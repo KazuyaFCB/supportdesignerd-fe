@@ -14,7 +14,7 @@ import Diagram from "../../components/Diagram";
 import axios from "../../utils/axios";
 
 export default function User() {
-    let [imgSrc, setImgSrc] = useState(null); 
+    let [imgSrc, setImgSrc] = useState(""); 
     // let elementJSON = {
     //     elements: [{'id': 1, 'type': 'Normal', 'paragraph': '      ', 'x': 80, 'y': 430}, {'id': 2, 'type': 'Normal', 'paragraph': '      ', 'x': 186, 'y': 530}]
     // }
@@ -31,11 +31,7 @@ export default function User() {
     }
     
     async function findErdById() {
-        //const id = "60717cd12963b855e845ea0a";
-        //const id = "607186a059f69e1555687108";
-        //const id = "6071b598cb935c0e92c45c5b";
-        //const id = "6071e34aba46f97afe7c6f88";
-        const id = "60727febd0c05777cff4a0db";
+        const id = "607428fabafe1b9b3c912dd9";
         const api = await axios.get("/find-erd-by-id/" + id);
         setImgSrc(api.data.imgSrc);
         //setImgSrc(api.data.image)
@@ -46,10 +42,25 @@ export default function User() {
         const api = await axios.post("/delete-erd-by-id", {id: id});
     }
 
-    async function convertImageToDiagram() {
-        const imageFile = document.getElementById("imageFile").files[0].name;
-        const api = await axios.post("/create-erd", {imageFile: imageFile});
+    async function getImgSrcFromImgFile() {
+        const imageFile = document.getElementById("imageFile").files[0];
+        const formData = new FormData();
+        formData.append("file", imageFile);
+        const api = await axios.post("/get-img-src-from-img-file", formData);
         setImgSrc(api.data.imgSrc);
+        sessionStorage.setItem("imgSrc", api.data.imgSrc);
+    }
+
+    async function convertImageToDiagram() {
+        if (!imgSrc) {
+            alert("Haven't uploaded the file yet")
+            return;
+        }
+        const api = await axios.post("/create-erd", {imgSrc: imgSrc});
+        
+        //const api = await axios.post("/create-erd", {imageFile: imageFile});
+        
+        
         setElementJSON(api.data.elementJSON);
     }
 
@@ -62,11 +73,10 @@ export default function User() {
         //alert(JSON.stringify(inputJSON));
         
         //alert(JSON.stringify(elementJSON));
-        
     }
 
     useEffect(() => {
-
+        setImgSrc(sessionStorage.getItem("imgSrc"));
     }, [])
 
     return (
@@ -94,9 +104,9 @@ export default function User() {
                             </Route>   
                             <Route path={'/image-to-diagram'}>
                                 <img width="600" height="400" src={imgSrc} />
-                                <form onSubmit={(e) => {e.preventDefault(); convertImageToDiagram()}} >
+                                <form encType="multipart/form-data" onSubmit={(e) => {e.preventDefault(); convertImageToDiagram()}} >
                                     <label for="img">Select image:</label>
-                                    <input type="file" id="imageFile" name="imageFile" accept="image/*" />
+                                    <input type="file" id="imageFile" name="imageFile" accept="image/*" onChange={(e) => {e.preventDefault(); getImgSrcFromImgFile()}}/>
                                     <input type="submit" value="Convert to diagram"/>
                                 </form>
                                 <Diagram elementJSON={elementJSON} linkJSON={linkJSON}/>
