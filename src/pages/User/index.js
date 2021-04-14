@@ -12,6 +12,7 @@ import Header from "../../components/Header";
 import SignIn from "../../components/Header/SignIn";
 import Diagram from "../../components/Diagram";
 import axios from "../../utils/axios";
+//import MessageBox from "../../components/MessageBox";
 
 export default function User() {
     let [imgSrc, setImgSrc] = useState(""); 
@@ -65,6 +66,7 @@ export default function User() {
     }
 
     function convertJSONToDiagram() {
+        if (!document.getElementById("inputJSON")) return;
         let inputJSON = document.getElementById("inputJSON").value;
         
         //inputJSON ='{"elements": [{"id": 1, "type": "Normal", "paragraph": "      ", "x": 80, "y": 430}, {"id": 2, "type": "Normal", "paragraph": "      ", "x": 80, "y": 430}] }';
@@ -109,17 +111,21 @@ export default function User() {
                                     <input type="file" id="imageFile" name="imageFile" accept="image/*" onChange={(e) => {e.preventDefault(); getImgSrcFromImgFile()}}/>
                                     <input type="submit" value="Convert to diagram"/>
                                 </form>
-                                <Diagram elementJSON={elementJSON} linkJSON={linkJSON}/>
+                                <Diagram elementJSON={elementJSON} setElementJSON={setElementJSON} linkJSON={linkJSON}/>
+                                
                             </Route>
                             <Route path={'/json-to-diagram'}>
-                            <div>
+                            <div style={{display: 'inline-block', float: 'left', width: '200px'}}>
                                 <form onSubmit={(e) => {e.preventDefault(); convertJSONToDiagram()}}>
-                                    <h1>Input JSON</h1>
-                                    <textarea id="inputJSON" name="Text1" cols="50" rows="15"></textarea>
+                                    <h2>Input JSON</h2>
+                                    <textarea id="inputJSON" name="Text1" cols="60" rows="20"></textarea>
                                     <input type="submit" value="Convert"></input>
                                 </form>
                             </div>
-                            <Diagram elementJSON={elementJSON} linkJSON={linkJSON}/>
+                            <div style={{display: "inline-block", float: 'right', width: '700px'}}>
+                                <Diagram elementJSON={elementJSON} setElementJSON={setElementJSON} linkJSON={linkJSON}/>
+                                
+                            </div>
                             </Route>
                         </Route>
                     </Switch>
