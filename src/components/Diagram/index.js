@@ -12,65 +12,47 @@ import * as joint from 'jointjs';
 window.joint = joint;
 
 export default function Diagram({elementJSON, setElementJSON, linkJSON}) {
-    let graph = new joint.dia.Graph();
-    let [isOpenEditElementParagraphDialog, setIsOpenEditElementParagraphDialog] = useState(false);
+    let graph = null;
+    let paper = null;
+    //let [isOpenEditElementParagraphDialog, setIsOpenEditElementParagraphDialog] = useState(false);
     let [isOpenDeleteElementDialog, setIsOpenDeleteElementDialog] = useState(false);
-    let [elementSelectedToUpdateElementParagraph, setElementSelectedToUpdateElementParagraph] = useState(null);
     let [elementSelectedToDeleteElement, setElementSelectedToDeleteElement] = useState(null);
-    //let elementSelected = null;
-    let [newElementParagraph, setNewElementParagraph] = useState("");
+    
     const fontSize = 12;
     const elementHeight = 40;
     let start = 0;
     let end = 0;
     let editText = null;
-    let [editTextBlock, setEditTextBlock] = useState(null);
-
+    let editTextBlock = null;
+    let rect = null;
+    let elementSelectedToUpdateElementParagraph = null;
+    let elementSelectedToReadElementType = null;
+    //let [elementSelectedToUpdateElementParagraph, setElementSelectedToUpdateElementParagraph] = useState(null);
+    //let elementSelectedToDeleteElement = null;
 
     useEffect(() => {
-      drawDiagram(elementJSON, linkJSON)    
+      // if (graph) {
+      //   graph.clear();
+      //   paper.remove();
+      // }
+      drawDiagram(elementJSON, linkJSON);
+      
     }, [elementJSON]);
-
-    useEffect(() => {
-      //alert(JSON.stringify(elementSelectedToUpdateElementParagraph));
-      if (!elementSelectedToUpdateElementParagraph) return;
-      let contentHTML = '<div><input id="editText" type="text" style="background-color:white; color:orange; font-weight:bold;" value="' + elementSelectedToUpdateElementParagraph.attr("text/text") + '"></input></div>';
-      setEditTextBlock(new joint.shapes.basic.TextBlock({
-        position: { x:elementSelectedToUpdateElementParagraph.prop('position').x, y:elementSelectedToUpdateElementParagraph.prop('position').y},
-        size: { width: elementSelectedToUpdateElementParagraph.prop('size').width, height: elementSelectedToUpdateElementParagraph.prop('size').height },
-        attrs: { rect: { fill: 'transparent' }},
-        content: contentHTML
-      }));
-    }, [elementSelectedToUpdateElementParagraph])
-
-    useEffect(() => {
-      if (!editTextBlock) return;
-      graph.addCells([editTextBlock]);
-      //editText = document.getElementById("editText");
-      document.getElementById("editText").focus();
-      document.getElementById("editText").setSelectionRange(0, elementSelectedToUpdateElementParagraph.attr("text/text").length);
-
-
-      window.addEventListener('click',function(e){
-        if(e.target != document.getElementById("editText")){
-          editElementParagraph();
-        }
-      });
-    }, [editTextBlock])
+    
 
     // useEffect(() => {
-    //   if (!elementSelected) {
+    //   if (!elementSelectedToUpdateElementParagraph) {
     //     return;
     //   }
     //   if (isOpenEditElementParagraphDialog) {
-    //     elementSelected.attr('text/fill', 'red');
-    //     elementSelected.attr('text/font-weight', 'bold');
-    //     setNewElementParagraph(elementSelected.attr('text/text'));
+    //     elementSelectedToUpdateElementParagraph.attr('text/fill', 'red');
+    //     elementSelectedToUpdateElementParagraph.attr('text/font-weight', 'bold');
+    //     setNewElementParagraph(elementSelectedToUpdateElementParagraph.attr('text/text'));
     //   }
     //   else {
-    //     elementSelected.attr('text/fill', 'white');
-    //     elementSelected.attr('text/font-weight', 'normal');
-    //     setElementSelected(null);
+    //     elementSelectedToUpdateElementParagraph.attr('text/fill', 'white');
+    //     elementSelectedToUpdateElementParagraph.attr('text/font-weight', 'normal');
+    //     setElementSelectedToUpdateElementParagraph(null);
     //   }
     // }, [isOpenEditElementParagraphDialog])
 
@@ -100,51 +82,76 @@ export default function Diagram({elementJSON, setElementJSON, linkJSON}) {
       });
     }
 
-    // edit element paragraph when double click
+    async function addMouseEnterElementEvent(paper) {
+      paper.on("element:mouseenter", function(elementView, evt) {
+        if (rect || editTextBlock) return;
+        elementSelectedToReadElementType = elementView.model;
+        readElementType();
+      })
+      
+    }
+
+    async function addMouseLeaveElementEvent(paper) {
+      paper.on("element:mouseleave", function(elementView, evt) {
+        unreadElementType();
+      })
+    }
+
+    function readElementType() {
+      let rectWidth = 150;
+        let rectHeight = 30
+        let diff = 0;
+        diff = -(rectWidth - elementSelectedToReadElementType.prop('size').width) / 2;
+        
+        rect = new joint.shapes.basic.Rect({
+          //id: elementView.model.prop('id'),
+          position: { x:elementSelectedToReadElementType.prop('position').x + diff, y:elementSelectedToReadElementType.prop('position').y - 40},
+          size: { width: rectWidth, height: rectHeight },
+          attrs: { rect: { fill: 'pink' }, text: { 
+            text: elementJSON.elements[elementSelectedToReadElementType.id-1].type, 
+            fill: 'black', 'font-weight': 'bold','font-variant': 'small-caps' }}
+        });
+        graph.addCells([rect]);
+    }
+
+    function unreadElementType() {
+      graph.removeCells([rect]);
+      elementSelectedToReadElementType = null;
+      rect = null;
+    }
+
+    // update element paragraph when double click
     async function addDoubleClickElementEvent(paper) {
       paper.on('element:pointerdblclick', function(elementView) {
-        // setElementSelectedToUpdateElementParagraph({
-        //   "id":elementView.model.prop('id'),
-        //   "type":elementView.model.prop('type'),
-        //   "position":elementView.model.prop('position'),
-        //   "size":elementView.model.prop('size'),
-        //   "attrs":{
-        //     "text":{
-        //       "text":elementView.model.attr("text/text"),
-        //       "fill":"white"
-        //     }
-        //   }
-        // });
-        
-        
-        setElementSelectedToUpdateElementParagraph(elementView.model);
-        //
+        //setElementSelectedToUpdateElementParagraph(elementView.model);
+        elementSelectedToUpdateElementParagraph = elementView.model;
 
-        //let contentHTML = '<div><textarea rows="2" cols="10" style="background-color:#b6b7b4; color:#ffffff" value="' + elementView.model.attr("text/text") + '" ></textarea></div>';
-        //let sizeHTML = 'width:' + elementView.model.prop('size').width + '; height:' + elementView.model.prop('size').height;
+        let contentHTML = '<div><input id="editText" type="text" style="background-color:white; color:orange; font-weight:bold;" value="' + elementView.model.attr("text/text") + '"/></div>';
+        editTextBlock = new joint.shapes.basic.TextBlock({
+          //id: elementView.model.prop('id'),
+          position: { x:elementView.model.prop('position').x, y:elementView.model.prop('position').y},
+          size: { width: elementView.model.prop('size').width, height: elementView.model.prop('size').height },
+          attrs: { rect: { fill: 'transparent' }},
+          content: contentHTML
+        });
+        graph.addCells([editTextBlock]);
+        editText = document.getElementById("editText");
+        editText.focus();
+        editText.setSelectionRange(0, elementView.model.attr("text/text").length);
+
+        window.addEventListener('click',function(e){
+          if(editText && e.target != editText){
+            updateElementParagraph();
+          }
+        });
         
-        //alert(elementView.model.attr('contentEditable'));
-        //elementView.model.attr('contenteditable', 'true');
         //pop up dialog
         //setIsOpenEditElementParagraphDialog(true);
       });
     }
 
-    function editElementParagraph() {
-      setNewElementParagraph(editText.value);
-
-      // setElementSelectedToUpdateElementParagraph({
-      //   "size": {
-      //     "width": newElementParagraph.length * fontSize,
-      //     "height": elementHeight
-      //   },
-      //   "attrs":{
-      //     "text":{
-      //       "text":newElementParagraph,
-      //       "fill":"white"
-      //     }
-      //   }
-      // });
+    function updateElementParagraph() {
+      let newElementParagraph = editText.value;
 
       elementSelectedToUpdateElementParagraph.resize(newElementParagraph.length * fontSize, elementHeight);
       elementSelectedToUpdateElementParagraph.attr('text/text', newElementParagraph);
@@ -152,22 +159,24 @@ export default function Diagram({elementJSON, setElementJSON, linkJSON}) {
       setElementJSON(elementJSON);
       document.getElementById("inputJSON").value = JSON.stringify(elementJSON);
       graph.removeCells([editTextBlock]);
-      setElementSelectedToUpdateElementParagraph(null);
-      setEditTextBlock(null);
+      //setElementSelectedToUpdateElementParagraph(null);
+      elementSelectedToUpdateElementParagraph = null;
+      //setEditTextBlock(null);
+      editTextBlock = null;
+      editText = null;
+      window.removeEventListener('click',function(e){
+        if(editText && e.target != editText){
+          updateElementParagraph();
+        }
+      });
     }
-
-    // function editElementParagraph() {
-    //   elementSelected.resize(newElementParagraph.length * fontSize, elementHeight);
-
-    //   elementSelected.attr('text/text', newElementParagraph);
-    //   elementJSON.elements[elementSelected.id - 1].paragraph = newElementParagraph;
-    //   setElementJSON(elementJSON);
-    //   document.getElementById("inputJSON").value = JSON.stringify(elementJSON);
-    // }
     
-    // drop and drag element to change position
+    
+    // update position element when drop and drag element
     function addChangePositionElementEvent(graph) {
       graph.on('change:position', function(cell) {
+      unreadElementType();
+
       //var center = cell.getBBox().center();
       let topLeft = cell.getBBox().topLeft();
       topLeft = topLeft.toString();
@@ -185,14 +194,35 @@ export default function Diagram({elementJSON, setElementJSON, linkJSON}) {
     }
 
     // delete element when click long
+    async function addPointerDownEvent(paper) {
+      paper.on('element:pointerdown', function(elementView) {
+        start = Date.now();
+      })
+    }
+
+    async function addPointerUpEvent(paper) {
+      paper.on('element:pointerup', function(elementView) {
+        end = Date.now();
+        if (end - start > 1000) {
+          //elementSelectedToDeleteElement = elementView.model;
+          setElementSelectedToDeleteElement(elementView.model);
+          //pop up dialog
+          setIsOpenDeleteElementDialog(true);
+        }
+      })
+    }
+
     function deleteElement() {
       // for (let i = elementSelected.id; i < elementJSON.elements.length; i++) {
       //   elementJSON.elements[i].id--;
       // }
       // alert(elementSelected.id);
+      if (!elementSelectedToDeleteElement) return;
+      
       for (let i = elementJSON.elements.length - 1; i > -1; i--) {
         if (elementJSON.elements[i].id === elementSelectedToDeleteElement.id) {
-          elementJSON.elements.splice(i,1);
+          elementJSON.elements[i] = null;
+          //elementJSON.elements.splice(i,1);
           break;
         }
       }
@@ -205,26 +235,10 @@ export default function Diagram({elementJSON, setElementJSON, linkJSON}) {
       //   successor.id--;
       // })
       elementSelectedToDeleteElement.remove();
-      
+      //elementSelectedToDeleteElement = null;
+      setElementSelectedToDeleteElement(null);
       //graph.removeCells(elementSelectedToDeleteElement);
       
-    }
-
-    function addPointerDownEvent(paper) {
-      paper.on('element:pointerdown', function(elementView) {
-        start = Date.now();
-      })
-    }
-
-    function addPointerUpEvent(paper) {
-      paper.on('element:pointerup', function(elementView) {
-        end = Date.now();
-        if (end - start > 500) {
-          setElementSelectedToDeleteElement(elementView.model);
-          //pop up dialog
-          setIsOpenDeleteElementDialog(true);
-        }
-      })
     }
   
     function drawDiagram(elementJSON, linkJSON) {
@@ -233,17 +247,19 @@ export default function Diagram({elementJSON, setElementJSON, linkJSON}) {
     
       var erd = joint.shapes.erd;
     
+      graph = new joint.dia.Graph();
       
-    
       customizeGraph(graph);
     
-      var paper = new joint.dia.Paper({
+      paper = new joint.dia.Paper({
         el: document.getElementById("paper"),
         model: graph,
         width: 800,
         height: 600
       });
 
+      addMouseEnterElementEvent(paper);
+      addMouseLeaveElementEvent(paper);
       addDoubleClickElementEvent(paper);
       addChangePositionElementEvent(graph);
       addPointerDownEvent(paper);
@@ -293,32 +309,15 @@ export default function Diagram({elementJSON, setElementJSON, linkJSON}) {
                   fill: "white",
                   text: item.paragraph
                 }
-                // body: {
-                //   button: {
-                //     event: 'element:button:pointerdown',
-                //     cursor: 'pointer',
-                //     ref: 'buttonLabel',
-                //     refWidth: '150%',
-                //     refHeight: '150%',
-                //     refX: '-25%',
-                //     refY: '-25%'
-                //   },
-                //   buttonLabel: {
-                //     text: 'X', // fullwidth underscore
-                //       pointerEvents: 'none',
-                //       refX: '100%',
-                //       refY: 0,
-                //       textAnchor: 'middle',
-                //       textVerticalAnchor: 'middle'
-                //   }
-                // }
               }
+              //content: '<label data-tooltip="tooltip text" data-tooltip-hide-trigger="mouseout mouseouver">HIDE ON MOUSEOUT</label>'
             };
             graph.addCell(element);
         }
         elements[item.id - 1] = element;
       });
-      //graph.addCells([el2]);
+      
+      //graph.addCells([editTextBlock]);
     
       // graph.fromJSON({
       //     cells: elements
@@ -362,7 +361,7 @@ export default function Diagram({elementJSON, setElementJSON, linkJSON}) {
     return (
       <div>
         <div id="paper"></div>
-        <Dialog open={isOpenEditElementParagraphDialog} onClose={() => setIsOpenEditElementParagraphDialog(false)} aria-labelledby="form-dialog-title">
+        {/* <Dialog open={isOpenEditElementParagraphDialog} onClose={() => setIsOpenEditElementParagraphDialog(false)} aria-labelledby="form-dialog-title">
           <DialogTitle>Edit element paragraph</DialogTitle>
           <DialogContent>
               <DialogContentText>
@@ -379,7 +378,7 @@ export default function Diagram({elementJSON, setElementJSON, linkJSON}) {
                   OK
               </Button>
           </DialogActions>
-      </Dialog>
+      </Dialog> */}
       <Dialog open={isOpenDeleteElementDialog} onClose={() => setIsOpenDeleteElementDialog(false)} aria-labelledby="form-dialog-title">
           <DialogTitle>Delete element</DialogTitle>
           <DialogContent>

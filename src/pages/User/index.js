@@ -115,14 +115,14 @@ export default function User() {
                                 
                             </Route>
                             <Route path={'/json-to-diagram'}>
-                            <div style={{display: 'inline-block', float: 'left', width: '200px'}}>
+                            <div style={{display: 'inline-block', float: 'left', width: '50px'}}>
                                 <form onSubmit={(e) => {e.preventDefault(); convertJSONToDiagram()}}>
-                                    <h2>Input JSON</h2>
-                                    <textarea id="inputJSON" name="Text1" cols="60" rows="20"></textarea>
+                                    <h5>Input JSON</h5>
+                                    <textarea id="inputJSON" name="Text1" cols="50" rows="20"></textarea>
                                     <input type="submit" value="Convert"></input>
                                 </form>
                             </div>
-                            <div style={{display: "inline-block", float: 'right', width: '700px'}}>
+                            <div style={{display: "inline-block", float: 'right', width: '800px', marginLeft: '-100px', backgroundColor: 'lavender'}}>
                                 <Diagram elementJSON={elementJSON} setElementJSON={setElementJSON} linkJSON={linkJSON}/>
                                 
                             </div>
