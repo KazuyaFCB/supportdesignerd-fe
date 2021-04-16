@@ -1,17 +1,28 @@
 import { useEffect, useState } from "react";
-import TextField from '@material-ui/core/TextField';
+import { makeStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
 
 import {AssociativeEntity, PartialKeyAttribute, DashedLine, DoubleLine} from "../../utils/myerd";
 import * as joint from 'jointjs';
 window.joint = joint;
 
+const useStyles = makeStyles((theme) => ({
+  gridList: {
+    flexWrap: 'nowrap',
+    // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
+    transform: 'translateZ(0)',
+  }
+}))
+
 export default function Diagram({elementJSON, setElementJSON, linkJSON}) {
+    const classes = useStyles();
     let graph = null;
     let paper = null;
     //let [isOpenEditElementParagraphDialog, setIsOpenEditElementParagraphDialog] = useState(false);
@@ -20,6 +31,8 @@ export default function Diagram({elementJSON, setElementJSON, linkJSON}) {
     
     const fontSize = 12;
     const elementHeight = 40;
+    let elements = [];
+
     let start = 0;
     let end = 0;
     let editText = null;
@@ -30,31 +43,30 @@ export default function Diagram({elementJSON, setElementJSON, linkJSON}) {
     //let [elementSelectedToUpdateElementParagraph, setElementSelectedToUpdateElementParagraph] = useState(null);
     //let elementSelectedToDeleteElement = null;
 
-    useEffect(() => {
-      // if (graph) {
-      //   graph.clear();
-      //   paper.remove();
-      // }
-      drawDiagram(elementJSON, linkJSON);
-      
-    }, [elementJSON]);
-    
+    const panel = [
+      {
+        img: "https://www.conceptdraw.com/How-To-Guide/picture/erd-symbols-and-meanings/ERD-Symbols-Entity.png",
+        title: "Entity"
+      }, {
+        img: "https://www.conceptdraw.com/How-To-Guide/picture/erd-symbols-and-meanings/ERD-Symbols-Weak-Entity.png",
+        title: "WeakEntity"
+      }, {
+        img: "https://www.conceptdraw.com/How-To-Guide/picture/erd-symbols-and-meanings/ERD-Symbols-Attribute.png",
+        title: "Attribute"
+      }, {
+        img: "https://www.conceptdraw.com/How-To-Guide/picture/erd-symbols-and-meanings/ERD-Symbols-Relationship.png",
+        title: "Relationship"
+      }, {
+        img: "https://www.conceptdraw.com/How-To-Guide/picture/erd-symbols-and-meanings/ERD-Symbols-Identifying-Relationship.png",
+        title: "IdentifyingRelationship"
+      }
+    ]
 
-    // useEffect(() => {
-    //   if (!elementSelectedToUpdateElementParagraph) {
-    //     return;
-    //   }
-    //   if (isOpenEditElementParagraphDialog) {
-    //     elementSelectedToUpdateElementParagraph.attr('text/fill', 'red');
-    //     elementSelectedToUpdateElementParagraph.attr('text/font-weight', 'bold');
-    //     setNewElementParagraph(elementSelectedToUpdateElementParagraph.attr('text/text'));
-    //   }
-    //   else {
-    //     elementSelectedToUpdateElementParagraph.attr('text/fill', 'white');
-    //     elementSelectedToUpdateElementParagraph.attr('text/font-weight', 'normal');
-    //     setElementSelectedToUpdateElementParagraph(null);
-    //   }
-    // }, [isOpenEditElementParagraphDialog])
+    useEffect(() => {
+      //alert('draw diagram');
+      drawDiagram();
+      
+    }, [elementJSON.elements]);
 
     function customizeGraph(graph) {
       // modify graph de children ko ra khoi parent
@@ -82,6 +94,27 @@ export default function Diagram({elementJSON, setElementJSON, linkJSON}) {
       });
     }
 
+    function updateInputJSON() {
+      if (document.getElementById("inputJSON")) {
+        document.getElementById("inputJSON").value = JSON.stringify(elementJSON);
+      }
+    }
+
+    // CREATE element when click on panel
+    function createElement(panelItem, panelIndex) {
+      let item = { id: elementJSON.elements.length + 1, x: 0, y: 0, type: panelItem.title, paragraph: "      "};
+      elementJSON.elements.push(item);
+      updateInputJSON();
+      if (!graph) {
+        drawDiagram();
+      } else {
+        let element = createElementFromItem(item);
+        graph.addCell(element);
+      }
+      //sessionStorage.setItem("elementJSON", JSON.stringify(elementJSON));
+    }
+
+    // READ element type when hover mouse on it
     async function addMouseEnterElementEvent(paper) {
       paper.on("element:mouseenter", function(elementView, evt) {
         if (rect || editTextBlock) return;
@@ -102,7 +135,9 @@ export default function Diagram({elementJSON, setElementJSON, linkJSON}) {
         let rectHeight = 30
         let diff = 0;
         diff = -(rectWidth - elementSelectedToReadElementType.prop('size').width) / 2;
-        
+        if (!elementJSON.elements[elementSelectedToReadElementType.id-1]) {
+          return;
+        }
         rect = new joint.shapes.basic.Rect({
           //id: elementView.model.prop('id'),
           position: { x:elementSelectedToReadElementType.prop('position').x + diff, y:elementSelectedToReadElementType.prop('position').y - 40},
@@ -120,7 +155,7 @@ export default function Diagram({elementJSON, setElementJSON, linkJSON}) {
       rect = null;
     }
 
-    // update element paragraph when double click
+    // UPDATE element paragraph when double click
     async function addDoubleClickElementEvent(paper) {
       paper.on('element:pointerdblclick', function(elementView) {
         //setElementSelectedToUpdateElementParagraph(elementView.model);
@@ -136,8 +171,10 @@ export default function Diagram({elementJSON, setElementJSON, linkJSON}) {
         });
         graph.addCells([editTextBlock]);
         editText = document.getElementById("editText");
-        editText.focus();
-        editText.setSelectionRange(0, elementView.model.attr("text/text").length);
+        if (editText) {
+          editText.focus();
+          editText.setSelectionRange(0, elementView.model.attr("text/text").length);
+        }
 
         window.addEventListener('click',function(e){
           if(editText && e.target != editText){
@@ -155,9 +192,11 @@ export default function Diagram({elementJSON, setElementJSON, linkJSON}) {
 
       elementSelectedToUpdateElementParagraph.resize(newElementParagraph.length * fontSize, elementHeight);
       elementSelectedToUpdateElementParagraph.attr('text/text', newElementParagraph);
-      elementJSON.elements[elementSelectedToUpdateElementParagraph.id - 1].paragraph = newElementParagraph;
-      setElementJSON(elementJSON);
-      document.getElementById("inputJSON").value = JSON.stringify(elementJSON);
+      if (elementJSON.elements[elementSelectedToUpdateElementParagraph.id - 1]) {
+        elementJSON.elements[elementSelectedToUpdateElementParagraph.id - 1].paragraph = newElementParagraph;
+      }
+      //setElementJSON(elementJSON);
+      updateInputJSON();
       graph.removeCells([editTextBlock]);
       //setElementSelectedToUpdateElementParagraph(null);
       elementSelectedToUpdateElementParagraph = null;
@@ -169,31 +208,34 @@ export default function Diagram({elementJSON, setElementJSON, linkJSON}) {
           updateElementParagraph();
         }
       });
+      //sessionStorage.setItem("elementJSON", JSON.stringify(elementJSON));
     }
     
     
-    // update position element when drop and drag element
+    // UPDATE position element when drop and drag element
     function addChangePositionElementEvent(graph) {
       graph.on('change:position', function(cell) {
-      unreadElementType();
+        unreadElementType(); // xoa label info cua element
 
-      //var center = cell.getBBox().center();
-      let topLeft = cell.getBBox().topLeft();
-      topLeft = topLeft.toString();
-      let token = topLeft.split("@");
-      let newX = Number(token[0]);
-      let newY = Number(token[1]);
-      //alert(JSON.stringify(elementJSON.elements[cell.id - 1]));
-      elementJSON.elements[cell.id - 1].x = newX;
-      elementJSON.elements[cell.id - 1].y = newY;
-      setElementJSON(elementJSON);
-      document.getElementById("inputJSON").value = JSON.stringify(elementJSON);
-      
-      //cell.attr('text/text', "" + x + " " + y);
+        //var center = cell.getBBox().center();
+        let topLeft = cell.getBBox().topLeft();
+        topLeft = topLeft.toString();
+        let token = topLeft.split("@");
+        let newX = Number(token[0]);
+        let newY = Number(token[1]);
+        //alert(JSON.stringify(elementJSON.elements[cell.id - 1]));
+        if (elementJSON.elements[cell.id - 1]) {
+          elementJSON.elements[cell.id - 1].x = newX;
+          elementJSON.elements[cell.id - 1].y = newY;
+          //setElementJSON(elementJSON);
+          updateInputJSON();
+          //sessionStorage.setItem("elementJSON", JSON.stringify(elementJSON));
+        }
+        //cell.attr('text/text', "" + x + " " + y);
       });
     }
 
-    // delete element when click long
+    // DELETE element when click long
     async function addPointerDownEvent(paper) {
       paper.on('element:pointerdown', function(elementView) {
         start = Date.now();
@@ -203,7 +245,7 @@ export default function Diagram({elementJSON, setElementJSON, linkJSON}) {
     async function addPointerUpEvent(paper) {
       paper.on('element:pointerup', function(elementView) {
         end = Date.now();
-        if (end - start > 1000) {
+        if (end - start > 2000) {
           //elementSelectedToDeleteElement = elementView.model;
           setElementSelectedToDeleteElement(elementView.model);
           //pop up dialog
@@ -220,33 +262,79 @@ export default function Diagram({elementJSON, setElementJSON, linkJSON}) {
       if (!elementSelectedToDeleteElement) return;
       
       for (let i = elementJSON.elements.length - 1; i > -1; i--) {
-        if (elementJSON.elements[i].id === elementSelectedToDeleteElement.id) {
+        if (elementJSON.elements[i] && elementJSON.elements[i].id === elementSelectedToDeleteElement.id) {
           elementJSON.elements[i] = null;
           //elementJSON.elements.splice(i,1);
           break;
         }
       }
-
-      //elementJSON.elements.splice({id:elementSelected.id}, 1);
-      setElementJSON(elementJSON);
-      document.getElementById("inputJSON").value = JSON.stringify(elementJSON);
-      
-      // graph.getSuccessors(elementSelected).forEach(function(successor){
-      //   successor.id--;
-      // })
       elementSelectedToDeleteElement.remove();
       //elementSelectedToDeleteElement = null;
       setElementSelectedToDeleteElement(null);
+
+      //elementJSON.elements.splice({id:elementSelected.id}, 1);
+      //setElementJSON(elementJSON);
+      updateInputJSON();
+      //sessionStorage.setItem("elementJSON", JSON.stringify(elementJSON));
+      // graph.getSuccessors(elementSelected).forEach(function(successor){
+      //   successor.id--;
+      // })
+      
+      //elementSelectedToDeleteElement = null;
+      
       //graph.removeCells(elementSelectedToDeleteElement);
       
     }
-  
-    function drawDiagram(elementJSON, linkJSON) {
-      window.joint = joint;
-      // khởi tạo các đối tượng erd, graph, paper
-    
-      var erd = joint.shapes.erd;
-    
+
+    function createElementFromItem(item) {
+      let element = null;
+      switch (item.type) {
+        case "AssociativeEntity":
+          element = new AssociativeEntity({
+            position: { x: item.x, y: item.y },
+            size: { width: item.paragraph.length * fontSize, height: elementHeight },
+            attrs: { text: { text: item.paragraph } }
+          });
+          element.addTo(graph);
+          element = element.diamond;
+          break;
+        case "PartialKeyAttribute":
+          element = new PartialKeyAttribute({
+            position: { x: item.x, y: item.y },
+            size: { width: item.paragraph.length * fontSize, height: elementHeight },
+            attrs: { text: { text: item.paragraph } }
+          });
+          element.addTo(graph);
+          element = element.text;
+          break;
+        default:
+          element = {
+            id: item.id,
+            type: "erd." + item.type,
+            position: {
+              x: item.x,
+              y: item.y
+            },
+            size: {
+              width: item.paragraph.length * fontSize,
+              height: elementHeight
+            },
+            attrs: {
+              text: {
+                fill: "white",
+                text: item.paragraph
+              }
+            }
+          };
+      }
+      return element;
+    }
+
+    function initDiagram() {
+      if (graph || paper) {
+        graph.clear();
+        paper.remove();
+      }
       graph = new joint.dia.Graph();
       
       customizeGraph(graph);
@@ -257,6 +345,15 @@ export default function Diagram({elementJSON, setElementJSON, linkJSON}) {
         width: 800,
         height: 600
       });
+    }
+  
+    function drawDiagram() {
+      window.joint = joint;
+      // khởi tạo các đối tượng erd, graph, paper
+    
+      var erd = joint.shapes.erd;
+    
+      initDiagram();
 
       addMouseEnterElementEvent(paper);
       addMouseLeaveElementEvent(paper);
@@ -265,56 +362,20 @@ export default function Diagram({elementJSON, setElementJSON, linkJSON}) {
       addPointerDownEvent(paper);
       addPointerUpEvent(paper);
     
-      let elements = new Array(elementJSON.elements.length);
+      //let elements = new Array(elementJSON.elements.length);
       let links = new Array(linkJSON.links.length);
       
     
       // duyệt mảng JSON từ input, lấy các giá trị id, type, paragraph, x, y gán vào elements
     
+      elements = [];
       elementJSON.elements.forEach((item) => {
-        let element;
-        switch (item.type) {
-          case "AssociativeEntity":
-            element = new AssociativeEntity({
-              position: { x: item.x, y: item.y },
-              size: { width: item.paragraph.length * fontSize, height: elementHeight },
-              attrs: { text: { text: item.paragraph } }
-            });
-            element.addTo(graph);
-            element = element.diamond;
-            break;
-          case "PartialKeyAttribute":
-            element = new PartialKeyAttribute({
-              position: { x: item.x, y: item.y },
-              size: { width: item.paragraph.length * fontSize, height: elementHeight },
-              attrs: { text: { text: item.paragraph } }
-            });
-            element.addTo(graph);
-            element = element.text;
-            break;
-          default:
-            element = {
-              id: item.id,
-              type: "erd." + item.type,
-              position: {
-                x: item.x,
-                y: item.y
-              },
-              size: {
-                width: item.paragraph.length * fontSize,
-                height: elementHeight
-              },
-              attrs: {
-                text: {
-                  fill: "white",
-                  text: item.paragraph
-                }
-              }
-              //content: '<label data-tooltip="tooltip text" data-tooltip-hide-trigger="mouseout mouseouver">HIDE ON MOUSEOUT</label>'
-            };
-            graph.addCell(element);
+        if (item) {
+          let element = createElementFromItem(item);
+          graph.addCell(element);
+          elements.push(element);
         }
-        elements[item.id - 1] = element;
+        //elements[item.id - 1] = element;
       });
       
       //graph.addCells([editTextBlock]);
@@ -360,41 +421,31 @@ export default function Diagram({elementJSON, setElementJSON, linkJSON}) {
 
     return (
       <div>
-        <div id="paper"></div>
-        {/* <Dialog open={isOpenEditElementParagraphDialog} onClose={() => setIsOpenEditElementParagraphDialog(false)} aria-labelledby="form-dialog-title">
-          <DialogTitle>Edit element paragraph</DialogTitle>
-          <DialogContent>
-              <DialogContentText>
-                  Type new element paragraph:
-              </DialogContentText>
+        <div id="paper" style={{display: 'inline-block', float: 'left', width: '800px'}}></div>
+        <List component="nav" aria-label="secondary mailbox folders" style={{float: 'right', width: '100px', marginLeft: '-100px', padding: '0px'}}>
+          {panel.map((panelItem, panelIndex) => (
+            <ListItem button style={{width:'100px'}} onClick={() => createElement(panelItem, panelIndex)}>
+              <img src={panelItem.img} alt={panelItem.title} title={panelItem.title} style={{width:'100px', height:'40px'}}/>
+            </ListItem>
+          ))}
+        </List>
 
-              <TextField defaultValue={newElementParagraph} onChange={e => setNewElementParagraph(e.target.value)} autoFocus margin="dense" fullWidth />
-          </DialogContent>
-          <DialogActions>
-              <Button onClick={() => { setIsOpenEditElementParagraphDialog(false); }} color="danger">
-                  Cancel
-              </Button>
-              <Button onClick={() => {  setIsOpenEditElementParagraphDialog(false); editElementParagraph(); }} color="primary">
-                  OK
-              </Button>
-          </DialogActions>
-      </Dialog> */}
-      <Dialog open={isOpenDeleteElementDialog} onClose={() => setIsOpenDeleteElementDialog(false)} aria-labelledby="form-dialog-title">
-          <DialogTitle>Delete element</DialogTitle>
-          <DialogContent>
-              <DialogContentText>
-                  Do you want to delete this element?
-              </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-              <Button onClick={() => { setIsOpenDeleteElementDialog(false); }} color="danger">
-                  Cancel
-              </Button>
-              <Button onClick={() => {  setIsOpenDeleteElementDialog(false); deleteElement(); }} color="primary">
-                  OK
-              </Button>
-          </DialogActions>
-      </Dialog>
+        <Dialog open={isOpenDeleteElementDialog} onClose={() => setIsOpenDeleteElementDialog(false)} aria-labelledby="form-dialog-title">
+            <DialogTitle>Delete element</DialogTitle>
+            <DialogContent>
+                <DialogContentText>
+                    Do you want to delete this element?
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={() => { setIsOpenDeleteElementDialog(false); }} color="danger">
+                    Cancel
+                </Button>
+                <Button onClick={() => {  setIsOpenDeleteElementDialog(false); deleteElement(); }} color="primary">
+                    OK
+                </Button>
+            </DialogActions>
+        </Dialog>
     </div>
     )
 }

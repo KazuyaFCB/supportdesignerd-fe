@@ -57,7 +57,10 @@ export default function User() {
             alert("Haven't uploaded the file yet")
             return;
         }
-        const api = await axios.post("/create-erd", {imgSrc: imgSrc});
+        const imageFile = document.getElementById("imageFile").files[0];
+        const formData = new FormData();
+        formData.append("file", imageFile);
+        const api = await axios.post("/create-erd", formData);
         
         //const api = await axios.post("/create-erd", {imageFile: imageFile});
         
@@ -105,27 +108,33 @@ export default function User() {
                                 </div>
                             </Route>   
                             <Route path={'/image-to-diagram'}>
-                                <img width="600" height="400" src={imgSrc} />
-                                <form encType="multipart/form-data" onSubmit={(e) => {e.preventDefault(); convertImageToDiagram()}} >
-                                    <label for="img">Select image:</label>
-                                    <input type="file" id="imageFile" name="imageFile" accept="image/*" onChange={(e) => {e.preventDefault(); getImgSrcFromImgFile()}}/>
-                                    <input type="submit" value="Convert to diagram"/>
-                                </form>
-                                <Diagram elementJSON={elementJSON} setElementJSON={setElementJSON} linkJSON={linkJSON}/>
+                                <div style={{display: 'inline-block', width: '385px'}}>
+                                    <img width="385" height="400" src={imgSrc} />
+                                    <form encType="multipart/form-data" onSubmit={(e) => {e.preventDefault(); convertImageToDiagram()}} >
+                                        <label for="img">Select image:</label>
+                                        <input type="file" id="imageFile" name="imageFile" accept="image/*" onChange={(e) => {e.preventDefault(); getImgSrcFromImgFile()}}/>
+                                        <br/>
+                                        <input type="submit" value="Convert to diagram"/>
+                                    </form>
+                                </div>
+                                <div style={{display: "inline-block", float: 'right', width: '900px', backgroundColor: 'lavender'}}>
+                                    <Diagram elementJSON={elementJSON} setElementJSON={setElementJSON} linkJSON={linkJSON}/>
+                                </div>
                                 
                             </Route>
                             <Route path={'/json-to-diagram'}>
-                            <div style={{display: 'inline-block', float: 'left', width: '50px'}}>
-                                <form onSubmit={(e) => {e.preventDefault(); convertJSONToDiagram()}}>
+                            
+                                <form onSubmit={(e) => {e.preventDefault(); convertJSONToDiagram()}} style={{display: 'inline-block', float: 'left'}}>
                                     <h5>Input JSON</h5>
-                                    <textarea id="inputJSON" name="Text1" cols="50" rows="20"></textarea>
+                                    <textarea id="inputJSON" name="Text1" cols="40" rows="20"></textarea>
+                                    <br/>
                                     <input type="submit" value="Convert"></input>
                                 </form>
-                            </div>
-                            <div style={{display: "inline-block", float: 'right', width: '800px', marginLeft: '-100px', backgroundColor: 'lavender'}}>
-                                <Diagram elementJSON={elementJSON} setElementJSON={setElementJSON} linkJSON={linkJSON}/>
                                 
-                            </div>
+                                <div style={{display: "inline-block", float: 'right', width: '900px', backgroundColor: 'lavender'}}>
+                                    <Diagram elementJSON={elementJSON} setElementJSON={setElementJSON} linkJSON={linkJSON}/>
+                                    
+                                </div>
                             </Route>
                         </Route>
                     </Switch>
