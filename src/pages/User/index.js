@@ -16,16 +16,14 @@ import axios from "../../utils/axios";
 
 export default function User() {
     let [imgSrc, setImgSrc] = useState(""); 
-    // let elementJSON = {
-    //     elements: [{'id': 1, 'type': 'Normal', 'paragraph': '      ', 'x': 80, 'y': 430}, {'id': 2, 'type': 'Normal', 'paragraph': '      ', 'x': 186, 'y': 530}]
-    // }
+    
     let [elementJSON, setElementJSON] = useState({elements: []});
-    // let [elementJSON, setElementJSON] = useState({
-    //     elements: [{'id': 1, 'type': 'Normal', 'paragraph': '      ', 'x': 80, 'y': 430}, {'id': 2, 'type': 'Normal', 'paragraph': '      ', 'x': 186, 'y': 530}]
-    // });
+    
     let [linkJSON, setLinkJSON] = useState({
         links: []
     });
+    let [imageWidth, setImageWidth] = useState(2667);
+    let [imageHeight, setImageHeight] = useState(2000);
     
     async function findErd() {
         const api = await axios.get("/find-erd");
@@ -50,7 +48,24 @@ export default function User() {
         const api = await axios.post("/get-img-src-from-img-file", formData);
         setImgSrc(api.data.imgSrc);
         sessionStorage.setItem("imgSrc", api.data.imgSrc);
+        getImageFileSize(imageFile);
     }
+
+     // GET THE IMAGE WIDTH AND HEIGHT USING fileReader() API.
+    function getImageFileSize(file) {
+        let reader = new FileReader(); // CREATE AN NEW INSTANCE.
+        reader.onload = function (e) {
+            var img = new Image();      
+            img.src = e.target.result;
+
+            img.onload = function () {
+                setImageWidth(this.width);
+                setImageHeight(this.height);
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+
 
     async function convertImageToDiagram() {
         if (!imgSrc) {
@@ -58,22 +73,26 @@ export default function User() {
             return;
         }
         const imageFile = document.getElementById("imageFile").files[0];
+        //getImageFileSize(imageFile);
         const formData = new FormData();
         formData.append("file", imageFile);
+        formData.append("size", [imageWidth, imageHeight]);
         const api = await axios.post("/create-erd", formData);
         
         //const api = await axios.post("/create-erd", {imageFile: imageFile});
         
-        
         setElementJSON(api.data.elementJSON);
+        setLinkJSON(api.data.linkJSON);
     }
 
     function convertJSONToDiagram() {
-        if (!document.getElementById("inputJSON")) return;
-        let inputJSON = document.getElementById("inputJSON").value;
+        if (!document.getElementById("inputElementJSON") || !document.getElementById("inputLinkJSON")) return;
+        let inputJSON = document.getElementById("inputElementJSON").value;
+        let linkJSON = document.getElementById("inputLinkJSON").value;
         
         //inputJSON ='{"elements": [{"id": 1, "type": "Normal", "paragraph": "      ", "x": 80, "y": 430}, {"id": 2, "type": "Normal", "paragraph": "      ", "x": 80, "y": 430}] }';
         setElementJSON(JSON.parse(inputJSON));
+        setLinkJSON(JSON.parse(linkJSON));
         
         //alert(JSON.stringify(inputJSON));
         
@@ -109,7 +128,7 @@ export default function User() {
                             </Route>   
                             <Route path={'/image-to-diagram'}>
                                 <div style={{display: 'inline-block', width: '385px'}}>
-                                    <img width="385" height="400" src={imgSrc} />
+                                    <img width="385" height="400" src={imgSrc}/>
                                     <form encType="multipart/form-data" onSubmit={(e) => {e.preventDefault(); convertImageToDiagram()}} >
                                         <label for="img">Select image:</label>
                                         <input type="file" id="imageFile" name="imageFile" accept="image/*" onChange={(e) => {e.preventDefault(); getImgSrcFromImgFile()}}/>
@@ -117,22 +136,28 @@ export default function User() {
                                         <input type="submit" value="Convert to diagram"/>
                                     </form>
                                 </div>
-                                <div style={{display: "inline-block", float: 'right', width: '900px', backgroundColor: 'lavender'}}>
-                                    <Diagram elementJSON={elementJSON} setElementJSON={setElementJSON} linkJSON={linkJSON}/>
+                                <div style={{display: "inline-block", float: 'right', width: '900px'}}>
+                                    <Diagram elementJSON={elementJSON} linkJSON={linkJSON} imageWidth={imageWidth} imageHeight={imageHeight} />
                                 </div>
                                 
                             </Route>
                             <Route path={'/json-to-diagram'}>
-                            
-                                <form onSubmit={(e) => {e.preventDefault(); convertJSONToDiagram()}} style={{display: 'inline-block', float: 'left'}}>
-                                    <h5>Input JSON</h5>
-                                    <textarea id="inputJSON" name="Text1" cols="40" rows="20"></textarea>
-                                    <br/>
-                                    <input type="submit" value="Convert"></input>
-                                </form>
+                                <div style={{display: 'inline-block', float: 'left'}}>
+                                    <form>
+                                        <h5>Input Element JSON</h5>
+                                        <textarea id="inputElementJSON" name="Text1" cols="40" rows="9"></textarea>
+                                        <br/>
+                                    </form>
+                                    <form onSubmit={(e) => {e.preventDefault(); convertJSONToDiagram()}} style={{display: 'inline-block', float: 'left'}}>
+                                        <h5>Input Link JSON</h5>
+                                        <textarea id="inputLinkJSON" name="Text1" cols="40" rows="9"></textarea>
+                                        <br/>
+                                        <input type="submit" value="Convert"></input>
+                                    </form>
+                                </div>
                                 
-                                <div style={{display: "inline-block", float: 'right', width: '900px', backgroundColor: 'lavender'}}>
-                                    <Diagram elementJSON={elementJSON} setElementJSON={setElementJSON} linkJSON={linkJSON}/>
+                                <div style={{display: "inline-block", float: 'right', width: '900px', height: '550px'}}>
+                                    <Diagram elementJSON={elementJSON} linkJSON={linkJSON} imageWidth={imageWidth} imageHeight={imageHeight} />
                                     
                                 </div>
                             </Route>
