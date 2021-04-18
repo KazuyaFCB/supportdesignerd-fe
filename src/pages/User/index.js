@@ -145,12 +145,12 @@ export default function User() {
                                 <div style={{display: 'inline-block', float: 'left'}}>
                                     <form>
                                         <h5>Input Element JSON</h5>
-                                        <textarea id="inputElementJSON" name="Text1" cols="40" rows="9"></textarea>
+                                        <textarea id="inputElementJSON" cols="40" rows="9"></textarea>
                                         <br/>
                                     </form>
                                     <form onSubmit={(e) => {e.preventDefault(); convertJSONToDiagram()}} style={{display: 'inline-block', float: 'left'}}>
                                         <h5>Input Link JSON</h5>
-                                        <textarea id="inputLinkJSON" name="Text1" cols="40" rows="9"></textarea>
+                                        <textarea id="inputLinkJSON" cols="40" rows="9"></textarea>
                                         <br/>
                                         <input type="submit" value="Convert"></input>
                                     </form>
