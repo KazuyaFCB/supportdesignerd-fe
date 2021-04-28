@@ -70,10 +70,10 @@ export class PartialKeyAttribute {
     }
   }
   
-export class DashedLine extends joint.dia.Link {
+export class DashedLine extends joint.shapes.standard.Link {
     constructor() {
-      //let link = new joint.shapes.standard.Link();
-      let link = new joint.dia.Link();
+      let link = new joint.shapes.standard.Link();
+      //let link = new joint.dia.Link();
       //var stroke = '#' + ('000000' + Math.floor(Math.random() * 16777215).toString(16)).slice(-6);
       //var strokeWidth = Math.floor(Math.random() * 10) + 1;
       var strokeDasharray =
@@ -82,15 +82,15 @@ export class DashedLine extends joint.dia.Link {
         " " +
         (Math.floor(Math.random() * 5) + 1);
       link.attr({
-        ".connection": { "stroke-width": 1, "stroke-dasharray": strokeDasharray }
-        // line: {
-        //     stroke: 'black',
-        //     strokeWidth: 1,
-        //     strokeDasharray: strokeDasharray,
-        //     targetMarker: {
-        //         display: 'none'
-        //     }
-        // }
+        //".connection": { "stroke-width": 1, "stroke-dasharray": strokeDasharray },
+        line: {
+            stroke: 'black',
+            strokeWidth: 1,
+            strokeDasharray: strokeDasharray,
+            targetMarker: {
+                display: 'none'
+            }
+        }
       });
       link.prop("defaultLabel/attrs/body/stroke", "black");
       //this.link.embed(this.line);
@@ -100,6 +100,20 @@ export class DashedLine extends joint.dia.Link {
     //     graph.addCell([this.line, this.link]);
     // }
   }
+
+export class Line extends joint.shapes.standard.Link {
+  constructor() {
+    let link = new joint.shapes.standard.Link();
+    link.attr({
+      line: {
+        targetMarker: {
+          display: "none"
+        }
+      }
+    });
+    return link;
+  }
+}
   
 export class DoubleLine extends joint.shapes.standard.DoubleLink {
     constructor() {
