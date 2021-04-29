@@ -3,6 +3,7 @@ window.joint = joint
 
 export class AssociativeEntity {
     constructor({
+      id: _id,
       position: { x: _x, y: _y },
       size: { width: _width, height: _height },
       attrs: {
@@ -18,6 +19,7 @@ export class AssociativeEntity {
         }
       });
       this.diamond = new joint.shapes.basic.Path({
+        id: _id,
         position: { x: _x, y: _y },
         size: { width: _width, height: _height },
         attrs: {
@@ -39,6 +41,7 @@ export class AssociativeEntity {
   
 export class PartialKeyAttribute {
     constructor({
+      id: _id,
       position: { x: _x, y: _y },
       size: { width: _width, height: _height },
       attrs: {
@@ -51,17 +54,21 @@ export class PartialKeyAttribute {
         size: { width: _width, height: _height },
         attrs: {
           text: { text: "" }
-          //text: { text: _text, fill: 'white', 'text-decoration': 'underline', 'text-underline-position': 'under' },
+          //text: { text: _text, fill: 'white', 'text-decoration': 'underline dotted white', 'text-underline-position': 'under' },
         }
       });
-      this.text = new joint.shapes.basic.TextBlock({
+      //let contentHTML = "<p style='color:black;font-weight:bold;text-decoration:underline black dashed; margin:auto'>" + _text + "</p>"
+      this.text = new joint.shapes.standard.TextBlock({
+        id: _id,
         position: { x: _x, y: _y },
         size: { width: _width, height: _height },
-        attrs: { rect: { fill: "transparent", "stroke-width": 0 } },
-        content:
-          "<p style='color:white;font-weight:bold;text-decoration:underline white dashed; margin:auto'>Partial Key Attribute</p>"
+        attrs: { 
+          body: { fill: "transparent", "stroke-width": 0 },
+          label: { text: _text, style: { color: 'white', textDecoration: 'underline dashed'} }
+        }
       });
       this.text.embed(this.partialKeyAttribute);
+      //this.partialKeyAttribute.embed(this.text);
       return this;
     }
     addTo(graph) {
