@@ -7,7 +7,8 @@ import {
     Link,
     Redirect
 } from "react-router-dom";
-import * as automl from '@tensorflow/tfjs-automl'
+import * as automl from '@tensorflow/tfjs-automl';
+import Cookies from 'js-cookie';
 
 import Header from "../../components/Header";
 import SignIn from "../../components/Header/SignIn";
@@ -31,8 +32,12 @@ export default function User() {
 
     let [currentUser, setCurrentUser] = useState(null);
 
-    useEffect(() => {
-
+    useEffect(async () => {
+        let currentUsername = Cookies.get(['currentUsername']);
+        if (currentUsername) {
+            const api = await axios.get("/find-user-by-username/" + currentUsername);
+            setCurrentUser(api.data);
+        }
     }, [])
 
     const useScript = url => {
@@ -49,8 +54,9 @@ export default function User() {
           }
         }, [url]);
     };
+    useScript('https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js');
+    useScript('https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.bundle.min.js');
     useScript("https://unpkg.com/@tensorflow/tfjs");
-    useScript("https://unpkg.com/@tensorflow/tfjs-automl");
     
     async function findErd() {
         const api = await axios.get("/find-erd");
@@ -115,7 +121,7 @@ export default function User() {
         console.log(linkPredictions);
         
 
-        let api = await axios.post("/create-erd", formData);
+        let api = await axios.post("/get-erd", formData);
         setElementJSON(api.data.elementJSON);
         setLinkJSON(api.data.linkJSON);
     }
@@ -139,13 +145,27 @@ export default function User() {
         let inputJSON = document.getElementById("inputElementJSON").value;
         let linkJSON = document.getElementById("inputLinkJSON").value;
         
-        //inputJSON ='{"elements": [{"id": 1, "type": "Normal", "paragraph": "      ", "x": 80, "y": 430}, {"id": 2, "type": "Normal", "paragraph": "      ", "x": 80, "y": 430}] }';
         setElementJSON(JSON.parse(inputJSON));
         setLinkJSON(JSON.parse(linkJSON));
         
         //alert(JSON.stringify(inputJSON));
-        
         //alert(JSON.stringify(elementJSON));
+    }
+
+    async function saveDiagram() {
+        let erdName;
+        while(!erdName) {
+            erdName = prompt("Please type new ERD name:");
+        }
+        const api = await axios.post("/create-erd", {"erdName": erdName, "imgSrc": imgSrc, "elementJSON": JSON.stringify(elementJSON), "linkJSON": JSON.stringify(linkJSON), "createdDate": new Date(), "updatedDate": new Date()});
+        if (api.data) {
+            alert("Save diagram successfully");
+        }
+    }
+
+    function signOut() {
+        Cookies.remove('currentUsername');
+        setCurrentUser(null);
     }
 
     useEffect(() => {
@@ -164,14 +184,14 @@ export default function User() {
                 <Router>
                     <Switch>
                         <Route path={"/*"}>
-                            <Header/>
+                            <Header currentUser={currentUser} saveDiagram={saveDiagram} signOut={signOut}/>
                             
                             <Route exact path={"/"}>
                                 
                             </Route>
                             <Route path={'/sign-in'}>
                                 <div>
-                                    <SignIn currentUser={currentUser} setCurrentUser={setCurrentUser}/>
+                                    <SignIn />
                                 </div>
                             </Route>   
                             <Route path={'/sign-up'}>

@@ -8,10 +8,14 @@ import {
 } from "react-router-dom";
 import './index.css';
 
-export default function Header() {
-
+export default function Header({currentUser, saveDiagram, signOut}) {
+    let [fullName, setFullName] = useState("");
     useEffect(() => {
-    }, [])
+        if (currentUser)
+            setFullName(currentUser.fullName);
+        else
+            setFullName("");
+    }, [currentUser])
 
     return (
         <nav class="navbar navbar-dark navbar-expand-md navigation-clean-search">
@@ -21,26 +25,39 @@ export default function Header() {
                         <div class="navbar-brand">Home</div>
                     </Link>
                     <ul class="nav navbar-nav form-inline mr-auto">
-                        <li class="nav-item" role="presentation">
-                            <Link to={'/image-to-diagram'} >
-                                <a class="nav-link">Draw ERD from image</a>
-                            </Link>
+                        <li hidden={!currentUser} class="dropdown">
+                            <a class="dropdown-toggle nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Dashboard</a>
+                            <div class="dropdown-menu" role="menu">  
+                                <a class="dropdown-item" role="presentation" onClick={() => saveDiagram()} >Save Diagram</a>
+                                <Link to={'/'}>
+                                    <a class="dropdown-item" role="presentation" onClick={() => signOut()} >Sign Out</a>
+                                </Link>
+                            </div>
                         </li>
-                        <li>
-                            <Link to={'/json-to-diagram'} >
-                                <a class="nav-link">Draw ERD from JSON</a>
-                            </Link>
-                        </li>     
+                        <li class="dropdown">
+                            <a class="dropdown-toggle nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Draw Diagram</a>
+                            <div class="dropdown-menu" role="menu">  
+                                <Link to={'/image-to-diagram'} >
+                                    <a class="dropdown-item" role="presentation">From Image</a>
+                                </Link>
+                                <Link to={'/json-to-diagram'} >
+                                    <a class="dropdown-item" role="presentation">From JSON</a>
+                                </Link>
+                            </div>
+                        </li>
                     </ul>
-                    <div>
+                    <div hidden={currentUser}>
                         <Link to={'/sign-in'}>
                             <span class="navbar-text">
-                                <div class="login">Đăng Nhập</div>
+                                <div class="login">Sign In</div>
                             </span>
                         </Link>
                         <Link to={'/sign-up'}>
-                            <div class="btn action-button" role="button">Đăng Ký</div>
+                            <div class="btn action-button" role="button">Sign Up</div>
                         </Link>
+                    </div>
+                    <div hidden={!currentUser}>
+                        <span class="login">Hello {fullName}</span>
                     </div>
                 </div>
             </div>

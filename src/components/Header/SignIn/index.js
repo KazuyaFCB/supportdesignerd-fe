@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useLocation } from 'react';
 import './index.css';
 import { Redirect } from 'react-router-dom';
-//import Cookies from 'js-cookie';
+import Cookies from 'js-cookie';
 import domain from '../../../utils/domain';
 import axios from "../../../utils/axios";
 
 
-export default function SignIn({currentUser, setCurrentUser}) {
+export default function SignIn() {
     const signInWithUsernameAndPasswordPath = domain + "/api/users/login";
     const signInWithGooglePath = domain + "/auth/google";
     const signInWithFacebookPath = domain + "/auth/facebook";
@@ -50,18 +50,19 @@ export default function SignIn({currentUser, setCurrentUser}) {
             return;
         }
 
-        const api = await axios.get("/sign-in", {username: username, password: password});
+        const api = await axios.post("/sign-in", {username: username, password: password});
         if (api.data) {
-            //Cookies.set('currentUsername', api.data.username, { expires: 0.05 });
-            setCurrentUser(api.data);
+            Cookies.set('currentUsername', api.data.username, { expires: 0.05 });
             setIsSignInSuccess(true);
+        } else {
+            alert("Sign in unsuccessfully");
         }
     }
     if (isSignInSuccess)
         window.location.href = "/";
 
     return (
-        <div id="login-box" style={{background: 'lavender', marginBottom: '0px'}}>
+        <div id="login-box" style={{background: 'lavender', marginBottom: '0px', opacity: '0.8'}}>
             <form onSubmit={(e) => {e.preventDefault(); signIn(); }} method="post" class="left">
                 <h1>SIGN IN</h1>
 
@@ -86,16 +87,4 @@ export default function SignIn({currentUser, setCurrentUser}) {
             <div class="or">OR</div>
         </div>
     );
-
-    return (
-        <form onSubmit={(e) => {e.preventDefault(); }} >
-
-            <label for="fname">Username:</label><br/>
-            <input type="text" id="username" name="username" defaultValue="John"/><br/>
-            <label for="lname">Password:</label><br/>
-            <input type="text" id="password" name="password" defaultValue="Doe"/><br/><br/>
-
-            <input type="submit"/>
-        </form>
-    )
 }
