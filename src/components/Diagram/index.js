@@ -195,22 +195,14 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight 
               new elementTools_Boundary(),
               new elementTools_RemoveButton(),
               new elementTools_ErrorButton()
-            ],
-            action: function () {
-              var element = this.model;
-              element.remove();
-            }
+            ]
           }))
         } else {
           elementView.addTools(new joint.dia.ToolsView({
             tools: [
               new elementTools_Boundary(),
               new elementTools_RemoveButton()
-            ],
-            action: function () {
-              var element = this.model;
-              element.remove();
-            }
+            ]
           }))
         }
       })
@@ -229,22 +221,14 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight 
               new linkTools_Vertices(),
               new linkTools_RemoveButton(),
               new linkTools_ErrorButton()
-            ],
-            action: function () {
-              var link = this.model;
-              link.remove();
-            }
+            ]
           }))
         } else {
           linkView.addTools(new joint.dia.ToolsView({
             tools: [
               new linkTools_Vertices(),
               new linkTools_RemoveButton()
-            ],
-            action: function () {
-              var link = this.model;
-              link.remove();
-            }
+            ]
           }))
         }
       })
@@ -568,6 +552,8 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight 
           graph.addCell(element);
           elements.push(element);
           //alert(JSON.stringify(graph.getCell(item.id)))
+        } else {
+          elements.push(null);
         }
         //elements[item.id - 1] = element;
       });
@@ -619,6 +605,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight 
         if (link) {
           let errorName = checkLinkBindingError(link, elementJSON);
           //alert(JSON.stringify(graph.getCell(link.id)));
+          if (!graph.getCell(mapNumberToLinkId[link.id])) return;
           let linkView = graph.getCell(mapNumberToLinkId[link.id]).findView(paper);
           if (errorName) {
             linkView.addTools(new joint.dia.ToolsView({
@@ -634,7 +621,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight 
       })
       //setBindingErrorList(result);
     }
-  
+
     function drawDiagram() {
       //window.joint = joint;
       // khởi tạo các đối tượng erd, graph, paper
@@ -652,25 +639,9 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight 
       changeBindingErrorList();
     }
 
-    // function renderBindingErrorItemView(bindingErrorItem) {
-    //   return (
-    //     <li>
-    //       {bindingErrorItem}
-    //     </li>
-    //   )
-    // }
-
-    // function renderBindingErrorListView() {
-    //   let result = [];
-    //   bindingErrorList.map((bindingErrorItem) => {
-    //     result.push(renderBindingErrorItemView(bindingErrorItem));
-    //   });
-    //   setBindingErrorListView(result);
-    // }
-
     return (
       <div>
-        <div style={{display: 'inline-block', float: 'left', width: '800px'}}>
+        <div style={{display: 'inline-block', float: 'left', width: '85%'}}>
           <div style={{backgroundColor: 'lavender', height: '570px', overflow: 'scroll'}}>
             <div id="paper"></div>
           </div>
@@ -680,12 +651,12 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight 
             </ul>
           </div> */}
         </div>
-        <div style={{float: 'right', width: '100px', marginLeft: '0px', padding: '0px'}}>
-          <ul style={{height: '570px', width: '100px', overflowY: 'scroll', overflowX: 'hidden', listStyleType: 'none'}} component="nav" aria-label="secondary mailbox folders" >
+        <div style={{float: 'right', width: '15%', marginLeft: '0px', padding: '0px'}}>
+          <ul style={{width: '100%', height: '570px', overflowY: 'scroll', overflowX: 'hidden', listStyleType: 'none'}} component="nav" aria-label="secondary mailbox folders" >
             {panel.map((panelItem, panelIndex) => (
-                <li className="createElementButton" button style={{width: '100px', padding: '0px'}} onClick={() => createElement(panelItem, panelIndex)}>
-                  <Button style={{marginLeft: '-50px', width: '100px'}}>
-                    <img src={panelItem.img} alt={panelItem.title} title={panelItem.title} style={{width:'80px', height:'40px'}}/>
+                <li className="createElementButton" button onClick={() => createElement(panelItem, panelIndex)}>
+                  <Button >
+                    <img src={panelItem.img} alt={panelItem.title} title={panelItem.title} style={{height:'40px'}}/>
                   </Button>                
                 </li>
             ))}

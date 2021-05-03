@@ -20,7 +20,7 @@ export function checkElementBindingError(element, linkJSON) {
     })
 
     // Lỗi mối kết hợp đứng một mình hoặc có một liên kết tới
-    if(element.type=="Relationship" || element.type=="IdentifyingRelationship"){
+    if(element.type=="Relationship" || element.type=="IdentifyingRelationship" || element.type=="ISA"){
         if(connectedLinkCount==0){
             return "Lỗi mối kết hợp " + element.paragraph + " đứng một mình";
             //console.log(element.paragraph + array_errors[0]);   // Lỗi mối kết hợp đứng một mình
@@ -123,5 +123,20 @@ export function checkLinkBindingError(link, elementJSON) {
         return "Lỗi hai thực thể " + ele1.paragraph + " và " + ele2.paragraph + " liên kết trực tiếp với nhau mà không có mối kết hợp";
         //console.log(array_errors[8] + " giua hai thuc the " + ele1.paragraph+" va "+ ele2.paragraph);
     }
+
+    // Lỗi hai mối kết hợp liên kết trực tiếp với nhau
+    if ((ele1.type=="Relationship" || ele1.type=="IdentifyingRelationship" || ele1.type=="ISA") && (ele2.type=="Relationship" || ele2.type=="IdentifyingRelationship" || ele2.type=="ISA")) {
+        return "Lỗi hai mối kết hợp " + ele1.paragraph + " và " + ele2.paragraph + " liên kết trực tiếp với nhau";
+    }
+
+    // Lỗi thực thể liên kết với thuộc tính nhưng lại vẽ liên kết đôi
+    if ((ele1.type=="Entity" || ele1.type=="WeakEntity" || ele1.type=="AssociativeEntity") && (ele2.type=="Attribute" || ele2.type=="Normal" || ele2.type=="Key" || ele2.type=="Multivalued" || ele2.type=="Derived" || ele2.type=="PartialKeyAttribute") && link.type=="TotalParticipation") {
+        return "Lỗi thực thể " + ele1.paragraph + " liên kết với thuộc tính  " + ele2.paragraph + " nhưng lại vẽ liên kết đôi";
+    }
+
+    if ((ele2.type=="Entity" || ele2.type=="WeakEntity" || ele2.type=="AssociativeEntity") && (ele1.type=="Attribute" || ele1.type=="Normal" || ele1.type=="Key" || ele1.type=="Multivalued" || ele1.type=="Derived" || ele1.type=="PartialKeyAttribute") && link.type=="TotalParticipation") {
+        return "Lỗi thực thể " + ele2.paragraph + " liên kết với thuộc tính  " + ele1.paragraph + " nhưng lại vẽ liên kết đôi";
+    }
+    
     return "";
 }

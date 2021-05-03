@@ -7,11 +7,15 @@ import {
     Link,
     Redirect
 } from "react-router-dom";
+import * as automl from '@tensorflow/tfjs-automl'
 
 import Header from "../../components/Header";
 import SignIn from "../../components/Header/SignIn";
+import SignUp from "../../components/Header/SignUp";
 import Diagram from "../../components/Diagram";
 import axios from "../../utils/axios";
+
+
 //import MessageBox from "../../components/MessageBox";
 
 export default function User() {
@@ -24,6 +28,29 @@ export default function User() {
     });
     let [imageWidth, setImageWidth] = useState(2667);
     let [imageHeight, setImageHeight] = useState(2000);
+
+    let [currentUser, setCurrentUser] = useState(null);
+
+    useEffect(() => {
+
+    }, [])
+
+    const useScript = url => {
+        useEffect(() => {
+          const script = document.createElement('script');
+      
+          script.src = url;
+          script.async = true;
+      
+          document.body.appendChild(script);
+      
+          return () => {
+            document.body.removeChild(script);
+          }
+        }, [url]);
+    };
+    useScript("https://unpkg.com/@tensorflow/tfjs");
+    useScript("https://unpkg.com/@tensorflow/tfjs-automl");
     
     async function findErd() {
         const api = await axios.get("/find-erd");
@@ -73,16 +100,38 @@ export default function User() {
             return;
         }
         const imageFile = document.getElementById("imageFile").files[0];
+        // ref: https://stackoverflow.com/questions/42318829/html5-input-type-file-read-image-data
+        let imageData = new Image();
+        imageData.src = window.URL.createObjectURL(imageFile);
+        const shapePredictions = await getShapePredictions(imageData);
+        const linkPredictions = await getLinkPredictions(imageData);
         //getImageFileSize(imageFile);
         const formData = new FormData();
         formData.append("file", imageFile);
         formData.append("size", [imageWidth, imageHeight]);
-        const api = await axios.post("/create-erd", formData);
+        formData.append("shape_predictions", JSON.stringify(shapePredictions));
+        formData.append("link_predictions", JSON.stringify(linkPredictions));
+        console.log(shapePredictions);
+        console.log(linkPredictions);
         
-        //const api = await axios.post("/create-erd", {imageFile: imageFile});
-        
+
+        let api = await axios.post("/create-erd", formData);
         setElementJSON(api.data.elementJSON);
         setLinkJSON(api.data.linkJSON);
+    }
+
+    async function getShapePredictions(imageData) {
+        const model = await automl.loadObjectDetection('/shape_model_js/model.json');
+        const options = {score: 0.5, iou: 0.5, topk: 50};
+        const predictions = await model.detect(imageData, options);
+        return predictions;
+    }
+
+    async function getLinkPredictions(imageData) {
+        const model = await automl.loadObjectDetection('/link_model_js/model.json');
+        const options = {score: 0.5, iou: 0.5, topk: 50};
+        const predictions = await model.detect(imageData, options);
+        return predictions;
     }
 
     function convertJSONToDiagram() {
@@ -111,24 +160,28 @@ export default function User() {
                 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter:400,700"/>
             </head>
 
-            <body>
+            <body style={{backgroundImage: 'url(https://cdn.wallpapersafari.com/86/19/LTbraQ.jpg)'}}>
                 <Router>
                     <Switch>
                         <Route path={"/*"}>
-                            
-                                <Header/>
+                            <Header/>
                             
                             <Route exact path={"/"}>
                                 
                             </Route>
                             <Route path={'/sign-in'}>
                                 <div>
-                                    <SignIn />
+                                    <SignIn currentUser={currentUser} setCurrentUser={setCurrentUser}/>
+                                </div>
+                            </Route>   
+                            <Route path={'/sign-up'}>
+                                <div>
+                                    <SignUp />
                                 </div>
                             </Route>   
                             <Route path={'/image-to-diagram'}>
-                                <div style={{display: 'inline-block', width: '385px'}}>
-                                    <img width="385" height="400" src={imgSrc}/>
+                                <div style={{display: 'inline-block', width: '30%'}}>
+                                    <img id='img' src={imgSrc} width='100%'/>
                                     <form encType="multipart/form-data" onSubmit={(e) => {e.preventDefault(); convertImageToDiagram()}} >
                                         <label for="img">Select image:</label>
                                         <input type="file" id="imageFile" name="imageFile" accept="image/*" onChange={(e) => {e.preventDefault(); getImgSrcFromImgFile()}}/>
@@ -136,27 +189,27 @@ export default function User() {
                                         <input type="submit" value="Convert to diagram"/>
                                     </form>
                                 </div>
-                                <div style={{display: "inline-block", float: 'right', width: '900px'}}>
+                                <div style={{display: "inline-block", float: 'right', width: '70%'}}>
                                     <Diagram elementJSON={elementJSON} linkJSON={linkJSON} imageWidth={imageWidth} imageHeight={imageHeight} />
                                 </div>
                                 
                             </Route>
                             <Route path={'/json-to-diagram'}>
-                                <div style={{display: 'inline-block', float: 'left'}}>
+                                <div style={{display: 'inline-block', float: 'left', width: '30%'}}>
                                     <form>
                                         <h5>Input Element JSON</h5>
-                                        <textarea id="inputElementJSON" cols="40" rows="9"></textarea>
+                                        <textarea id="inputElementJSON" rows="9" cols="37"></textarea>
                                         <br/>
                                     </form>
                                     <form onSubmit={(e) => {e.preventDefault(); convertJSONToDiagram()}} style={{display: 'inline-block', float: 'left'}}>
                                         <h5>Input Link JSON</h5>
-                                        <textarea id="inputLinkJSON" cols="40" rows="9"></textarea>
+                                        <textarea id="inputLinkJSON" rows="9" cols="37"></textarea>
                                         <br/>
                                         <input type="submit" value="Convert"></input>
                                     </form>
                                 </div>
                                 
-                                <div style={{display: "inline-block", float: 'right', width: '900px', height: '550px'}}>
+                                <div style={{display: "inline-block", float: 'right', width: '70%', height: '550px'}}>
                                     <Diagram elementJSON={elementJSON} linkJSON={linkJSON} imageWidth={imageWidth} imageHeight={imageHeight} />
                                     
                                 </div>
