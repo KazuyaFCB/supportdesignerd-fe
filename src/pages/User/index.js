@@ -25,14 +25,13 @@ export default function User() {
     
     let [elementJSON, setElementJSON] = useState({elements: []});
     
-    let [linkJSON, setLinkJSON] = useState({
-        links: []
-    });
+    let [linkJSON, setLinkJSON] = useState({links: []});
     let [imageWidth, setImageWidth] = useState(2667);
     let [imageHeight, setImageHeight] = useState(2000);
 
     let [currentUser, setCurrentUser] = useState(null);
-    let [currentErdId, setCurrentErdId] = useState("");
+    let [diagramList, setDiagramList] = useState([]);
+    let [currentViewedErd, setCurrentViewedErd] = useState(null); //erd viewed when click view button in list
 
     useEffect(async () => {
         let currentUsername = Cookies.get(['currentUsername']);
@@ -40,8 +39,24 @@ export default function User() {
             const api = await axios.get("/api/users/find-user-by-username/" + currentUsername);
             setCurrentUser(api.data);
         }
-        //alert(JSON.stringify(elementJSON))
-    }, [])
+        const elementJSONStr = sessionStorage.getItem("elementJSON");
+        const linkJSONStr = sessionStorage.getItem("linkJSON");
+        const imgSrcStr = sessionStorage.getItem("imgSrc");
+        if (elementJSONStr) setElementJSON(JSON.parse(elementJSONStr));
+        if (linkJSONStr) setLinkJSON(JSON.parse(linkJSONStr));
+        if (imgSrcStr) setImgSrc(JSON.parse(imgSrcStr));
+    }, []);
+    useEffect(async() => {
+        if (currentUser) {
+            const api = await axios.get('/api/erds/find-erd-by-userIdCreated/' + currentUser._id);
+            setDiagramList(api.data.erdList);
+        }
+    }, [currentUser]);
+
+    window.onbeforeunload = function() {
+        sessionStorage.setItem("elementJSON", JSON.stringify(elementJSON));
+        sessionStorage.setItem("linkJSON", JSON.stringify(linkJSON));
+    }
 
     const useScript = url => {
         useEffect(() => {
@@ -117,6 +132,7 @@ export default function User() {
         let api = await axios.post("/api/erds/get-erd", formData);
         setElementJSON(api.data.elementJSON);
         setLinkJSON(api.data.linkJSON);
+        setCurrentViewedErd(null);
     }
 
     async function getShapePredictions(imageData) {
@@ -147,6 +163,7 @@ export default function User() {
         
         setElementJSON(JSON.parse(inputJSON));
         setLinkJSON(JSON.parse(linkJSON));
+        setCurrentViewedErd(null);
         
         //alert(JSON.stringify(inputJSON));
         //alert(JSON.stringify(elementJSON));
@@ -154,36 +171,36 @@ export default function User() {
 
     async function saveDiagram() {
         let erdName;
-        if (currentErdId) {
-            alert("This diagram is exist and it will be updated");
-            while(!erdName) erdName = prompt("Please type new ERD name:");
-            const api = await axios.post("/api/erds/update-erd-by-id", {"erdId": currentErdId, "erdName": erdName, "imgSrc": imgSrc, "elementJSON": JSON.stringify(elementJSON), "linkJSON": JSON.stringify(linkJSON), "updatedDate": new Date()});
-            if (api.data) {
-                alert("Update diagram successfully");
-            }
-            return;
-        } else {
-            while(!erdName) erdName = prompt("Please type new ERD name:");
-            const api = await axios.post("/api/erds/create-erd", {"userIdCreated": currentUser._id, "erdName": erdName, "imgSrc": imgSrc, "elementJSON": JSON.stringify(elementJSON), "linkJSON": JSON.stringify(linkJSON), "createdDate": new Date(), "updatedDate": new Date()});
-            if (api.data) {
-                alert("Save diagram successfully");
+        if (currentViewedErd) {
+            let isUpdate = window.confirm("This diagram is exist. Do you want to update it?");
+            if (isUpdate) {
+                while(!erdName) erdName = prompt("Please type new ERD name:", currentViewedErd.erdName);
+                const api = await axios.post("/api/erds/update-erd-by-id", {"erdId": currentViewedErd._id, "erdName": erdName, "imgSrc": imgSrc, "elementJSON": JSON.stringify(elementJSON), "linkJSON": JSON.stringify(linkJSON), "updatedDate": new Date()});
+                if (api.data) {
+                    alert("Update diagram successfully");
+                }
+                const api2 = await axios.get('/api/erds/find-erd-by-userIdCreated/' + currentUser._id);
+                setDiagramList(api2.data.erdList);
+                return;
             }
         }
+        if (currentViewedErd) {
+            while(!erdName) erdName = prompt("Please type new ERD name:", currentViewedErd.erdName);
+        } else {
+            while(!erdName) erdName = prompt("Please type new ERD name:");
+        }
+        const api = await axios.post("/api/erds/create-erd", {"userIdCreated": currentUser._id, "erdName": erdName, "imgSrc": imgSrc, "elementJSON": JSON.stringify(elementJSON), "linkJSON": JSON.stringify(linkJSON), "createdDate": new Date(), "updatedDate": new Date()});
+        if (api.data) {
+            alert("Save diagram successfully");
+        }
+        const api2 = await axios.get('/api/erds/find-erd-by-userIdCreated/' + currentUser._id);
+        setDiagramList(api2.data.erdList);
     }
 
     function signOut() {
         Cookies.remove('currentUsername');
         setCurrentUser(null);
     }
-
-    useEffect(() => {
-        //const elementJSONString = sessionStorage.getItem("elementJSON");
-        //const linkJSONString = sessionStorage.getItem("linkJSON");
-        const imgSrc = sessionStorage.getItem("imgSrc");
-        //setElementJSON(JSON.parse(elementJSONString));
-        //setLinkJSON(JSON.parse(linkJSONString));
-        setImgSrc(imgSrc);
-    }, [])
 
     return (
         <html>
@@ -217,7 +234,7 @@ export default function User() {
                             </Route>
                             <Route path={'/diagram-list'}>
                                 <div>
-                                    <DiagramList currentUser={currentUser} setCurrentErdId={setCurrentErdId} elementJSON={elementJSON} setElementJSON={setElementJSON} setLinkJSON={setLinkJSON}/>
+                                    <DiagramList currentUser={currentUser} diagramList={diagramList} setDiagramList={setDiagramList} setCurrentViewedErd={setCurrentViewedErd} setElementJSON={setElementJSON} setLinkJSON={setLinkJSON}/>
                                 </div>
                             </Route>   
                             <Route path={'/image-to-diagram'}>

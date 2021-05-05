@@ -6,8 +6,10 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
+
+import Slider from '@material-ui/core/Slider';
+//import AddIcon from '@material-ui/icons/Add';
+//import RemoveIcon from '@material-ui/icons/Remove';
 
 import {AssociativeEntity, PartialKeyAttribute, DashedLine, Line, DoubleLine} from "../../utils/myerd";
 import {checkElementBindingError, checkLinkBindingError} from "../../utils/bindingErrorInErd";
@@ -33,7 +35,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
     
     const fontSize = 12;
     const elementHeight = 40;
-    let [zoom, setZoom] = useState(1.0); // 100%
+    let [zoom, setZoom] = useState(0.5); // 100%
 
     let elements = [];
     let mapLinkIdToNumber = {}; // convert string to number (id)
@@ -97,13 +99,12 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
     useEffect(() => {
       updateInputElementJSON();
       updateInputLinkJSON();
-    }, [])
-
-    useEffect(() => {
-      //sessionStorage.setItem("elementJSON", JSON.stringify(elementJSON));
-      //sessionStorage.setItem("linkJSON", JSON.stringify(linkJSON));
       drawDiagram();
-    }, [elementJSON.elements, linkJSON.links]);
+    }, [elementJSON.elements, linkJSON.links, zoom]);
+
+    // useEffect(() => {
+    //   drawDiagram();
+    // }, [zoom])
 
     // useEffect(() => {
     //   renderBindingErrorListView();
@@ -653,8 +654,8 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
             </ul>
           </div> */}
         </div>
-        <div style={{float: 'right', width: '15%', marginLeft: '0px', padding: '0px'}}>
-          <ul style={{width: '100%', height: '570px', overflowY: 'scroll', overflowX: 'hidden', listStyleType: 'none'}} component="nav" aria-label="secondary mailbox folders" >
+        <div style={{float: 'right', width: '15%', marginLeft: '0px', padding: '0px', display: 'flex'}}>
+          <ul style={{ width: '98%', height: '570px', overflowY: 'scroll', overflowX: 'hidden', listStyleType: 'none', display: 'inline-block'}} component="nav" aria-label="secondary mailbox folders" >
             <li>
               <Button variant="contained" color="secondary" hidden={!currentUser} onClick={saveDiagram}>
                 SAVE
@@ -663,12 +664,34 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
             {panel.map((panelItem, panelIndex) => (
                 <li className="createElementButton" button onClick={() => createElement(panelItem, panelIndex)}>
                   <Button >
-                    <img src={panelItem.img} alt={panelItem.title} title={panelItem.title} style={{height:'40px'}}/>
+                    <img src={panelItem.img} alt={panelItem.title} title={panelItem.title} style={{height:'30px'}}/>
                   </Button>                
                 </li>
             ))}
           </ul>
+
+          <Slider
+          orientation="vertical"
+          min={0}
+          step={0.01}
+          max={1}
+          defaultValue={0.5}
+          aria-labelledby="vertical-slider"
+          style={{ height: 300}}
+          onChange={(event, value) => setZoom(value)}
+        />
+          {/* <div>
+            <Button onClick={() => {if (zoom < 0.9) setZoom(zoom + 0.1)}}>
+              <AddIcon/>
+            </Button>
+            <Button onClick={() => {if (zoom > 0.1) setZoom(zoom - 0.1)}}>
+              <RemoveIcon/>
+            </Button>
+            <label>{zoom.toPrecision(2)}</label>
+          </div> */}
         </div>
+
+        
 
         <Dialog open={isOpenDeleteElementDialog} onClose={() => setIsOpenDeleteElementDialog(false)} aria-labelledby="form-dialog-title">
             <DialogTitle>Delete element</DialogTitle>

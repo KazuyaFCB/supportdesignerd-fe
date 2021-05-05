@@ -4,8 +4,8 @@ import $ from 'jquery';
 import './index.css';
 import axios from '../../../utils/axios';
 
-export default function DiagramList({currentUser, setCurrentErdId, elementJSON, setElementJSON, setLinkJSON}) {
-    let [diagramList, setDiagramList] = useState([]);
+export default function DiagramList({currentUser, diagramList, setDiagramList, setCurrentViewedErd, setElementJSON, setLinkJSON}) {
+    
     let [diagramListView, setDiagramListView] = useState(null);
     let [paginationView, setPaginationView] = useState(null);
 
@@ -25,9 +25,10 @@ export default function DiagramList({currentUser, setCurrentErdId, elementJSON, 
     }, []);
 
     useEffect(() => {
-        //renderDiagramListView();
         if (diagramList.length > 0) {
             setCurrentPage(1);
+        } else {
+            setCurrentPage(-1);
         }
     }, [diagramList])
 
@@ -38,6 +39,8 @@ export default function DiagramList({currentUser, setCurrentErdId, elementJSON, 
             currentEndPage = (endPage < currentStartPage + numShownPage - 1) ? endPage : (currentStartPage + numShownPage - 1);
             renderDiagramListView();
             renderPaginationView();
+        } else {
+            setDiagramListView(<tr><td colSpan="4" align="center">Not found diagram</td></tr>)
         }
     }, [currentPage])
 
@@ -111,7 +114,7 @@ export default function DiagramList({currentUser, setCurrentErdId, elementJSON, 
 
     function viewDiagram(viewId) {
         let index = viewId.substr(2);
-        setCurrentErdId(diagramList[index]._id);
+        setCurrentViewedErd(diagramList[index]);
         setElementJSON(diagramList[index].elementJSON);
         setLinkJSON(diagramList[index].linkJSON);
     }
@@ -119,12 +122,13 @@ export default function DiagramList({currentUser, setCurrentErdId, elementJSON, 
     async function deleteDiagram(deleteId) {
         let index = deleteId.substr(2);
         const api = await axios.get('/api/erds/delete-erd-by-id/' + diagramList[index]._id);
-        if (api.data.status) {
-            alert("Delete diagram successfully");
-        }
         let tmpDiagramList = diagramList.slice();
         tmpDiagramList.splice(index, 1);
         setDiagramList(tmpDiagramList);
+        setCurrentPage(-1);
+        if (api.data.status) {
+            alert("Delete diagram successfully");
+        }
     }
 
     return (
