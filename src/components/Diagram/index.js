@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
 
 export let bindingErrorMap = {};
 
-export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight }) {
+export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight, currentUser, saveDiagram }) {
     const classes = useStyles();
     let graph = null;
     let paper = null;
@@ -100,6 +100,8 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight 
     }, [])
 
     useEffect(() => {
+      //sessionStorage.setItem("elementJSON", JSON.stringify(elementJSON));
+      //sessionStorage.setItem("linkJSON", JSON.stringify(linkJSON));
       drawDiagram();
     }, [elementJSON.elements, linkJSON.links]);
 
@@ -653,6 +655,11 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight 
         </div>
         <div style={{float: 'right', width: '15%', marginLeft: '0px', padding: '0px'}}>
           <ul style={{width: '100%', height: '570px', overflowY: 'scroll', overflowX: 'hidden', listStyleType: 'none'}} component="nav" aria-label="secondary mailbox folders" >
+            <li>
+              <Button variant="contained" color="secondary" hidden={!currentUser} onClick={saveDiagram}>
+                SAVE
+              </Button>
+            </li>
             {panel.map((panelItem, panelIndex) => (
                 <li className="createElementButton" button onClick={() => createElement(panelItem, panelIndex)}>
                   <Button >

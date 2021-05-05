@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 import './index.css';
 
-export default function Header({currentUser, saveDiagram, signOut}) {
+export default function Header({currentUser, signOut}) {
     let [fullName, setFullName] = useState("");
     useEffect(() => {
         if (currentUser)
@@ -27,8 +27,10 @@ export default function Header({currentUser, saveDiagram, signOut}) {
                     <ul class="nav navbar-nav form-inline mr-auto">
                         <li hidden={!currentUser} class="dropdown">
                             <a class="dropdown-toggle nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Dashboard</a>
-                            <div class="dropdown-menu" role="menu">  
-                                <a class="dropdown-item" role="presentation" onClick={() => saveDiagram()} >Save Diagram</a>
+                            <div class="dropdown-menu" role="menu">
+                                <Link to={'/diagram-list'}>
+                                    <a class="dropdown-item" role="presentation" > My Diagram List</a>
+                                </Link>
                                 <Link to={'/'}>
                                     <a class="dropdown-item" role="presentation" onClick={() => signOut()} >Sign Out</a>
                                 </Link>

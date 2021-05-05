@@ -51,7 +51,7 @@ export default function SignUp() {
             alert("Email không đúng định dạng");
             return;
         }
-        const api = await axios.post("/sign-up", {fullName: fullName, username: username, password: password, email: email});
+        const api = await axios.post("/api/users/sign-up", {fullName: fullName, username: username, password: password, email: email});
         
         if (api.data) {
             alert("Sign up successfully");

@@ -23,13 +23,13 @@ export default function SignIn() {
     }
 
     async function findUser() {
-        const api = await axios.get("/find-user");
+        const api = await axios.get("/api/users/find-user");
         alert(JSON.stringify(api.data));
     }
 
     async function findUserByUsername() {
         const username = document.getElementsByName("username")[0].value;
-        const api = await axios.get("/find-user-by-username/" + username);
+        const api = await axios.get("/api/users/find-user-by-username/" + username);
         alert(JSON.stringify(api.data));
     }
 
@@ -50,7 +50,7 @@ export default function SignIn() {
             return;
         }
 
-        const api = await axios.post("/sign-in", {username: username, password: password});
+        const api = await axios.post("/api/users/sign-in", {username: username, password: password});
         if (api.data) {
             Cookies.set('currentUsername', api.data.username, { expires: 0.05 });
             setIsSignInSuccess(true);
