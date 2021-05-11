@@ -11,6 +11,8 @@ import Slider from '@material-ui/core/Slider';
 //import AddIcon from '@material-ui/icons/Add';
 //import RemoveIcon from '@material-ui/icons/Remove';
 
+import $ from 'jquery';
+
 import {AssociativeEntity, PartialKeyAttribute, DashedLine, Line, DoubleLine} from "../../utils/myerd";
 import {checkElementBindingError, checkLinkBindingError} from "../../utils/bindingErrorInErd";
 import {elementTools_Boundary, elementTools_RemoveButton, elementTools_ErrorButton, linkTools_Vertices, linkTools_RemoveButton, linkTools_ErrorButton} from "../../utils/toolsView";
@@ -33,9 +35,9 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
     let paper = null;
     let erd = joint.shapes.erd;
     
-    const fontSize = 12;
+    const fontSize = 20;
     const elementHeight = 40;
-    let [zoom, setZoom] = useState(0.5); // 100%
+    let zoom = 0.5; // 40%
 
     let elements = [];
     let mapLinkIdToNumber = {}; // convert string to number (id)
@@ -100,11 +102,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
       updateInputElementJSON();
       updateInputLinkJSON();
       drawDiagram();
-    }, [elementJSON.elements, linkJSON.links, zoom]);
-
-    // useEffect(() => {
-    //   drawDiagram();
-    // }, [zoom])
+    }, [elementJSON.elements, linkJSON.links]);
 
     // useEffect(() => {
     //   renderBindingErrorListView();
@@ -164,7 +162,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
         if (!graph) {
           drawDiagram();
         } else {
-          let element = createElementFromItem(item, zoom);
+          let element = createElementFromItem(item);
           graph.addCell(element);
           changeBindingErrorList();
         }
@@ -393,7 +391,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
     function addChangePositionObjectEvent(graph) {
       graph.on('change:position', function(cell) {
         //unselectLinkPanel();
-
+        
         unreadObjectType(); // xoa label info cua object
 
         //var center = cell.getBBox().center();
@@ -459,14 +457,14 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
       }
     }
 
-    function createElementFromItem(item, zoom) {
+    function createElementFromItem(item) {
       let element = null;
       switch (item.type) {
         case "AssociativeEntity":
           element = new AssociativeEntity({
             id: item.id,
-            position: { x: item.x * zoom, y: item.y * zoom },
-            size: { width: item.width * zoom, height: item.height * zoom },
+            position: { x: item.x, y: item.y },
+            size: { width: item.width, height: item.height },
             attrs: { text: { text: item.paragraph } }
           });
           element.addTo(graph);
@@ -475,8 +473,8 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
         case "PartialKeyAttribute":
           element = new PartialKeyAttribute({
             id: item.id,
-            position: { x: item.x * zoom, y: item.y * zoom },
-            size: { width: item.width * zoom, height: item.height * zoom },
+            position: { x: item.x, y: item.y },
+            size: { width: item.width, height: item.height },
             attrs: { text: { text: item.paragraph } }
           });
           element.addTo(graph);
@@ -486,8 +484,8 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
           element = {
             id: item.id,
             type: "erd." + item.type,
-            position: { x: item.x * zoom, y: item.y * zoom },
-            size: { width: item.width * zoom, height: item.height * zoom },
+            position: { x: item.x, y: item.y },
+            size: { width: item.width, height: item.height },
             attrs: { 
               text: { text: item.paragraph, fill: "white", 'font-size': fontSize, 'font-weight': 'bold' } 
             }
@@ -532,11 +530,11 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
       paper = new joint.dia.Paper({
         el: document.getElementById("paper"),
         model: graph,
-        width: imageWidth * zoom,
-        height: imageHeight * zoom,
+        width: imageWidth,
+        height: imageHeight,
         restrictTranslate: true
       });
-
+      paper.scale(zoom, zoom);
       //addClickToBlankEvent(paper);
       addMouseEnterObjectEvent(paper);
       addMouseLeaveObjectEvent(paper);
@@ -551,7 +549,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
       elements = [];
       elementJSON.elements.forEach((item) => {
         if (item) {
-          let element = createElementFromItem(item, zoom);
+          let element = createElementFromItem(item);
           graph.addCell(element);
           elements.push(element);
           //alert(JSON.stringify(graph.getCell(item.id)))
@@ -574,7 +572,8 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
                     rect: { fill: 'none' }
                 }
             }]
-          }).set('smooth', true);
+          })
+          //.set('smooth', true);
           graph.addCell(link);
           mapLinkIdToNumber[graph.getLastCell().id] = index + 1;
           mapNumberToLinkId[index + 1] = graph.getLastCell().id;
@@ -645,17 +644,22 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
     return (
       <div>
         <div style={{display: 'inline-block', float: 'left', width: '85%'}}>
-          <div style={{backgroundColor: 'lavender', height: '570px', overflow: 'scroll'}}>
+          <div style={{backgroundColor: 'lavender', height: '520px', overflow: 'scroll'}}>
             <div id="paper"></div>
           </div>
-          {/* <div style={{backgroundColor: 'pink', overflow: 'scroll', height: '120px'}}>
-            <ul>
-              {bindingErrorListView}
-            </ul>
-          </div> */}
         </div>
         <div style={{float: 'right', width: '15%', marginLeft: '0px', padding: '0px', display: 'flex'}}>
-          <ul style={{ width: '98%', height: '570px', overflowY: 'scroll', overflowX: 'hidden', listStyleType: 'none', display: 'inline-block'}} component="nav" aria-label="secondary mailbox folders" >
+          <Slider
+            orientation="vertical"
+            min={0}
+            step={0.01}
+            max={1}
+            defaultValue={zoom}
+            aria-labelledby="vertical-slider"
+            style={{ height: 300}}
+            onChange={(event, value) => { zoom = value; paper.scale(zoom, zoom); }}
+          />
+          <ul style={{ width: '100', height: '450px', overflowY: 'scroll', overflowX: 'hidden', listStyleType: 'none'}} component="nav" aria-label="secondary mailbox folders" >
             <li>
               <Button variant="contained" color="secondary" hidden={!currentUser} onClick={saveDiagram}>
                 SAVE
@@ -669,26 +673,6 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
                 </li>
             ))}
           </ul>
-
-          <Slider
-          orientation="vertical"
-          min={0}
-          step={0.01}
-          max={1}
-          defaultValue={0.5}
-          aria-labelledby="vertical-slider"
-          style={{ height: 300}}
-          onChange={(event, value) => setZoom(value)}
-        />
-          {/* <div>
-            <Button onClick={() => {if (zoom < 0.9) setZoom(zoom + 0.1)}}>
-              <AddIcon/>
-            </Button>
-            <Button onClick={() => {if (zoom > 0.1) setZoom(zoom - 0.1)}}>
-              <RemoveIcon/>
-            </Button>
-            <label>{zoom.toPrecision(2)}</label>
-          </div> */}
         </div>
 
         

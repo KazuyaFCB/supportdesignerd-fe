@@ -1,6 +1,6 @@
 export function checkElementBindingError(element, linkJSON) {
     if (!linkJSON || !element) return "";
-
+    element.paragraph = element.paragraph.trim();
     // let array_errors = [' Loi moi ket hop dung mot minh',
     // ' Loi moi ket hop chi co mot lien ket toi',
     // ' Loi thuoc tinh dung mot minh',
@@ -22,12 +22,16 @@ export function checkElementBindingError(element, linkJSON) {
     // Lỗi mối kết hợp đứng một mình hoặc có một liên kết tới
     if(element.type=="Relationship" || element.type=="IdentifyingRelationship" || element.type=="ISA"){
         if(connectedLinkCount==0){
-            return "Lỗi mối kết hợp " + element.paragraph + " đứng một mình";
+            let errorName = "Lỗi mối kết hợp " + element.paragraph + " đứng một mình";
+            if(!element.paragraph) errorName += " và không có nội dung";
+            return errorName;
             //console.log(element.paragraph + array_errors[0]);   // Lỗi mối kết hợp đứng một mình
         } 
 
         if(connectedLinkCount==1){
-            return "Lỗi mối kết hợp " + element.paragraph + " chỉ có một liên kết tới";
+            let errorName = "Lỗi mối kết hợp " + element.paragraph + " chỉ có một liên kết tới";
+            if(!element.paragraph) errorName += " và không có nội dung";
+            return errorName;
             //console.log(element.paragraph + array_errors[1]);   // Lỗi mối kết hợp chỉ có một liên kết tới
         }
     }
@@ -35,14 +39,27 @@ export function checkElementBindingError(element, linkJSON) {
     // Lỗi thuộc tính đứng một mình hoặc liên kết tới nhiều thực thể (mối kết hợp)
     if(element.type=="Attribute" || element.type=="Normal" || element.type=="Key" || element.type=="Multivalued" || element.type=="Derived" || element.type=="PartialKeyAttribute"){
         if(connectedLinkCount == 0) {
-            return "Lỗi thuộc tính " + element.paragraph + " đứng một mình";
+            let errorName = "Lỗi thuộc tính " + element.paragraph + " đứng một mình";
+            if(!element.paragraph) errorName += " và không có nội dung";
+            return errorName;
             //console.log(element.paragraph + array_errors[2]);    // Lỗi thuộc tính đứng một mình
         }
 
         if (connectedLinkCount >1) {
-            return "Lỗi thuộc tính " + element.paragraph + " liên kết tới nhiều thực thể hoặc mối kết hợp";
+            let errorName = "Lỗi thuộc tính " + element.paragraph + " liên kết tới nhiều thực thể hoặc mối kết hợp";
+            if(!element.paragraph) errorName += " và không có nội dung";
+            return errorName;
             //console.log(element.paragraph + array_errors[3]);    // Lỗi thuộc tính liên kết tới nhiều thực thể hoặc mối kết hợp
         }
+    }
+
+    if(!element.paragraph) {
+        if(element.type=="Relationship" || element.type=="IdentifyingRelationship" || element.type=="ISA")
+            return "Lỗi mối kết hợp " + element.paragraph + " không có nội dung";
+        if(element.type=="Attribute" || element.type=="Normal" || element.type=="Key" || element.type=="Multivalued" || element.type=="Derived" || element.type=="PartialKeyAttribute")
+            return "Lỗi thuộc tính " + element.paragraph + " không có nội dung";
+        if(element.type=="Entity" || element.type=="WeakEntity" || element.type=="AssociativeEntity")
+            return "Lỗi thực thể  " + element.paragraph + " không có nội dung";
     }
 
     return "";

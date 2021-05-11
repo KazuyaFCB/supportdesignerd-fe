@@ -244,7 +244,7 @@ export default function User() {
                                         <label for="img">Select image:</label>
                                         <input type="file" id="imageFile" name="imageFile" accept="image/*" onChange={(e) => {e.preventDefault(); getImgSrcFromImgFile()}}/>
                                         <br/>
-                                        <input type="submit" value="Convert to diagram"/>
+                                        <input type="submit" value="Convert"/>
                                     </form>
                                 </div>
                                 <div style={{display: "inline-block", float: 'right', width: '70%'}}>

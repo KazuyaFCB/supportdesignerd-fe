@@ -25,7 +25,7 @@ export default function DiagramList({currentUser, diagramList, setDiagramList, s
     }, []);
 
     useEffect(() => {
-        if (diagramList.length > 0) {
+        if (diagramList && diagramList.length > 0) {
             setCurrentPage(1);
         } else {
             setCurrentPage(-1);
@@ -58,10 +58,10 @@ export default function DiagramList({currentUser, diagramList, setDiagramList, s
                     <td>{diagramList[i].updatedDate}</td>
                     <td>
                         <Link to={'/json-to-diagram'}>
-                            <a onClick={(e) => viewDiagram(e.currentTarget.id)} id={viewId} class="view" title="View" data-toggle="tooltip"><i class="material-icons">&#xE417;</i></a>
+                            {/* <a onClick={(e) => viewDiagram(e.currentTarget.id)} id={viewId} class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE417;</i></a> */}
+                            <a onClick={(e) => viewDiagram(e.currentTarget.id)} id={viewId} class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>
                         </Link>
-                        <a href="#" class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>
-                        <a onClick={(e) => deleteDiagram(e.currentTarget.id)} id={deleteId} class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a>
+                        <a onClick={(e) => deleteDiagram(e.currentTarget.id)} href="" id={deleteId} class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a>
                     </td>
                 </tr>
             )
