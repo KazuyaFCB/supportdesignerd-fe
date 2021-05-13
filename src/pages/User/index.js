@@ -239,7 +239,7 @@ export default function User() {
                             </Route>   
                             <Route path={'/image-to-diagram'}>
                                 <div style={{display: 'inline-block', width: '30%'}}>
-                                    <img id='img' src={imgSrc} width='100%'/>
+                                    <img id='img' src={imgSrc} width='100%' />
                                     <form encType="multipart/form-data" onSubmit={(e) => {e.preventDefault(); convertImageToDiagram()}} >
                                         <label for="img">Select image:</label>
                                         <input type="file" id="imageFile" name="imageFile" accept="image/*" onChange={(e) => {e.preventDefault(); getImgSrcFromImgFile()}}/>

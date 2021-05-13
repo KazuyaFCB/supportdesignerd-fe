@@ -35,7 +35,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
     let paper = null;
     let erd = joint.shapes.erd;
     
-    const fontSize = 20;
+    const fontSize = 25;
     const elementHeight = 40;
     let zoom = 0.5; // 40%
 
@@ -98,7 +98,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
       }
     ]
 
-    useEffect(() => {
+    useEffect(async() => {
       updateInputElementJSON();
       updateInputLinkJSON();
       drawDiagram();
@@ -267,8 +267,8 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
     }
 
     function readObjectType(objectX, objectY, text, elementOrLink) {
-      let rectWidth = 150;
-      let rectHeight = 30;
+      let rectWidth = 300;
+      let rectHeight = 60;
       let diff = 0;
       if (elementOrLink === "element") {
         if (!elementJSON.elements[objectSelectedToRead.id-1]) return;
@@ -281,11 +281,14 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
         diff = -(rectWidth - objectSelectedToRead.prop('size').width) / 2;
       
       rect = new joint.shapes.basic.Rect({
-        position: { x: objectX + diff, y: objectY - 40},
+        position: { x: objectX + diff, y: objectY - 60},
         size: { width: rectWidth, height: rectHeight },
         attrs: { rect: { fill: 'pink' }, text: { 
           text: text, 
-          fill: 'black', 'font-weight': 'bold','font-variant': 'small-caps' }}
+          fill: 'black', 'font-weight': 'bold','font-variant': 'small-caps',
+          'font-size': fontSize
+          }
+        }
       });
       graph.addCells([rect]);
     }
@@ -458,6 +461,11 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
     }
 
     function createElementFromItem(item) {
+      let maxWordLen = Math.max(...item.paragraph.split("\n").map((item) => {
+        if (item.length>=8) return item.length-2;
+        return 6;
+      }));
+      
       let element = null;
       switch (item.type) {
         case "AssociativeEntity":
@@ -487,7 +495,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
             position: { x: item.x, y: item.y },
             size: { width: item.width, height: item.height },
             attrs: { 
-              text: { text: item.paragraph, fill: "white", 'font-size': fontSize, 'font-weight': 'bold' } 
+              text: { text: item.paragraph, fill: "white", 'font-size': item.width/maxWordLen, 'font-weight': 'bold' } 
             }
           };
       }
