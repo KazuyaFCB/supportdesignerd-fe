@@ -47,7 +47,6 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
     let editText = null;
     let editTextBlock = null;
     let rect = null;
-    let rectForOptions = null;
 
     let objectSelectedToUpdate = null;
     let objectSelectedToRead = null;
@@ -57,7 +56,9 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
     let elementSelectedToDelete = null;
     //let [objectSelectedToUpdate, setobjectSelectedToUpdate] = useState(null);
     let linkSelectedToDelete = null;
-    let linkPanelSelectedToCreate = null;
+    let linkPanelIndexSelectedToCreate = -1;
+    let sourceElementIdConnectedToLinkCreated = -1;
+    let rectCoverElementToCreateLink = null;
 
     //let [bindingErrorList, setBindingErrorList] = useState([]);
     //let [bindingErrorListView, setBindingErrorListView] = useState([]);
@@ -94,7 +95,13 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
         title: "PartialKeyAttribute"
       }, {
         img: "https://www.conceptdraw.com/How-To-Guide/picture/erd-entity-relationship-diagram-symbols/ERD-Symbols-Relationships-Many-to-Many-5.png",
-        title: "Line"
+        title: "PartialParticipation"
+      }, {
+        img: "https://www.conceptdraw.com/How-To-Guide/picture/erd-entity-relationship-diagram-symbols/ERD-Symbols-Relationships-Many-to-Many-5.png",
+        title: "TotalParticipation"
+      }, {
+        img: "https://www.conceptdraw.com/How-To-Guide/picture/erd-entity-relationship-diagram-symbols/ERD-Symbols-Relationships-Many-to-Many-5.png",
+        title: "Optional"
       }
     ]
 
@@ -104,9 +111,6 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
       drawDiagram();
     }, [elementJSON.elements, linkJSON.links]);
 
-    // useEffect(() => {
-    //   renderBindingErrorListView();
-    // }, [bindingErrorList]);
 
     function customizeGraph(graph) {
       // modify graph de children ko ra khoi parent
@@ -146,15 +150,21 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
       }
     }
 
-    function unselectLinkPanel() {
-      if (linkPanelSelectedToCreate) {
-        linkPanelSelectedToCreate.style.backgroundColor = 'transparent';
-        linkPanelSelectedToCreate = null;
+    async function unselectLinkPanel() {
+      //alert(rectCoverElementToCreateLink);
+      if (linkPanelIndexSelectedToCreate != -1) {
+        document.getElementsByClassName("createElementButton")[linkPanelIndexSelectedToCreate].style.backgroundColor = "transparent";
+        if (rectCoverElementToCreateLink) {
+          graph.removeCells([rectCoverElementToCreateLink]);
+          rectCoverElementToCreateLink = null;
+        }
+        linkPanelIndexSelectedToCreate = -1;
+        sourceElementIdConnectedToLinkCreated = -1;
       }
     }
 
     // CREATE element when click on panel
-    function createElement(panelItem, panelIndex) {
+    async function createElement(panelItem, panelIndex) {
       if (panelIndex <= 9) {
         let item = { id: elementJSON.elements.length + 1, x: 0, y: 0, type: panelItem.title, paragraph: "      ", width: 100, height: 50};
         elementJSON.elements.push(item);
@@ -168,18 +178,18 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
         }
       }
       else {
-        //document.getElementsByClassName("createElementButton")[panelIndex].style.backgroundColor = "skyblue";
-        //linkPanelSelectedToCreate = document.getElementsByClassName("createElementButton")[panelIndex];
+        document.getElementsByClassName("createElementButton")[panelIndex].style.backgroundColor='skyblue';
+        linkPanelIndexSelectedToCreate = panelIndex;
         //paper.setInteractivity(false);
       }
       //sessionStorage.setItem("elementJSON", JSON.stringify(elementJSON));
     }
 
-    // async function addClickToBlankEvent(paper) {
-    //   paper.on("blank:click", function() {
-    //     //unselectLinkPanel();
-    //   })
-    // }
+    function addClickToBlankEvent(paper) {
+      paper.on("blank:click", function() {
+        unselectLinkPanel();
+      })
+    }
 
     // READ object type when hover mouse on it
     async function addMouseEnterObjectEvent(paper) {
@@ -301,8 +311,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
 
     // UPDATE object paragraph when double click
     async function addDoubleClickObjectEvent(paper) {
-      paper.on('element:pointerdblclick', function(elementView) {
-        //unselectLinkPanel();
+      paper.on('element:pointerdblclick', async function(elementView) {
         //setobjectSelectedToUpdate(elementView.model);
         objectSelectedToUpdate = elementView.model;
         if (elementJSON.elements[elementView.model.prop('id') - 1].type === "PartialKeyAttribute") {
@@ -313,7 +322,6 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
         addClickOutsideTextBlockEvent("element");
       });
       paper.on('link:pointerdblclick', function(linkView, evt) {
-        //unselectLinkPanel();
         objectSelectedToUpdate = linkView.model;
         let linkX = (elementJSON.elements[linkJSON.links[mapLinkIdToNumber[objectSelectedToRead.id] - 1].sourceId - 1].x + elementJSON.elements[linkJSON.links[mapLinkIdToNumber[objectSelectedToRead.id] - 1].targetId - 1].x) / 2;
         let linkY = (elementJSON.elements[linkJSON.links[mapLinkIdToNumber[objectSelectedToRead.id] - 1].sourceId - 1].y + elementJSON.elements[linkJSON.links[mapLinkIdToNumber[objectSelectedToRead.id] - 1].targetId - 1].y) / 2;
@@ -356,6 +364,9 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
 
     function updateObjectParagraph(elementOrLink) {
       let newObjectParagraph = editText.value;
+      if (newObjectParagraph == "") {
+        newObjectParagraph = "      ";
+      }
       if (objectSelectedToUpdate.resize && elementJSON.elements[objectSelectedToUpdate.prop('id') - 1].type !== "AssociativeEntity" && elementJSON.elements[objectSelectedToUpdate.prop('id') - 1].type !== "PartialKeyAttribute")
         objectSelectedToUpdate.resize(newObjectParagraph.length * fontSize, elementHeight);
       
@@ -393,10 +404,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
     // UPDATE position object when drop and drag object
     function addChangePositionObjectEvent(graph) {
       graph.on('change:position', function(cell) {
-        //unselectLinkPanel();
-        
         unreadObjectType(); // xoa label info cua object
-
         //var center = cell.getBBox().center();
         let topLeft = cell.getBBox().topLeft();
         topLeft = topLeft.toString();
@@ -415,18 +423,18 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
     }
 
     // DELETE element
-    
     async function addDeleteObjectEvent(graph) {
       graph.on('remove', function(cell, evt) {
         if (cell.isLink()) {
-          //unselectLinkPanel();
           linkSelectedToDelete = cell;
           deleteLink();
         }
         else if (cell.isElement() && cell != rect && cell != editTextBlock) {
           elementSelectedToDelete = cell;
           deleteElement();
+          unselectLinkPanel();
         }
+        unreadObjectType();
       })
     }
 
@@ -457,6 +465,48 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
         linkSelectedToDelete = null;
         updateInputLinkJSON();
         changeBindingErrorList();
+      }
+    }
+
+    function addClickElementEvent(paper) {
+      paper.on('element:pointerclick', function(elementView) {
+        if (linkPanelIndexSelectedToCreate != -1 && rectCoverElementToCreateLink != elementView.model) {
+          if (rectCoverElementToCreateLink != null) {
+            if (sourceElementIdConnectedToLinkCreated != elementView.model.prop('id')){
+              createLink(sourceElementIdConnectedToLinkCreated, elementView.model.prop('id'));
+            }
+          } else {
+            sourceElementIdConnectedToLinkCreated = elementView.model.prop('id');
+            createRectCoverElementToCreateLink(elementView.model)
+          }
+        }
+      })
+    }
+
+    function createRectCoverElementToCreateLink(element) {
+      rectCoverElementToCreateLink = new joint.shapes.basic.Rect({
+        position: { x: element.prop('position').x, y: element.prop('position').y },
+        size: { width: element.prop('size').width, height: element.prop('size').height },
+        attrs: { rect: { fill: 'skyblue', opacity: '0.8' }
+        }
+      });
+      element.embed(rectCoverElementToCreateLink);
+      graph.addCells([rectCoverElementToCreateLink]);
+    }
+
+    function createLink(sourceId, targetId) {
+      let item = {id: linkJSON.links.length + 1, type: panel[linkPanelIndexSelectedToCreate].title, paragraph: "", sourceId: sourceId, targetId: targetId};
+      linkJSON.links.push(item);
+      updateInputLinkJSON();
+      if (!graph) {
+        drawDiagram();
+      } else {
+        let link = createLinkFromItem(item);
+        graph.addCell(link);
+        changeBindingErrorList();
+        mapLinkIdToNumber[graph.getLastCell().id] = item.id;
+        mapNumberToLinkId[item.id] = graph.getLastCell().id;
+        unselectLinkPanel();
       }
     }
 
@@ -543,13 +593,14 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
         restrictTranslate: true
       });
       paper.scale(zoom, zoom);
-      //addClickToBlankEvent(paper);
+      addClickToBlankEvent(paper);
       addMouseEnterObjectEvent(paper);
       addMouseLeaveObjectEvent(paper);
       addDoubleClickObjectEvent(paper);
       addChangePositionObjectEvent(graph);
-      
+
       addDeleteObjectEvent(graph);
+      addClickElementEvent(paper);
     }
 
     function drawElement() {

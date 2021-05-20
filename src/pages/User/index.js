@@ -125,9 +125,10 @@ export default function User() {
         formData.append("shape_predictions", JSON.stringify(shapePredictions));
         formData.append("link_predictions", JSON.stringify(linkPredictions));
         //formData.append("cardinal_predictions", JSON.stringify(cardinalPredictions));
-        console.log(shapePredictions);
-        console.log(linkPredictions);
-        
+        //console.log(shapePredictions);
+        //console.log(linkPredictions);
+        if (document.getElementById("vietnamese").checked) formData.append("language", "vn")
+        else formData.append("language", "en")
 
         let api = await axios.post("/api/erds/get-erd", formData);
         setElementJSON(api.data.elementJSON);
@@ -243,6 +244,16 @@ export default function User() {
                                     <form encType="multipart/form-data" onSubmit={(e) => {e.preventDefault(); convertImageToDiagram()}} >
                                         <label for="img">Select image:</label>
                                         <input type="file" id="imageFile" name="imageFile" accept="image/*" onChange={(e) => {e.preventDefault(); getImgSrcFromImgFile()}}/>
+                                        <br/><br/>
+                                        <label>
+                                            <input type="radio" id="vietnamese" name="language" checked="true"/>
+                                            Vietnamese
+                                        </label>
+                                        <br/>
+                                        <label>
+                                            <input type="radio" id="english" name="language"/>
+                                            English
+                                        </label>
                                         <br/>
                                         <input type="submit" value="Convert"/>
                                     </form>
