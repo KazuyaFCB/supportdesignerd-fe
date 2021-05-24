@@ -63,6 +63,8 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
     //let [bindingErrorList, setBindingErrorList] = useState([]);
     //let [bindingErrorListView, setBindingErrorListView] = useState([]);
 
+    // Ref: https://www.conceptdraw.com/How-To-Guide/erd-entity-relationship-diagram-symbols
+    // https://www.lucidchart.com/pages/er-diagrams
     const panel = [{
         img: "https://www.conceptdraw.com/How-To-Guide/picture/erd-symbols-and-meanings/ERD-Symbols-Entity.png",
         title: "Entity"
@@ -94,13 +96,13 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
         img: "https://vertabelo.com/blog/chen-erd-notation/chen-notation-partial-key-attribute.png",
         title: "PartialKeyAttribute"
       }, {
-        img: "https://www.conceptdraw.com/How-To-Guide/picture/erd-entity-relationship-diagram-symbols/ERD-Symbols-Relationships-Many-to-Many-5.png",
+        img: "https://d2slcw3kip6qmk.cloudfront.net/marketing/pages/chart/seo/ERD/discovery/erd-chens-11.svg",
         title: "PartialParticipation"
       }, {
         img: "https://www.conceptdraw.com/How-To-Guide/picture/erd-entity-relationship-diagram-symbols/ERD-Symbols-Relationships-Many-to-Many-5.png",
         title: "TotalParticipation"
       }, {
-        img: "https://www.conceptdraw.com/How-To-Guide/picture/erd-entity-relationship-diagram-symbols/ERD-Symbols-Relationships-Many-to-Many-5.png",
+        img: "https://d2slcw3kip6qmk.cloudfront.net/marketing/pages/chart/seo/ERD/discovery/erd-barkers-04.svg",
         title: "Optional"
       }
     ]
@@ -174,6 +176,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
         } else {
           let element = createElementFromItem(item);
           graph.addCell(element);
+          elements.push(element);
           changeBindingErrorList();
         }
       }
@@ -718,16 +721,16 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
             style={{ height: 300}}
             onChange={(event, value) => { zoom = value; paper.scale(zoom, zoom); }}
           />
-          <ul style={{ width: '100', height: '450px', overflowY: 'scroll', overflowX: 'hidden', listStyleType: 'none'}} component="nav" aria-label="secondary mailbox folders" >
+          <ul style={{ height: '450px', marginLeft: '-50px', overflowY: 'scroll', overflowX: 'hidden', listStyleType: 'none'}} component="nav" aria-label="secondary mailbox folders" >
             <li>
-              <Button variant="contained" color="secondary" hidden={!currentUser} onClick={saveDiagram}>
+              <Button style={{height:'30px', width: '90px'}} variant="contained" color="secondary" hidden={!currentUser} onClick={saveDiagram}>
                 SAVE
               </Button>
             </li>
             {panel.map((panelItem, panelIndex) => (
                 <li className="createElementButton" button onClick={() => createElement(panelItem, panelIndex)}>
                   <Button >
-                    <img src={panelItem.img} alt={panelItem.title} title={panelItem.title} style={{height:'30px'}}/>
+                    <img src={panelItem.img} alt={panelItem.title} title={panelItem.title} style={{height:'80px', width: '90px'}}/>
                   </Button>                
                 </li>
             ))}

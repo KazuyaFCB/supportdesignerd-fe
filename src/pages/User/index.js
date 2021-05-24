@@ -8,6 +8,8 @@ import {
     Redirect
 } from "react-router-dom";
 import * as automl from '@tensorflow/tfjs-automl';
+//import * as cvstfjs from '@microsoft/customvision-tfjs';
+
 import Cookies from 'js-cookie';
 
 import Header from "../../components/Header";
@@ -80,6 +82,8 @@ export default function User() {
     
     useScript("https://unpkg.com/@tensorflow/tfjs");
 
+    //useScript("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.8.3/dist/tf.min.js");
+    useScript("https://unpkg.com/@microsoft/customvision-tfjs@1.2.0");
     async function getImgSrcFromImgFile() {
         const imageFile = document.getElementById("imageFile").files[0];
         const formData = new FormData();
@@ -117,16 +121,20 @@ export default function User() {
         imageData.src = window.URL.createObjectURL(imageFile);
         const shapePredictions = await getShapePredictions(imageData);
         const linkPredictions = await getLinkPredictions(imageData);
-        //const cardinalPredictions = await getCardinalPredictions(imageData);
+        cropShapeImg(imageData, shapePredictions);
+        return;
+        const cardinalPredictions = await getCardinalPredictions(imageData);
+        
         //getImageFileSize(imageFile);
         const formData = new FormData();
         formData.append("file", imageFile);
         formData.append("size", [imageWidth, imageHeight]);
         formData.append("shape_predictions", JSON.stringify(shapePredictions));
         formData.append("link_predictions", JSON.stringify(linkPredictions));
-        //formData.append("cardinal_predictions", JSON.stringify(cardinalPredictions));
+        formData.append("cardinal_predictions", JSON.stringify(cardinalPredictions));
         //console.log(shapePredictions);
         //console.log(linkPredictions);
+
         if (document.getElementById("vietnamese").checked) formData.append("language", "vn")
         else formData.append("language", "en")
 
@@ -137,24 +145,133 @@ export default function User() {
     }
 
     async function getShapePredictions(imageData) {
-        const model = await automl.loadObjectDetection('/shape_model_js/model.json');
+        const model = await automl.loadObjectDetection('/shape_model/model.json');
         const options = {score: 0.4, iou: 0.5, topk: 50};
         const predictions = await model.detect(imageData, options);
         return predictions;
     }
 
     async function getLinkPredictions(imageData) {
-        const model = await automl.loadObjectDetection('/link_model_js/model.json');
-        const options = {score: 0.5, iou: 0.5, topk: 50};
-        const predictions = await model.detect(imageData, options);
+        const model1 = await automl.loadObjectDetection('/link_model/single_link/model.json');
+        const model2 = await automl.loadObjectDetection('/link_model/double_link/model.json');
+        const options = {score: 0.4, iou: 0.5, topk: 50};
+        let predictions = await model1.detect(imageData, options);
+        predictions.push(...await model2.detect(imageData, options));
         return predictions;
     }
 
-    async function getCardinalPredictions(imageData) {
-        const model = await automl.loadObjectDetection('/cardinal_model_js/model.json');
-        const options = {score: 0.5, iou: 0.5, topk: 50};
-        const predictions = await model.detect(imageData, options);
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    //const image = document.getElementById('img');
+    async function getCardinalDetectionPredictions(imageData) {
+        let model = new window.cvstfjs.ObjectDetectionModel();
+        await model.loadModelAsync('/cardinal_detection_model/model.json');
+        const predictions = await model.executeAsync(imageData);
         return predictions;
+    }
+
+    async function getCardinalClassificationPredictions(imageData) {
+        let model = new window.cvstfjs.ClassificationModel();
+        await model.loadModelAsync('/cardinal_classification_model/model.json');
+        const predictions = await model.executeAsync(imageData);
+        return predictions;
+    }
+
+    function classify(cardinalClassificationPredictions) {
+        let max=-1, idx;
+        for (let i=0;i<cardinalClassificationPredictions[0].length;i++){
+            if (max<cardinalClassificationPredictions[0][i]){
+                max=cardinalClassificationPredictions[0][i];
+                idx=i;
+            }
+        }
+        if (idx==0) return "(0..1)";
+        if (idx==1) return "(0..n)";
+        if (idx==2) return "(1..1)";
+        if (idx==3) return "(1..n)";
+    }
+
+    async function getCardinalPredictions(imageData) {
+        //crop img: https://stackoverflow.com/questions/39968756/javascript-crop-image-to-canvas
+        let cardinalPredictions = [];
+        // DETECT
+        const cardinalDetectionPredictions = await getCardinalDetectionPredictions(imageData);
+        console.log(cardinalDetectionPredictions);
+        let len = cardinalDetectionPredictions[0].length;
+        for(let i=0;i<len;i++){
+            if (cardinalDetectionPredictions[1][i]<0.23) continue;
+            cardinalPredictions.push({
+              box: {
+                left: cardinalDetectionPredictions[0][i][0]*imageWidth,
+                top: cardinalDetectionPredictions[0][i][1]*imageHeight,
+                width: (cardinalDetectionPredictions[0][i][2]-cardinalDetectionPredictions[0][i][0])*imageWidth,
+                height: (cardinalDetectionPredictions[0][i][3]-cardinalDetectionPredictions[0][i][1])*imageHeight,
+              }, 
+              label: "",
+              score: cardinalDetectionPredictions[1][i]
+            });
+        }
+        
+        for(let i=0;i<cardinalPredictions.length;i++) {
+            // CROP
+            const canvas = document.createElement("canvas");
+            canvas.width=cardinalPredictions[i].box.width;
+            canvas.height=cardinalPredictions[i].box.height;
+            const ctx = canvas.getContext('2d');
+            //https://stackoverflow.com/questions/26015497/how-to-resize-then-crop-an-image-with-canvas
+            ctx.drawImage(imageData,cardinalPredictions[i].box.left,cardinalPredictions[i].box.top,cardinalPredictions[i].box.width,cardinalPredictions[i].box.height,
+                0,0,cardinalPredictions[i].box.width,cardinalPredictions[i].box.height);
+            //https://stackoverflow.com/questions/16301449/convert-canvas-to-an-image-with-javascript
+            let image = new Image();
+            image.src = canvas.toDataURL();
+            image.width=cardinalPredictions[i].box.width;
+            image.height=cardinalPredictions[i].box.height;
+            //CLASSIFY
+            const cardinalClassificationPredictions = await getCardinalClassificationPredictions(image);
+            const label = classify(cardinalClassificationPredictions);
+            cardinalPredictions[i].label = label;
+            //document.body.appendChild(document.createElement("br"));
+            //document.body.appendChild(document.createElement("br"));
+            //document.body.appendChild(canvas);
+            //console.log(label);
+
+        }
+        //document.body.appendChild(canvas);
+        return cardinalPredictions;
+    }
+
+    async function cropShapeImg(imageData, predictions) {
+        //alert(predictions.length);
+        let countAttribute=1;
+        for(let i=0;i<predictions.length;i++) {
+            if (predictions[i].label != "Attribute") continue;
+            // CROP
+            const canvas = document.createElement("canvas");
+            canvas.width=predictions[i].box.width;
+            canvas.height=predictions[i].box.height;
+            const ctx = canvas.getContext('2d');
+            //https://stackoverflow.com/questions/26015497/how-to-resize-then-crop-an-image-with-canvas
+            ctx.drawImage(imageData,predictions[i].box.left,predictions[i].box.top,predictions[i].box.width,predictions[i].box.height,
+                0,0,predictions[i].box.width,predictions[i].box.height);
+            //https://stackoverflow.com/questions/16301449/convert-canvas-to-an-image-with-javascript
+            let image = new Image();
+            image.src = canvas.toDataURL();
+            document.body.appendChild(document.createElement("br"));
+            document.body.appendChild(canvas);
+
+            //https://stackoverflow.com/questions/7034754/how-to-set-a-file-name-using-window-open
+            //https://stackoverflow.com/questions/10473932/browser-html-force-download-of-image-from-src-dataimage-jpegbase64
+            var link = document.createElement("a");
+            link.href = image.src.replace(/^data:image\/[^;]+/, 'data:application/octet-stream');
+            link.download = "" + countAttribute + ".png";
+            link.click();
+            countAttribute++;
+            if (countAttribute%10==1) await sleep(2000);
+            
+            //window.open(image.src.replace(/^data:image\/[^;]+/, 'data:application/octet-stream'),);
+        }
     }
 
     function convertJSONToDiagram() {
@@ -209,9 +326,7 @@ export default function User() {
                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css"/>
                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
                 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter:400,700"/>
-
                 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
-
             </head>
 
             <body style={{backgroundImage: 'url(https://cdn.wallpapersafari.com/86/19/LTbraQ.jpg)'}}>
@@ -287,7 +402,6 @@ export default function User() {
                     </Switch>
                 </Router>
             </body>
-
         </html>
     )
 }

@@ -1,6 +1,0 @@
-background
-WeakRelationship
-Attribute
-WeakEntity
-Entity
-Relationship
