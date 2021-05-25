@@ -47,6 +47,7 @@ export default function User() {
         if (elementJSONStr) setElementJSON(JSON.parse(elementJSONStr));
         if (linkJSONStr) setLinkJSON(JSON.parse(linkJSONStr));
         if (imgSrcStr) setImgSrc(JSON.parse(imgSrcStr));
+        
     }, []);
     useEffect(async() => {
         if (currentUser) {
@@ -82,7 +83,7 @@ export default function User() {
     
     useScript("https://unpkg.com/@tensorflow/tfjs");
 
-    //useScript("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.8.3/dist/tf.min.js");
+    useScript("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.0");
     useScript("https://unpkg.com/@microsoft/customvision-tfjs@1.2.0");
     async function getImgSrcFromImgFile() {
         const imageFile = document.getElementById("imageFile").files[0];
@@ -121,9 +122,9 @@ export default function User() {
         imageData.src = window.URL.createObjectURL(imageFile);
         const shapePredictions = await getShapePredictions(imageData);
         const linkPredictions = await getLinkPredictions(imageData);
-        cropShapeImg(imageData, shapePredictions);
-        return;
-        const cardinalPredictions = await getCardinalPredictions(imageData);
+        //cropShapeImg(imageData, shapePredictions);
+        //return;
+        let cardinalPredictions = await getCardinalPredictions(imageData);
         
         //getImageFileSize(imageFile);
         const formData = new FormData();
@@ -167,14 +168,14 @@ export default function User() {
     //const image = document.getElementById('img');
     async function getCardinalDetectionPredictions(imageData) {
         let model = new window.cvstfjs.ObjectDetectionModel();
-        await model.loadModelAsync('/cardinal_detection_model/model.json');
+        await model.loadModelAsync('/cardinal_model/detection/model.json');
         const predictions = await model.executeAsync(imageData);
         return predictions;
     }
 
     async function getCardinalClassificationPredictions(imageData) {
         let model = new window.cvstfjs.ClassificationModel();
-        await model.loadModelAsync('/cardinal_classification_model/model.json');
+        await model.loadModelAsync('/cardinal_model/classification/model.json');
         const predictions = await model.executeAsync(imageData);
         return predictions;
     }
@@ -191,6 +192,7 @@ export default function User() {
         if (idx==1) return "(0..n)";
         if (idx==2) return "(1..1)";
         if (idx==3) return "(1..n)";
+
     }
 
     async function getCardinalPredictions(imageData) {
@@ -198,7 +200,6 @@ export default function User() {
         let cardinalPredictions = [];
         // DETECT
         const cardinalDetectionPredictions = await getCardinalDetectionPredictions(imageData);
-        console.log(cardinalDetectionPredictions);
         let len = cardinalDetectionPredictions[0].length;
         for(let i=0;i<len;i++){
             if (cardinalDetectionPredictions[1][i]<0.23) continue;
