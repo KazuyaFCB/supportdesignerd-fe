@@ -124,8 +124,8 @@ export default function User() {
         const linkPredictions = await getLinkPredictions(imageData);
         //cropShapeImg(imageData, shapePredictions);
         //return;
-        let cardinalPredictions = await getCardinalPredictions(imageData);
-        
+        const cardinalPredictions = await getCardinalPredictions(imageData);
+
         //getImageFileSize(imageFile);
         const formData = new FormData();
         formData.append("file", imageFile);
@@ -146,15 +146,15 @@ export default function User() {
     }
 
     async function getShapePredictions(imageData) {
-        const model = await automl.loadObjectDetection('/shape_model/model.json');
+        const model = await automl.loadObjectDetection('/models/shape/model.json');
         const options = {score: 0.4, iou: 0.5, topk: 50};
         const predictions = await model.detect(imageData, options);
         return predictions;
     }
 
     async function getLinkPredictions(imageData) {
-        const model1 = await automl.loadObjectDetection('/link_model/single_link/model.json');
-        const model2 = await automl.loadObjectDetection('/link_model/double_link/model.json');
+        const model1 = await automl.loadObjectDetection('/models/link/single_link/model.json');
+        const model2 = await automl.loadObjectDetection('/models/link/double_link/model.json');
         const options = {score: 0.4, iou: 0.5, topk: 50};
         let predictions = await model1.detect(imageData, options);
         predictions.push(...await model2.detect(imageData, options));
@@ -168,14 +168,14 @@ export default function User() {
     //const image = document.getElementById('img');
     async function getCardinalDetectionPredictions(imageData) {
         let model = new window.cvstfjs.ObjectDetectionModel();
-        await model.loadModelAsync('/cardinal_model/detection/model.json');
+        await model.loadModelAsync('/models/cardinal/detection/model.json');
         const predictions = await model.executeAsync(imageData);
         return predictions;
     }
 
     async function getCardinalClassificationPredictions(imageData) {
         let model = new window.cvstfjs.ClassificationModel();
-        await model.loadModelAsync('/cardinal_model/classification/model.json');
+        await model.loadModelAsync('/models/cardinal/classification/model.json');
         const predictions = await model.executeAsync(imageData);
         return predictions;
     }
