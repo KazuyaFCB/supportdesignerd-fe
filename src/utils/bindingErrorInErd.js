@@ -146,6 +146,16 @@ export function checkLinkBindingError(link, elementJSON) {
         return "Lỗi hai mối kết hợp " + ele1.paragraph + " và " + ele2.paragraph + " liên kết trực tiếp với nhau";
     }
 
+    // Lỗi mối kết hợp liên kết thuộc tính
+    if ((ele1.type=="Relationship" || ele1.type=="IdentifyingRelationship" || ele1.type=="ISA") && (ele2.type=="Attribute" || ele2.type=="Normal" || ele2.type=="Key" || ele2.type=="Multivalued" || ele2.type=="Derived" || ele2.type=="PartialKeyAttribute")) {
+        return "Lỗi mối kết hợp " + ele1.paragraph + " liên kết thuộc tính " + ele2.paragraph;
+    }
+
+    // Lỗi liên kết không có cardinal
+    if (link.paragraph=="") {
+        return "Lỗi liên kết không có cardinal";
+    }
+
     // Lỗi thực thể liên kết với thuộc tính nhưng lại vẽ liên kết đôi
     if ((ele1.type=="Entity" || ele1.type=="WeakEntity" || ele1.type=="AssociativeEntity") && (ele2.type=="Attribute" || ele2.type=="Normal" || ele2.type=="Key" || ele2.type=="Multivalued" || ele2.type=="Derived" || ele2.type=="PartialKeyAttribute") && link.type=="TotalParticipation") {
         return "Lỗi thực thể " + ele1.paragraph + " liên kết với thuộc tính  " + ele2.paragraph + " nhưng lại vẽ liên kết đôi";

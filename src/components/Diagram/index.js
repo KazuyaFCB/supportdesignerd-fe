@@ -630,7 +630,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
           link.addTo(graph).set({
             labels: [{
                 attrs: {
-                    text: { text: item.paragraph, fill: 'red', 'font-size': fontSize, 'font-weight': 'bold' },
+                    text: { text: item.paragraph, fill: 'blue', 'font-size': fontSize, 'font-weight': 'bold' },
                     rect: { fill: 'none' }
                 }
             }]
@@ -706,11 +706,11 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
     return (
       <div>
         <div style={{display: 'inline-block', float: 'left', width: '85%'}}>
-          <div style={{backgroundColor: 'lavender', height: '520px', overflow: 'scroll'}}>
+          <div style={{backgroundImage: 'url(https://i.pinimg.com/originals/04/2a/ef/042aefaccd947a8c07f36b11f228ba2e.gif)', height: '520px', overflow: 'scroll'}}>
             <div id="paper"></div>
           </div>
         </div>
-        <div style={{float: 'right', width: '15%', marginLeft: '0px', padding: '0px', display: 'flex'}}>
+        <div style={{backgroundImage: 'url(https://image.freepik.com/free-vector/wood-background-realistic_107791-102.jpg?1)', float: 'right', width: '15%', marginLeft: '0px', padding: '0px', display: 'flex'}}>
           <Slider
             orientation="vertical"
             min={0}
@@ -730,7 +730,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
             {panel.map((panelItem, panelIndex) => (
                 <li className="createElementButton" button onClick={() => createElement(panelItem, panelIndex)}>
                   <Button >
-                    <img src={panelItem.img} alt={panelItem.title} title={panelItem.title} style={{height:'80px', width: '90px'}}/>
+                    <img style={{backgroundColor: 'green'}} src={panelItem.img} alt={panelItem.title} title={panelItem.title} style={{height:'80px', width: '90px'}}/>
                   </Button>                
                 </li>
             ))}

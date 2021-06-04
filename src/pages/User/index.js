@@ -24,6 +24,7 @@ import axios from "../../utils/axios";
 
 export default function User() {
     let [imgSrc, setImgSrc] = useState(""); 
+    let [language, setLanguage] = useState("vn");
     
     let [elementJSON, setElementJSON] = useState({elements: []});
     
@@ -121,23 +122,23 @@ export default function User() {
         let imageData = new Image();
         imageData.src = window.URL.createObjectURL(imageFile);
         const shapePredictions = await getShapePredictions(imageData);
-        const linkPredictions = await getLinkPredictions(imageData);
+        //const linkPredictions = await getLinkPredictions(imageData);
         //cropShapeImg(imageData, shapePredictions);
         //return;
-        const cardinalPredictions = await getCardinalPredictions(imageData);
+        //const cardinalPredictions = await getCardinalPredictions(imageData);
+        //console.log(cardinalPredictions); 
 
         //getImageFileSize(imageFile);
         const formData = new FormData();
         formData.append("file", imageFile);
         formData.append("size", [imageWidth, imageHeight]);
         formData.append("shape_predictions", JSON.stringify(shapePredictions));
-        formData.append("link_predictions", JSON.stringify(linkPredictions));
-        formData.append("cardinal_predictions", JSON.stringify(cardinalPredictions));
+        //formData.append("link_predictions", JSON.stringify(linkPredictions));
+        //formData.append("cardinal_predictions", JSON.stringify(cardinalPredictions));
         //console.log(shapePredictions);
         //console.log(linkPredictions);
 
-        if (document.getElementById("vietnamese").checked) formData.append("language", "vn")
-        else formData.append("language", "en")
+        formData.append("language", language)
 
         let api = await axios.post("/api/erds/get-erd", formData);
         setElementJSON(api.data.elementJSON);
@@ -147,23 +148,47 @@ export default function User() {
 
     async function getShapePredictions(imageData) {
         const model = await automl.loadObjectDetection('/models/shape/model.json');
-        const options = {score: 0.4, iou: 0.5, topk: 50};
+        const options = {score: 0.3, iou: 0.5, topk: 50};
         const predictions = await model.detect(imageData, options);
         return predictions;
     }
 
-    async function getLinkPredictions(imageData) {
-        const model1 = await automl.loadObjectDetection('/models/link/single_link/model.json');
-        const model2 = await automl.loadObjectDetection('/models/link/double_link/model.json');
-        const options = {score: 0.4, iou: 0.5, topk: 50};
-        let predictions = await model1.detect(imageData, options);
-        predictions.push(...await model2.detect(imageData, options));
-        return predictions;
-    }
+    // async function getLinkDetectionPredictions(imageData) {
+    //     const model = new window.cvstfjs.ObjectDetectionModel();
+    //     await model.loadModelAsync('/models/link/detection/model.json');
+    //     const predictions = await model.executeAsync(imageData);
+    //     return predictions;
+    // }
 
-    function sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
+    // async function getLinkPredictions2(imageData) {
+    //     let linkPredictions = [];
+    //     const labelArray = ["dauSac","dauHuyen","dauSac","dauSac2"];
+    //     const linkDetectionPredictions = await getLinkDetectionPredictions(imageData);
+    //     let len = linkDetectionPredictions[0].length;
+    //     for(let i=0;i<len;i++){
+    //         if (linkDetectionPredictions[1][i]<0.2) continue;
+    //         linkPredictions.push({
+    //           box: {
+    //             left: linkDetectionPredictions[0][i][0]*imageWidth,
+    //             top: linkDetectionPredictions[0][i][1]*imageHeight,
+    //             width: (linkDetectionPredictions[0][i][2]-linkDetectionPredictions[0][i][0])*imageWidth,
+    //             height: (linkDetectionPredictions[0][i][3]-linkDetectionPredictions[0][i][1])*imageHeight,
+    //           }, 
+    //           label: labelArray[linkDetectionPredictions[2][i]],
+    //           score: linkDetectionPredictions[1][i]
+    //         });
+    //     }
+    //     return linkPredictions;
+    // }
+
+    // async function getLinkPredictions(imageData) {
+    //     const model1 = await automl.loadObjectDetection('/models/link/single_link/model.json');
+    //     const model2 = await automl.loadObjectDetection('/models/link/double_link/model.json');
+    //     const options = {score: 0.3, iou: 0.5, topk: 50};
+    //     let predictions = await model1.detect(imageData, options);
+    //     predictions.push(...await model2.detect(imageData, options));
+    //     return predictions;
+    // }
 
     //const image = document.getElementById('img');
     async function getCardinalDetectionPredictions(imageData) {
@@ -192,7 +217,6 @@ export default function User() {
         if (idx==1) return "(0..n)";
         if (idx==2) return "(1..1)";
         if (idx==3) return "(1..n)";
-
     }
 
     async function getCardinalPredictions(imageData) {
@@ -202,7 +226,7 @@ export default function User() {
         const cardinalDetectionPredictions = await getCardinalDetectionPredictions(imageData);
         let len = cardinalDetectionPredictions[0].length;
         for(let i=0;i<len;i++){
-            if (cardinalDetectionPredictions[1][i]<0.23) continue;
+            if (cardinalDetectionPredictions[1][i]<0.2) continue;
             cardinalPredictions.push({
               box: {
                 left: cardinalDetectionPredictions[0][i][0]*imageWidth,
@@ -233,14 +257,12 @@ export default function User() {
             const cardinalClassificationPredictions = await getCardinalClassificationPredictions(image);
             const label = classify(cardinalClassificationPredictions);
             cardinalPredictions[i].label = label;
-            //document.body.appendChild(document.createElement("br"));
-            //document.body.appendChild(document.createElement("br"));
-            //document.body.appendChild(canvas);
-            //console.log(label);
-
         }
-        //document.body.appendChild(canvas);
         return cardinalPredictions;
+    }
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
 
     async function cropShapeImg(imageData, predictions) {
@@ -330,14 +352,14 @@ export default function User() {
                 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
             </head>
 
-            <body style={{backgroundImage: 'url(https://cdn.wallpapersafari.com/86/19/LTbraQ.jpg)'}}>
+            <body>
                 <Router>
                     <Switch>
                         <Route path={"/*"}>
                             <Header currentUser={currentUser} signOut={signOut}/>
                             
                             <Route exact path={"/"}>
-                                
+                                <div style={{backgroundImage: 'url(https://olc-wordpress-assets.s3.amazonaws.com/uploads/2019/10/E-Learning-with-blurred-city-abstract-lights-background.jpeg)', width: '100%', height: '550px'}}></div>
                             </Route>
                             <Route path={'/sign-in'}>
                                 <div>
@@ -355,19 +377,19 @@ export default function User() {
                                 </div>
                             </Route>   
                             <Route path={'/image-to-diagram'}>
-                                <div style={{display: 'inline-block', width: '30%'}}>
+                                <div style={{backgroundImage: 'url(https://pa1.narvii.com/6860/9abaebbcd09174329f99a8707a69f56cab9ad1f6r1-540-265_hq.gif)', display: 'inline-block', width: '30%'}}>
                                     <img id='img' src={imgSrc} width='100%' />
                                     <form encType="multipart/form-data" onSubmit={(e) => {e.preventDefault(); convertImageToDiagram()}} >
                                         <label for="img">Select image:</label>
                                         <input type="file" id="imageFile" name="imageFile" accept="image/*" onChange={(e) => {e.preventDefault(); getImgSrcFromImgFile()}}/>
                                         <br/><br/>
                                         <label>
-                                            <input type="radio" id="vietnamese" name="language" checked="true"/>
+                                            <input type="radio" id="vietnamese" name="language" onClick={() => setLanguage("vn")} checked={language=="vn"}/>
                                             Vietnamese
                                         </label>
                                         <br/>
                                         <label>
-                                            <input type="radio" id="english" name="language"/>
+                                            <input type="radio" id="english" name="language" onClick={() => setLanguage("en")} checked={language=="en"}/>
                                             English
                                         </label>
                                         <br/>
@@ -380,7 +402,7 @@ export default function User() {
                                 
                             </Route>
                             <Route path={'/json-to-diagram'}>
-                                <div style={{display: 'inline-block', float: 'left', width: '30%'}}>
+                                <div style={{backgroundImage: 'url(https://pa1.narvii.com/6860/9abaebbcd09174329f99a8707a69f56cab9ad1f6r1-540-265_hq.gif)', display: 'inline-block', float: 'left', width: '30%'}}>
                                     <form>
                                         <h5>Input Element JSON</h5>
                                         <textarea id="inputElementJSON" rows="9" cols="37"></textarea>

@@ -12,7 +12,30 @@ export class elementTools_RemoveButton {
     constructor() {
         return new joint.elementTools.Remove({
             x: '50%',
-            y: '50%'
+            y: '50%',
+            markup: [{
+                tagName: 'circle',
+                selector: 'button',
+                attributes: {
+                    'r': 10,
+                    'stroke': 'white',
+                    'stroke-width': 1,
+                    'fill': 'red',
+                    'cursor': 'pointer'
+                }
+            }, {
+                tagName: 'text',
+                textContent: 'X',
+                selector: 'icon',
+                attributes: {
+                    'fill': 'white',
+                    'font-size': 15,
+                    'text-anchor': 'middle',
+                    'font-weight': 'bold',
+                    'pointer-events': 'none',
+                    'y': '0.3em'
+                }
+            }]
         });
     }
 }
@@ -38,7 +61,7 @@ export class elementTools_ErrorButton {
                 selector: 'icon',
                 attributes: {
                     'fill': 'white',
-                    'font-size': 12,
+                    'font-size': 15,
                     'text-anchor': 'middle',
                     'font-weight': 'bold',
                     'pointer-events': 'none',
@@ -64,7 +87,30 @@ export class linkTools_RemoveButton {
         return new joint.linkTools.Remove({
             //distance: 20
             x: '50%',
-            y: '50%'
+            y: '50%',
+            markup: [{
+                tagName: 'circle',
+                selector: 'button',
+                attributes: {
+                    'r': 10,
+                    'stroke': 'white',
+                    'stroke-width': 1,
+                    'fill': 'red',
+                    'cursor': 'pointer'
+                }
+            }, {
+                tagName: 'text',
+                textContent: 'X',
+                selector: 'icon',
+                attributes: {
+                    'fill': 'white',
+                    'font-size': 15,
+                    'text-anchor': 'middle',
+                    'font-weight': 'bold',
+                    'pointer-events': 'none',
+                    'y': '0.3em'
+                }
+            }]
         });
     }
 }
@@ -89,7 +135,7 @@ export class linkTools_ErrorButton {
                 selector: 'icon',
                 attributes: {
                     'fill': 'white',
-                    'font-size': 12,
+                    'font-size': 15,
                     'text-anchor': 'middle',
                     'font-weight': 'bold',
                     'pointer-events': 'none',
