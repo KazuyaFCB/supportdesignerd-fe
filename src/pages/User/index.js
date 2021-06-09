@@ -362,12 +362,12 @@ export default function User() {
                                 <div style={{backgroundImage: 'url(https://olc-wordpress-assets.s3.amazonaws.com/uploads/2019/10/E-Learning-with-blurred-city-abstract-lights-background.jpeg)', width: '100%', height: '550px'}}></div>
                             </Route>
                             <Route path={'/sign-in'}>
-                                <div>
+                                <div style={{backgroundImage: 'url(https://olc-wordpress-assets.s3.amazonaws.com/uploads/2019/10/E-Learning-with-blurred-city-abstract-lights-background.jpeg)', width: '100%', height: '550px', marginTop: '-60px'}}>
                                     <SignIn />
                                 </div>
                             </Route>   
                             <Route path={'/sign-up'}>
-                                <div>
+                                <div style={{backgroundImage: 'url(https://olc-wordpress-assets.s3.amazonaws.com/uploads/2019/10/E-Learning-with-blurred-city-abstract-lights-background.jpeg)', width: '100%', height: '550px', marginTop: '-60px'}}>
                                     <SignUp />
                                 </div>
                             </Route>

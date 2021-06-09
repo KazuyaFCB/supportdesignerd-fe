@@ -62,7 +62,7 @@ export default function SignIn() {
         window.location.href = "/";
 
     return (
-        <div id="login-box" style={{background: 'lavender', marginBottom: '0px', opacity: '0.8'}}>
+        <div id="login-box" style={{background: 'lavender', marginBottom: '0px', opacity: '0.7'}}>
             <form onSubmit={(e) => {e.preventDefault(); signIn(); }} method="post" class="left">
                 <h1>SIGN IN</h1>
 

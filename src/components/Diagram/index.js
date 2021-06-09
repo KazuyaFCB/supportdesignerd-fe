@@ -35,7 +35,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
     let paper = null;
     let erd = joint.shapes.erd;
     
-    const fontSize = 25;
+    const fontSize = 20;
     const elementHeight = 40;
     let zoom = 0.5; // 40%
 
@@ -112,6 +112,11 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
       updateInputLinkJSON();
       drawDiagram();
     }, [elementJSON.elements, linkJSON.links]);
+
+    useEffect(() => {
+      if (paper)
+        paper.setDimensions(imageWidth, imageHeight);
+    }, [imageWidth, imageHeight]);
 
 
     function customizeGraph(graph) {
@@ -280,8 +285,9 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
     }
 
     function readObjectType(objectX, objectY, text, elementOrLink) {
-      let rectWidth = 300;
-      let rectHeight = 60;
+      const fontSize = 20;
+      let rectWidth = text.length * fontSize;
+      let rectHeight = 20;
       let diff = 0;
       if (elementOrLink === "element") {
         if (!elementJSON.elements[objectSelectedToRead.id-1]) return;
@@ -294,7 +300,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
         diff = -(rectWidth - objectSelectedToRead.prop('size').width) / 2;
       
       rect = new joint.shapes.basic.Rect({
-        position: { x: objectX + diff, y: objectY - 60},
+        position: { x: objectX + diff, y: objectY - 20},
         size: { width: rectWidth, height: rectHeight },
         attrs: { rect: { fill: 'pink' }, text: { 
           text: text, 
@@ -518,6 +524,10 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
         if (item.length>=8) return item.length-2;
         return 6;
       }));
+      const fontSize = 20;
+      let itemWidth = fontSize * maxWordLen > item.width ? fontSize * maxWordLen : item.width;
+      //let itemWidth = Math.max([fontSize * maxWordLen, item.width]);
+      let itemHeight = item.height;
       
       let element = null;
       switch (item.type) {
@@ -525,8 +535,8 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
           element = new AssociativeEntity({
             id: item.id,
             position: { x: item.x, y: item.y },
-            size: { width: item.width, height: item.height },
-            attrs: { text: { text: item.paragraph } }
+            size: { width: itemWidth, height: itemHeight },
+            attrs: { text: { text: item.paragraph, 'font-size': fontSize } }
           });
           element.addTo(graph);
           element = element.diamond;
@@ -535,8 +545,8 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
           element = new PartialKeyAttribute({
             id: item.id,
             position: { x: item.x, y: item.y },
-            size: { width: item.width, height: item.height },
-            attrs: { text: { text: item.paragraph } }
+            size: { width: itemWidth, height: itemHeight },
+            attrs: { text: { text: item.paragraph, 'font-size': fontSize } }
           });
           element.addTo(graph);
           element = element.text;
@@ -546,9 +556,9 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
             id: item.id,
             type: "erd." + item.type,
             position: { x: item.x, y: item.y },
-            size: { width: item.width, height: item.height },
+            size: { width: itemWidth, height: itemHeight },
             attrs: { 
-              text: { text: item.paragraph, fill: "white", 'font-size': item.width/maxWordLen, 'font-weight': 'bold' } 
+              text: { text: item.paragraph, fill: "white", 'font-size': fontSize, 'font-weight': 'bold' } 
             }
           };
       }
@@ -591,8 +601,10 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
       paper = new joint.dia.Paper({
         el: document.getElementById("paper"),
         model: graph,
-        width: imageWidth,
-        height: imageHeight,
+        // width: imageWidth,
+        // height: imageHeight,
+        width: 2667,
+        height: 2000,
         restrictTranslate: true
       });
       paper.scale(zoom, zoom);

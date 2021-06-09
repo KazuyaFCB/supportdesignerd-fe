@@ -10,7 +10,7 @@ export default function DiagramList({currentUser, diagramList, setDiagramList, s
     let [paginationView, setPaginationView] = useState(null);
 
     const numShownPage = 3;
-    const numElementInPage = 2;
+    const numElementInPage = 5;
     let [currentPage, setCurrentPage] = useState(-1);
     const startPage = 1;
     let endPage = 1;
@@ -143,25 +143,25 @@ export default function DiagramList({currentUser, diagramList, setDiagramList, s
                             <div class="table-title">
                                 <div class="row">
                                     <div class="col-xs-4">
-                                        <div class="show-entries">
+                                        {/* <div class="show-entries">
                                             <span>Show</span>
                                             <select>
                                                 <option>5</option>
                                                 <option>10</option>
                                             </select>
                                             <span>entries</span>
-                                        </div>
+                                        </div> */}
                                     </div>
-                                    <div class="col-xs-4" style={{ marginLeft: '250px' }}>
+                                    <div class="col-xs-4" style={{ marginLeft: '350px' }}>
                                         <h2 class="text-center">Diagram List</h2>
                                     </div>
-                                    <div class="col-xs-4" style={{ marginLeft: '400px' }}>
-                                        <div class="search-box">
+                                    <div class="col-xs-4" style={{  }}>
+                                        {/* <div class="search-box">
                                             <div class="input-group">
                                                 <span class="input-group-addon"><i class="material-icons">&#xE8B6;</i></span>
                                                 <input type="text" class="form-control" placeholder="Search&hellip;" />
                                             </div>
-                                        </div>
+                                        </div> */}
                                     </div>
                                 </div>
                             </div>
@@ -179,7 +179,7 @@ export default function DiagramList({currentUser, diagramList, setDiagramList, s
                                 </tbody>
                             </table>
                             <div class="clearfix">
-                                <div class="hint-text">Showing <b>5</b> out of <b>25</b> entries</div>
+                                <div class="hint-text">Showing <b>{numElementInPage < diagramList.length ? numElementInPage : diagramList.length}</b> out of <b>{diagramList.length}</b> entries</div>
                                 <ul class="pagination">
                                     {paginationView}
                                 </ul>
