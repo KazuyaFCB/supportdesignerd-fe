@@ -630,9 +630,9 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
         let maxWordLen = Math.max(words.map((item) => {
           return item.length;
         }));
-        if (maxWordLen <= 4) maxWordLen = 5;
-        if (fontSize > elementJSON.elements[i].width / (maxWordLen - 4))
-          fontSize = elementJSON.elements[i].width / (maxWordLen - 4);
+        //if (maxWordLen <= 0) maxWordLen = 1;
+        if (fontSize > elementJSON.elements[i].width / (maxWordLen))
+          fontSize = elementJSON.elements[i].width / (maxWordLen);
       }
       if (fontSize == Number.MAX_VALUE) fontSize = 15;
       

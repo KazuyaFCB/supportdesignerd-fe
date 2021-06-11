@@ -95,7 +95,9 @@ export default function User() {
         const imageFile = document.getElementById("imageFile").files[0];
         const formData = new FormData();
         formData.append("file", imageFile);
+        setOpenLoading(true);
         const api = await axios.post("/api/erds/get-img-src-from-img-file", formData);
+        setOpenLoading(false);
         setImgSrc(api.data.imgSrc);
         sessionStorage.setItem("imgSrc", api.data.imgSrc);
         getImageFileSize(imageFile);
@@ -409,7 +411,7 @@ export default function User() {
                                     <DialogContent>
                                         <img src="https://c.tenor.com/I6kN-6X7nhAAAAAj/loading-buffering.gif" />
                                         <DialogContentText>
-                                            Converting image to ER diagram, please wait a moment...
+                                            Processing your request, please wait a moment...
                                         </DialogContentText>
                                     </DialogContent>
                                 </Dialog>
