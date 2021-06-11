@@ -99,7 +99,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
         img: "https://d2slcw3kip6qmk.cloudfront.net/marketing/pages/chart/seo/ERD/discovery/erd-chens-11.svg",
         title: "PartialParticipation"
       }, {
-        img: "https://www.conceptdraw.com/How-To-Guide/picture/erd-entity-relationship-diagram-symbols/ERD-Symbols-Relationships-Many-to-Many-5.png",
+        img: "https://static.thenounproject.com/png/1729063-200.png",
         title: "TotalParticipation"
       }, {
         img: "https://d2slcw3kip6qmk.cloudfront.net/marketing/pages/chart/seo/ERD/discovery/erd-barkers-04.svg",
@@ -714,15 +714,16 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
 
       changeBindingErrorList();
     }
-
+    // set height that use viewport percentages
+    //https://stackoverflow.com/questions/18934141/set-div-height-to-fit-to-the-browser-using-css/18934195
     return (
       <div>
         <div style={{display: 'inline-block', float: 'left', width: '85%'}}>
-          <div style={{backgroundImage: 'url(https://i.pinimg.com/originals/04/2a/ef/042aefaccd947a8c07f36b11f228ba2e.gif)', height: '520px', overflow: 'scroll'}}>
+          <div style={{backgroundColor: 'rgba(255, 240, 255, 1)', height: '90vh', overflow: 'scroll'}}>
             <div id="paper"></div>
           </div>
         </div>
-        <div style={{backgroundImage: 'url(https://image.freepik.com/free-vector/wood-background-realistic_107791-102.jpg?1)', float: 'right', width: '15%', marginLeft: '0px', padding: '0px', display: 'flex'}}>
+        <div style={{float: 'right', width: '15%', height: '90vh', marginLeft: '0px', display: 'flex'}}>
           <Slider
             orientation="vertical"
             min={0}
@@ -733,7 +734,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
             style={{ height: 300}}
             onChange={(event, value) => { zoom = value; paper.scale(zoom, zoom); }}
           />
-          <ul style={{ height: '450px', marginLeft: '-50px', overflowY: 'scroll', overflowX: 'hidden', listStyleType: 'none'}} component="nav" aria-label="secondary mailbox folders" >
+          <ul style={{ marginLeft: '-50px', overflowY: 'scroll', overflowX: 'hidden', listStyleType: 'none'}} component="nav" aria-label="secondary mailbox folders" >
             <li>
               <Button style={{height:'30px', width: '90px'}} variant="contained" color="secondary" hidden={!currentUser} onClick={saveDiagram}>
                 SAVE

@@ -377,7 +377,7 @@ export default function User() {
                                 </div>
                             </Route>   
                             <Route path={'/image-to-diagram'}>
-                                <div style={{backgroundImage: 'url(https://pa1.narvii.com/6860/9abaebbcd09174329f99a8707a69f56cab9ad1f6r1-540-265_hq.gif)', display: 'inline-block', width: '30%'}}>
+                                <div style={{backgroundColor: 'rgba(230, 246, 254, 1)', display: 'inline-block', width: '30%', height: '90vh'}}>
                                     <img id='img' src={imgSrc} width='100%' />
                                     <form encType="multipart/form-data" onSubmit={(e) => {e.preventDefault(); convertImageToDiagram()}} >
                                         <label for="img">Select image:</label>
@@ -402,23 +402,21 @@ export default function User() {
                                 
                             </Route>
                             <Route path={'/json-to-diagram'}>
-                                <div style={{backgroundImage: 'url(https://pa1.narvii.com/6860/9abaebbcd09174329f99a8707a69f56cab9ad1f6r1-540-265_hq.gif)', display: 'inline-block', float: 'left', width: '30%'}}>
-                                    <form>
-                                        <h5>Input Element JSON</h5>
-                                        <textarea id="inputElementJSON" rows="9" cols="37"></textarea>
+                                <div style={{backgroundColor: 'rgba(230, 246, 254, 1)', display: 'inline-block', float: 'left', width: '30%', height: '90vh'}}>
+                                    <form style={{height: '45%'}}>
+                                        <h5 style={{color: 'red'}}>Input Element JSON</h5>
+                                        <textarea id="inputElementJSON" style={{width: '100%', height: '80%', backgroundColor: 'rgba(243, 255, 229, 1)'}}></textarea>
                                         <br/>
                                     </form>
-                                    <form onSubmit={(e) => {e.preventDefault(); convertJSONToDiagram()}} style={{display: 'inline-block', float: 'left'}}>
-                                        <h5>Input Link JSON</h5>
-                                        <textarea id="inputLinkJSON" rows="9" cols="37"></textarea>
-                                        <br/>
+                                    <form style={{height: '55%'}} onSubmit={(e) => {e.preventDefault(); convertJSONToDiagram()}}>
+                                        <h5 style={{color: 'red'}}>Input Link JSON</h5>
+                                        <textarea id="inputLinkJSON" style={{width: '100%', height: '65%', backgroundColor: 'rgba(243, 255, 229, 1)'}}></textarea>
                                         <input type="submit" value="Convert"></input>
                                     </form>
                                 </div>
                                 
-                                <div style={{display: "inline-block", float: 'right', width: '70%', height: '550px'}}>
+                                <div style={{display: "inline-block", float: 'right', width: '70%'}}>
                                     <Diagram elementJSON={elementJSON} linkJSON={linkJSON} imageWidth={imageWidth} imageHeight={imageHeight} currentUser={currentUser} saveDiagram={saveDiagram} />
-                                    
                                 </div>
                             </Route>
                         </Route>

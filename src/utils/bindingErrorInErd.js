@@ -136,33 +136,36 @@ export function checkLinkBindingError(link, elementJSON) {
     }
 
     // Lỗi hai thực thể liên kết trực tiếp với nhau mà không có mối kết hợp
-    if((ele1.type=="Entity" && ele2.type=="Entity") || (ele1.type=="Entity" && ele2.type=="WeakEntity") || (ele1.type=="WeakEntity" && ele2.type=="Entity") || (ele1.type=="WeakEntity" && ele2.type=="WeakEntity")) {
+    if((ele1.type=="Entity" || ele1.type=="WeakEntity" || ele1.type=="AssociativeEntity") && (ele2.type=="Entity" || ele2.type=="WeakEntity" || ele2.type=="AssociativeEntity")) {
         return "Lỗi hai thực thể " + ele1.paragraph + " và " + ele2.paragraph + " liên kết trực tiếp với nhau mà không có mối kết hợp";
         //console.log(array_errors[8] + " giua hai thuc the " + ele1.paragraph+" va "+ ele2.paragraph);
     }
 
-    // Lỗi hai mối kết hợp liên kết trực tiếp với nhau
+    // Lỗi hai mối kết hợp liên kết trực tiếp với nhau mà không có mối kết hợp
     if ((ele1.type=="Relationship" || ele1.type=="IdentifyingRelationship" || ele1.type=="ISA") && (ele2.type=="Relationship" || ele2.type=="IdentifyingRelationship" || ele2.type=="ISA")) {
         return "Lỗi hai mối kết hợp " + ele1.paragraph + " và " + ele2.paragraph + " liên kết trực tiếp với nhau";
     }
 
-    // Lỗi mối kết hợp liên kết thuộc tính
-    if ((ele1.type=="Relationship" || ele1.type=="IdentifyingRelationship" || ele1.type=="ISA") && (ele2.type=="Attribute" || ele2.type=="Normal" || ele2.type=="Key" || ele2.type=="Multivalued" || ele2.type=="Derived" || ele2.type=="PartialKeyAttribute")) {
-        return "Lỗi mối kết hợp " + ele1.paragraph + " liên kết thuộc tính " + ele2.paragraph;
-    }
-
-    // Lỗi liên kết không có cardinal
-    if (link.paragraph=="") {
-        return "Lỗi liên kết không có cardinal";
-    }
-
     // Lỗi thực thể liên kết với thuộc tính nhưng lại vẽ liên kết đôi
-    if ((ele1.type=="Entity" || ele1.type=="WeakEntity" || ele1.type=="AssociativeEntity") && (ele2.type=="Attribute" || ele2.type=="Normal" || ele2.type=="Key" || ele2.type=="Multivalued" || ele2.type=="Derived" || ele2.type=="PartialKeyAttribute") && link.type=="TotalParticipation") {
-        return "Lỗi thực thể " + ele1.paragraph + " liên kết với thuộc tính  " + ele2.paragraph + " nhưng lại vẽ liên kết đôi";
+    if ((ele1.type=="Entity" || ele1.type=="WeakEntity" || ele1.type=="AssociativeEntity") && (ele2.type=="Attribute" || ele2.type=="Normal" || ele2.type=="Key" || ele2.type=="Multivalued" || ele2.type=="Derived" || ele2.type=="PartialKeyAttribute")) {
+        if (link.type=="TotalParticipation")
+            return "Lỗi thực thể " + ele1.paragraph + " liên kết với thuộc tính  " + ele2.paragraph + " nhưng lại vẽ liên kết đôi";
     }
 
-    if ((ele2.type=="Entity" || ele2.type=="WeakEntity" || ele2.type=="AssociativeEntity") && (ele1.type=="Attribute" || ele1.type=="Normal" || ele1.type=="Key" || ele1.type=="Multivalued" || ele1.type=="Derived" || ele1.type=="PartialKeyAttribute") && link.type=="TotalParticipation") {
-        return "Lỗi thực thể " + ele2.paragraph + " liên kết với thuộc tính  " + ele1.paragraph + " nhưng lại vẽ liên kết đôi";
+    if ((ele2.type=="Entity" || ele2.type=="WeakEntity" || ele2.type=="AssociativeEntity") && (ele1.type=="Attribute" || ele1.type=="Normal" || ele1.type=="Key" || ele1.type=="Multivalued" || ele1.type=="Derived" || ele1.type=="PartialKeyAttribute")) {
+        if (link.type=="TotalParticipation")
+            return "Lỗi thực thể " + ele2.paragraph + " liên kết với thuộc tính  " + ele1.paragraph + " nhưng lại vẽ liên kết đôi";
+    }
+
+    // Lỗi liên kết giữa thực thể và mối kết hợp không có cardinal
+    if ((ele1.type=="Entity" || ele1.type=="WeakEntity" || ele1.type=="AssociativeEntity") && (ele2.type=="Relationship" || ele2.type=="IdentifyingRelationship" || ele2.type=="ISA")) {
+        if (link.paragraph == "")
+            return "Lỗi thực thể " + ele1.paragraph + " liên kết với thuộc tính  " + ele2.paragraph + " mà không có cardinal";
+    }
+
+    if ((ele2.type=="Entity" || ele2.type=="WeakEntity" || ele2.type=="AssociativeEntity") && (ele1.type=="Relationship" || ele1.type=="IdentifyingRelationship" || ele1.type=="ISA")) {
+        if (link.paragraph == "")
+            return "Lỗi thực thể " + ele2.paragraph + " liên kết với thuộc tính  " + ele1.paragraph + " mà không có cardinal";
     }
     
     return "";
