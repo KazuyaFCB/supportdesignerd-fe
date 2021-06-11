@@ -9,7 +9,7 @@ export class elementTools_Boundary {
 }
 
 export class elementTools_RemoveButton {
-    constructor() {
+    constructor(fontSize) {
         return new joint.elementTools.Remove({
             x: '50%',
             y: '50%',
@@ -17,7 +17,7 @@ export class elementTools_RemoveButton {
                 tagName: 'circle',
                 selector: 'button',
                 attributes: {
-                    'r': 10,
+                    'r': fontSize/1.5/2,
                     'stroke': 'white',
                     'stroke-width': 1,
                     'fill': 'red',
@@ -29,7 +29,7 @@ export class elementTools_RemoveButton {
                 selector: 'icon',
                 attributes: {
                     'fill': 'white',
-                    'font-size': 15,
+                    'font-size': fontSize/2,
                     'text-anchor': 'middle',
                     'font-weight': 'bold',
                     'pointer-events': 'none',
@@ -41,7 +41,7 @@ export class elementTools_RemoveButton {
 }
 
 export class elementTools_ErrorButton {
-    constructor() {
+    constructor(fontSize) {
         return new joint.elementTools.Button({
             x: '0%',
             y: '50%',
@@ -49,7 +49,7 @@ export class elementTools_ErrorButton {
                 tagName: 'circle',
                 selector: 'button',
                 attributes: {
-                    'r': 10,
+                    'r': fontSize/1.5/2,
                     'stroke': 'white',
                     'stroke-width': 1,
                     'fill': 'red',
@@ -61,7 +61,7 @@ export class elementTools_ErrorButton {
                 selector: 'icon',
                 attributes: {
                     'fill': 'white',
-                    'font-size': 15,
+                    'font-size': fontSize/2,
                     'text-anchor': 'middle',
                     'font-weight': 'bold',
                     'pointer-events': 'none',
@@ -83,7 +83,7 @@ export class linkTools_Vertices {
 }
 
 export class linkTools_RemoveButton {
-    constructor() {
+    constructor(fontSize) {
         return new joint.linkTools.Remove({
             //distance: 20
             x: '50%',
@@ -92,7 +92,7 @@ export class linkTools_RemoveButton {
                 tagName: 'circle',
                 selector: 'button',
                 attributes: {
-                    'r': 10,
+                    'r': fontSize/1.5/2,
                     'stroke': 'white',
                     'stroke-width': 1,
                     'fill': 'red',
@@ -104,7 +104,7 @@ export class linkTools_RemoveButton {
                 selector: 'icon',
                 attributes: {
                     'fill': 'white',
-                    'font-size': 15,
+                    'font-size': fontSize/2,
                     'text-anchor': 'middle',
                     'font-weight': 'bold',
                     'pointer-events': 'none',
@@ -116,14 +116,14 @@ export class linkTools_RemoveButton {
 }
 
 export class linkTools_ErrorButton {
-    constructor() {
+    constructor(fontSize) {
         return new joint.linkTools.Button({
             distance: '35%',
             markup: [{
                 tagName: 'circle',
                 selector: 'button',
                 attributes: {
-                    'r': 10,
+                    'r': fontSize/1.5/2,
                     'stroke': 'white',
                     'stroke-width': 1,
                     'fill': 'red',
@@ -135,7 +135,7 @@ export class linkTools_ErrorButton {
                 selector: 'icon',
                 attributes: {
                     'fill': 'white',
-                    'font-size': 15,
+                    'font-size': fontSize/2,
                     'text-anchor': 'middle',
                     'font-weight': 'bold',
                     'pointer-events': 'none',

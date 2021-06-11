@@ -35,7 +35,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
     let paper = null;
     let erd = joint.shapes.erd;
     
-    const fontSize = 20;
+    let fontSize = 20;
     const elementHeight = 40;
     let zoom = 0.5; // 40%
 
@@ -173,7 +173,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
     // CREATE element when click on panel
     async function createElement(panelItem, panelIndex) {
       if (panelIndex <= 9) {
-        let item = { id: elementJSON.elements.length + 1, x: 0, y: 0, type: panelItem.title, paragraph: "      ", width: 100, height: 50};
+        let item = { id: elementJSON.elements.length + 1, x: 0, y: 0, type: panelItem.title, paragraph: "      ", width: fontSize * 6, height: fontSize * 4};
         elementJSON.elements.push(item);
         updateInputElementJSON();
         if (!graph) {
@@ -212,15 +212,15 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
             name: 'has-error-button',
             tools: [
               new elementTools_Boundary(),
-              new elementTools_RemoveButton(),
-              new elementTools_ErrorButton()
+              new elementTools_RemoveButton(fontSize),
+              new elementTools_ErrorButton(fontSize)
             ]
           }))
         } else {
           elementView.addTools(new joint.dia.ToolsView({
             tools: [
               new elementTools_Boundary(),
-              new elementTools_RemoveButton()
+              new elementTools_RemoveButton(fontSize)
             ]
           }))
         }
@@ -238,15 +238,15 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
             name: 'has-error-button',
             tools: [
               new linkTools_Vertices(),
-              new linkTools_RemoveButton(),
-              new linkTools_ErrorButton()
+              new linkTools_RemoveButton(fontSize),
+              new linkTools_ErrorButton(fontSize)
             ]
           }))
         } else {
           linkView.addTools(new joint.dia.ToolsView({
             tools: [
               new linkTools_Vertices(),
-              new linkTools_RemoveButton()
+              new linkTools_RemoveButton(fontSize)
             ]
           }))
         }
@@ -261,7 +261,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
           elementView.removeTools();
           elementView.addTools(new joint.dia.ToolsView({
             name: 'has-error-button',
-            tools: [ new elementTools_ErrorButton() ]
+            tools: [ new elementTools_ErrorButton(fontSize) ]
           }))
         }
         else {
@@ -275,7 +275,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
           linkView.removeTools();
           linkView.addTools(new joint.dia.ToolsView({
             name: 'has-error-button',
-            tools: [ new linkTools_ErrorButton() ]
+            tools: [ new linkTools_ErrorButton(fontSize) ]
           }))
         }
         else {
@@ -285,9 +285,9 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
     }
 
     function readObjectType(objectX, objectY, text, elementOrLink) {
-      const fontSize = 20;
+      //const fontSize = 20;
       let rectWidth = text.length * fontSize;
-      let rectHeight = 20;
+      let rectHeight = fontSize * 2;
       let diff = 0;
       if (elementOrLink === "element") {
         if (!elementJSON.elements[objectSelectedToRead.id-1]) return;
@@ -300,7 +300,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
         diff = -(rectWidth - objectSelectedToRead.prop('size').width) / 2;
       
       rect = new joint.shapes.basic.Rect({
-        position: { x: objectX + diff, y: objectY - 20},
+        position: { x: objectX + diff, y: objectY - rectHeight},
         size: { width: rectWidth, height: rectHeight },
         attrs: { rect: { fill: 'pink' }, text: { 
           text: text, 
@@ -520,15 +520,17 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
     }
 
     function createElementFromItem(item) {
-      let maxWordLen = Math.max(...item.paragraph.split("\n").map((item) => {
-        if (item.length>=8) return item.length-2;
-        return 6;
-      }));
-      const fontSize = 20;
-      let itemWidth = fontSize * maxWordLen > item.width ? fontSize * maxWordLen : item.width;
-      //let itemWidth = Math.max([fontSize * maxWordLen, item.width]);
+      // let words = item.paragraph.split("\n");
+      // let maxWordLen = Math.max(words.map((item) => {
+      //   if (item.length>=8) return item.length-2;
+      //   return 6;
+      // }));
+      //const fontSize = 25;
+      let itemWidth = item.width;
+      //let itemWidth = fontSize * maxWordLen > item.width ? fontSize * maxWordLen : item.width;
+      //let itemWidth = fontSize * maxWordLen;
       let itemHeight = item.height;
-      
+      //let itemHeight = fontSize * words.length * 2;
       let element = null;
       switch (item.type) {
         case "AssociativeEntity":
@@ -619,6 +621,21 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
     }
 
     function drawElement() {
+      let len = elementJSON.elements.length;
+      fontSize = Number.MAX_VALUE;
+      for (let i=0;i<len;i++){
+        if (!elementJSON.elements[i]) continue
+        let words = elementJSON.elements[i].paragraph.split("\n");
+        if (words[0] == "") continue;
+        let maxWordLen = Math.max(words.map((item) => {
+          return item.length;
+        }));
+        if (maxWordLen <= 4) maxWordLen = 5;
+        if (fontSize > elementJSON.elements[i].width / (maxWordLen - 4))
+          fontSize = elementJSON.elements[i].width / (maxWordLen - 4);
+      }
+      if (fontSize == Number.MAX_VALUE) fontSize = 15;
+      
       // duyệt mảng JSON từ input, lấy các giá trị id, type, paragraph, x, y gán vào elements
       elements = [];
       elementJSON.elements.forEach((item) => {
@@ -666,7 +683,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
             elementView.addTools(new joint.dia.ToolsView({
               name: 'has-error-button',
               tools: [
-                new elementTools_ErrorButton()
+                new elementTools_ErrorButton(fontSize)
               ]
             }));
             bindingErrorMap[element.id] = errorName;
@@ -687,7 +704,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
             linkView.addTools(new joint.dia.ToolsView({
               name: 'has-error-button',
               tools: [
-                new linkTools_ErrorButton()
+                new linkTools_ErrorButton(fontSize)
               ]
             }));
             bindingErrorMap[mapNumberToLinkId[link.id]] = errorName;

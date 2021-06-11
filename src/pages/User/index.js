@@ -19,6 +19,9 @@ import Diagram from "../../components/Diagram";
 import DiagramList from "../../components/Header/DiagramList";
 import axios from "../../utils/axios";
 
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
 
 //import MessageBox from "../../components/MessageBox";
 
@@ -35,6 +38,8 @@ export default function User() {
     let [currentUser, setCurrentUser] = useState(null);
     let [diagramList, setDiagramList] = useState([]);
     let [currentViewedErd, setCurrentViewedErd] = useState(null); //erd viewed when click view button in list
+
+    let [openLoading, setOpenLoading] = useState(false);
 
     useEffect(async () => {
         let currentUsername = Cookies.get(['currentUsername']);
@@ -139,8 +144,9 @@ export default function User() {
         //console.log(linkPredictions);
 
         formData.append("language", language)
-
+        setOpenLoading(true);
         let api = await axios.post("/api/erds/get-erd", formData);
+        setOpenLoading(false);
         setElementJSON(api.data.elementJSON);
         setLinkJSON(api.data.linkJSON);
         setCurrentViewedErd(null);
@@ -378,8 +384,8 @@ export default function User() {
                             </Route>   
                             <Route path={'/image-to-diagram'}>
                                 <div style={{backgroundColor: 'rgba(230, 246, 254, 1)', display: 'inline-block', width: '30%', height: '90vh'}}>
-                                    <img id='img' src={imgSrc} width='100%' />
-                                    <form encType="multipart/form-data" onSubmit={(e) => {e.preventDefault(); convertImageToDiagram()}} >
+                                    <img id='img' src={imgSrc} width='100%' height='60%'/>
+                                    <form style={{height: '40%'}} encType="multipart/form-data" onSubmit={(e) => {e.preventDefault(); convertImageToDiagram()}} >
                                         <label for="img">Select image:</label>
                                         <input type="file" id="imageFile" name="imageFile" accept="image/*" onChange={(e) => {e.preventDefault(); getImgSrcFromImgFile()}}/>
                                         <br/><br/>
@@ -399,6 +405,14 @@ export default function User() {
                                 <div style={{display: "inline-block", float: 'right', width: '70%'}}>
                                     <Diagram elementJSON={elementJSON} linkJSON={linkJSON} imageWidth={imageWidth} imageHeight={imageHeight} currentUser={currentUser} saveDiagram={saveDiagram}/>
                                 </div>
+                                <Dialog open={openLoading} aria-labelledby="form-dialog-title">
+                                    <DialogContent>
+                                        <img src="https://c.tenor.com/I6kN-6X7nhAAAAAj/loading-buffering.gif" />
+                                        <DialogContentText>
+                                            Converting image to ER diagram, please wait a moment...
+                                        </DialogContentText>
+                                    </DialogContent>
+                                </Dialog>
                                 
                             </Route>
                             <Route path={'/json-to-diagram'}>

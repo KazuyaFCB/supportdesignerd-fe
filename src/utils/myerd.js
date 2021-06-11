@@ -7,7 +7,7 @@ export class AssociativeEntity {
       position: { x: _x, y: _y },
       size: { width: _width, height: _height },
       attrs: {
-        text: { text: _text }
+        text: { text: _text, 'font-size': _fontSize }
       }
     }) {
       this.rect = new joint.shapes.basic.Rect({
@@ -24,7 +24,7 @@ export class AssociativeEntity {
         size: { width: _width, height: _height },
         attrs: {
           path: { d: "M 30 0 L 60 30 30 60 0 30 z", fill: "violet" },
-          text: { text: _text, "ref-y": -35, fill: "white" }
+          text: { text: _text, "ref-y": -35, fill: "white", style: { 'font-size': _fontSize } }
         }
       });
   
@@ -45,7 +45,7 @@ export class PartialKeyAttribute {
       position: { x: _x, y: _y },
       size: { width: _width, height: _height },
       attrs: {
-        text: { text: _text }
+        text: { text: _text, 'font-size': _fontSize }
       }
     }) {
       //let customText = joint.util.breakText(_text, {width: _width - 2*padding, height: _height - 2*padding});
@@ -64,7 +64,7 @@ export class PartialKeyAttribute {
         size: { width: _width, height: _height },
         attrs: { 
           body: { fill: "transparent", "stroke-width": 0 },
-          label: { text: _text, style: { color: 'white', textDecoration: 'underline dashed'} }
+          label: { text: _text, style: { color: 'white', textDecoration: 'underline dashed', 'font-size': _fontSize} }
         }
       });
       this.text.embed(this.partialKeyAttribute);
