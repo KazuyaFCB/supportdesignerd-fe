@@ -18,7 +18,6 @@ import SignUp from "../../components/Header/SignUp";
 import Diagram from "../../components/Diagram";
 import DiagramList from "../../components/Header/DiagramList";
 import axios from "../../utils/axios";
-
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
@@ -65,7 +64,7 @@ export default function User() {
         }
     }, [currentUser]);
 
-    window.onbeforeunload = async function() {
+    window.onbeforeunload = function() {
         sessionStorage.setItem("elementJSON", JSON.stringify(elementJSON));
         sessionStorage.setItem("linkJSON", JSON.stringify(linkJSON));
         sessionStorage.setItem("imgSrc", imgSrc);
@@ -100,16 +99,23 @@ export default function User() {
 
     useScript("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.0");
     useScript("https://unpkg.com/@microsoft/customvision-tfjs@1.2.0");
+    
     async function getImgSrcFromImgFile() {
+        // Ref: https://stackoverflow.com/questions/5802580/html-input-type-file-get-the-image-before-submitting-the-form
         const imageFile = document.getElementById("imageFile").files[0];
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            setImgSrc(e.target.result);
+        };
+        reader.readAsDataURL(imageFile);
         const formData = new FormData();
         formData.append("file", imageFile);
         formData.append("imgId", imgId);
         setOpenLoading(true);
         const api = await axios.post("/api/erds/get-img-src-from-img-file", formData);
         setOpenLoading(false);
-        setImgSrc(api.data.imgSrc);
-        sessionStorage.setItem("imgSrc", api.data.imgSrc);
+        //setImgSrc(api.data.imgSrc);
+        //sessionStorage.setItem("imgSrc", api.data.imgSrc);
         getImageFileSize(imageFile);
         setImgId(api.data.imgId);
         sessionStorage.setItem("imgId", api.data.imgId);
@@ -132,11 +138,11 @@ export default function User() {
 
 
     async function convertImageToDiagram() {
-        if (!imgSrc) {
+        const imageFile = document.getElementById("imageFile").files[0];
+        if (!imageFile) {
             alert("Haven't uploaded the file yet")
             return;
         }
-        const imageFile = document.getElementById("imageFile").files[0];
         // ref: https://stackoverflow.com/questions/42318829/html5-input-type-file-read-image-data
         let imageData = new Image();
         imageData.src = window.URL.createObjectURL(imageFile);
@@ -148,19 +154,15 @@ export default function User() {
         //console.log(cardinalPredictions); 
 
         //getImageFileSize(imageFile);
-        const formData = new FormData();
+        //const formData = new FormData();
         //formData.append("file", imageFile);
-        formData.append("size", [imageWidth, imageHeight]);
-        formData.append("shape_predictions", JSON.stringify(shapePredictions));
-        //formData.append("link_predictions", JSON.stringify(linkPredictions));
-        //formData.append("cardinal_predictions", JSON.stringify(cardinalPredictions));
-        //console.log(shapePredictions);
-        //console.log(linkPredictions);
-
-        formData.append("language", language)
-        formData.append("imgId", imgId)
+        // formData.append("size", [imageWidth, imageHeight]);
+        // formData.append("shape_predictions", JSON.stringify(shapePredictions));
+        // formData.append("language", language)
+        // formData.append("imgId", imgId)
         setOpenLoading(true);
-        let api = await axios.post("/api/erds/get-erd", formData);
+        //let api = await axios.post("/api/erds/get-erd", formData);
+        let api = await axios.post("/api/erds/get-erd", {size: imageWidth + "," + imageHeight, shape_predictions: JSON.stringify(shapePredictions), language: language, imgId: imgId});
         setOpenLoading(false);
         setElementJSON(api.data.elementJSON);
         setLinkJSON(api.data.linkJSON);
@@ -394,7 +396,7 @@ export default function User() {
                             </Route>
                             <Route path={'/diagram-list'}>
                                 <div>
-                                    <DiagramList currentUser={currentUser} diagramList={diagramList} setDiagramList={setDiagramList} setCurrentViewedErd={setCurrentViewedErd} setElementJSON={setElementJSON} setLinkJSON={setLinkJSON}/>
+                                    <DiagramList currentUser={currentUser} diagramList={diagramList} setDiagramList={setDiagramList} setCurrentViewedErd={setCurrentViewedErd} setElementJSON={setElementJSON} setLinkJSON={setLinkJSON} setImgSrc={setImgSrc}/>
                                 </div>
                             </Route>   
                             <Route path={'/image-to-diagram'}>

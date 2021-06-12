@@ -4,7 +4,7 @@ import $ from 'jquery';
 import './index.css';
 import axios from '../../../utils/axios';
 
-export default function DiagramList({currentUser, diagramList, setDiagramList, setCurrentViewedErd, setElementJSON, setLinkJSON}) {
+export default function DiagramList({currentUser, diagramList, setDiagramList, setCurrentViewedErd, setElementJSON, setLinkJSON, setImgSrc}) {
     
     let [diagramListView, setDiagramListView] = useState(null);
     let [paginationView, setPaginationView] = useState(null);
@@ -117,6 +117,7 @@ export default function DiagramList({currentUser, diagramList, setDiagramList, s
         setCurrentViewedErd(diagramList[index]);
         setElementJSON(diagramList[index].elementJSON);
         setLinkJSON(diagramList[index].linkJSON);
+        setImgSrc(diagramList[index].imgSrc);
     }
 
     async function deleteDiagram(deleteId) {
