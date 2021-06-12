@@ -41,6 +41,8 @@ export default function User() {
 
     let [openLoading, setOpenLoading] = useState(false);
 
+    let [imgId, setImgId] = useState("000000000000000000000000");
+
     useEffect(async () => {
         let currentUsername = Cookies.get(['currentUsername']);
         if (currentUsername) {
@@ -50,10 +52,11 @@ export default function User() {
         const elementJSONStr = sessionStorage.getItem("elementJSON");
         const linkJSONStr = sessionStorage.getItem("linkJSON");
         const imgSrcStr = sessionStorage.getItem("imgSrc");
+        const imgIdStr = sessionStorage.getItem("imgId");
         if (elementJSONStr) setElementJSON(JSON.parse(elementJSONStr));
         if (linkJSONStr) setLinkJSON(JSON.parse(linkJSONStr));
-        if (imgSrcStr) setImgSrc(JSON.parse(imgSrcStr));
-        
+        if (imgSrcStr) setImgSrc(imgSrcStr);
+        if (imgIdStr) setImgId(imgIdStr);
     }, []);
     useEffect(async() => {
         if (currentUser) {
@@ -62,9 +65,15 @@ export default function User() {
         }
     }, [currentUser]);
 
-    window.onbeforeunload = function() {
+    window.onbeforeunload = async function() {
         sessionStorage.setItem("elementJSON", JSON.stringify(elementJSON));
         sessionStorage.setItem("linkJSON", JSON.stringify(linkJSON));
+        sessionStorage.setItem("imgSrc", imgSrc);
+        sessionStorage.setItem("imgId", imgId);
+    }  
+
+    window.onunload = async function() {
+        await axios.get('/api/tmp-uploaded-imgs/delete-tmp-uploaded-img-by-id/' + imgId);
     }
 
     const useScript = url => {
@@ -95,12 +104,15 @@ export default function User() {
         const imageFile = document.getElementById("imageFile").files[0];
         const formData = new FormData();
         formData.append("file", imageFile);
+        formData.append("imgId", imgId);
         setOpenLoading(true);
         const api = await axios.post("/api/erds/get-img-src-from-img-file", formData);
         setOpenLoading(false);
         setImgSrc(api.data.imgSrc);
         sessionStorage.setItem("imgSrc", api.data.imgSrc);
         getImageFileSize(imageFile);
+        setImgId(api.data.imgId);
+        sessionStorage.setItem("imgId", api.data.imgId);
     }
 
      // GET THE IMAGE WIDTH AND HEIGHT USING fileReader() API.
@@ -137,7 +149,7 @@ export default function User() {
 
         //getImageFileSize(imageFile);
         const formData = new FormData();
-        formData.append("file", imageFile);
+        //formData.append("file", imageFile);
         formData.append("size", [imageWidth, imageHeight]);
         formData.append("shape_predictions", JSON.stringify(shapePredictions));
         //formData.append("link_predictions", JSON.stringify(linkPredictions));
@@ -146,6 +158,7 @@ export default function User() {
         //console.log(linkPredictions);
 
         formData.append("language", language)
+        formData.append("imgId", imgId)
         setOpenLoading(true);
         let api = await axios.post("/api/erds/get-erd", formData);
         setOpenLoading(false);
