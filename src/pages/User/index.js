@@ -18,9 +18,7 @@ import SignUp from "../../components/Header/SignUp";
 import Diagram from "../../components/Diagram";
 import DiagramList from "../../components/Header/DiagramList";
 import axios from "../../utils/axios";
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
+import WaitingDialog from "../../components/WaitingDialog";
 
 //import MessageBox from "../../components/MessageBox";
 
@@ -103,6 +101,12 @@ export default function User() {
     async function getImgSrcFromImgFile() {
         // Ref: https://stackoverflow.com/questions/5802580/html-input-type-file-get-the-image-before-submitting-the-form
         const imageFile = document.getElementById("imageFile").files[0];
+        if (!imageFile) return;
+        if (imageFile.size+128 >= 4*1024*1024) {
+            document.getElementById("imageFile").value = null;
+            alert("Please choose file size less than 4MB");
+            return;
+        }
         var reader = new FileReader();
         reader.onload = function (e) {
             setImgSrc(e.target.result);
@@ -118,7 +122,6 @@ export default function User() {
         //sessionStorage.setItem("imgSrc", api.data.imgSrc);
         getImageFileSize(imageFile);
         setImgId(api.data.imgId);
-        sessionStorage.setItem("imgId", api.data.imgId);
     }
 
      // GET THE IMAGE WIDTH AND HEIGHT USING fileReader() API.
@@ -171,7 +174,7 @@ export default function User() {
 
     async function getShapePredictions(imageData) {
         const model = await automl.loadObjectDetection('/models/shape/model.json');
-        const options = {score: 0.3, iou: 0.5, topk: 50};
+        const options = {score: 0.3, iou: 0.5, topk: 100};
         const predictions = await model.detect(imageData, options);
         return predictions;
     }
@@ -343,7 +346,9 @@ export default function User() {
                 if (api.data) {
                     alert("Update diagram successfully");
                 }
+                setOpenLoading(true);
                 const api2 = await axios.get('/api/erds/find-erd-by-userIdCreated/' + currentUser._id);
+                setOpenLoading(false);
                 setDiagramList(api2.data.erdList);
                 return;
             }
@@ -357,7 +362,9 @@ export default function User() {
         if (api.data) {
             alert("Save diagram successfully");
         }
+        setOpenLoading(true);
         const api2 = await axios.get('/api/erds/find-erd-by-userIdCreated/' + currentUser._id);
+        setOpenLoading(false);
         setDiagramList(api2.data.erdList);
     }
 
@@ -396,7 +403,8 @@ export default function User() {
                             </Route>
                             <Route path={'/diagram-list'}>
                                 <div>
-                                    <DiagramList currentUser={currentUser} diagramList={diagramList} setDiagramList={setDiagramList} setCurrentViewedErd={setCurrentViewedErd} setElementJSON={setElementJSON} setLinkJSON={setLinkJSON} setImgSrc={setImgSrc}/>
+                                    <DiagramList currentUser={currentUser} diagramList={diagramList} setDiagramList={setDiagramList} setCurrentViewedErd={setCurrentViewedErd} setElementJSON={setElementJSON} setLinkJSON={setLinkJSON} setImgSrc={setImgSrc} setOpenLoading={setOpenLoading}/>
+                                    <WaitingDialog openLoading={openLoading}/>
                                 </div>
                             </Route>   
                             <Route path={'/image-to-diagram'}>
@@ -422,14 +430,7 @@ export default function User() {
                                 <div style={{display: "inline-block", float: 'right', width: '70%'}}>
                                     <Diagram elementJSON={elementJSON} linkJSON={linkJSON} imageWidth={imageWidth} imageHeight={imageHeight} currentUser={currentUser} saveDiagram={saveDiagram}/>
                                 </div>
-                                <Dialog open={openLoading} aria-labelledby="form-dialog-title">
-                                    <DialogContent>
-                                        <img src="https://c.tenor.com/I6kN-6X7nhAAAAAj/loading-buffering.gif" />
-                                        <DialogContentText>
-                                            Processing your request, please wait a moment...
-                                        </DialogContentText>
-                                    </DialogContent>
-                                </Dialog>
+                                <WaitingDialog openLoading={openLoading}/>
                                 
                             </Route>
                             <Route path={'/json-to-diagram'}>

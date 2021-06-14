@@ -4,7 +4,7 @@ import $ from 'jquery';
 import './index.css';
 import axios from '../../../utils/axios';
 
-export default function DiagramList({currentUser, diagramList, setDiagramList, setCurrentViewedErd, setElementJSON, setLinkJSON, setImgSrc}) {
+export default function DiagramList({currentUser, diagramList, setDiagramList, setCurrentViewedErd, setElementJSON, setLinkJSON, setImgSrc, setOpenLoading}) {
     
     let [diagramListView, setDiagramListView] = useState(null);
     let [paginationView, setPaginationView] = useState(null);
@@ -19,7 +19,9 @@ export default function DiagramList({currentUser, diagramList, setDiagramList, s
     
     useEffect(async() => {
         if (currentUser) {
+            setOpenLoading(true);
             const api = await axios.get('/api/erds/find-erd-by-userIdCreated/' + currentUser._id);
+            setOpenLoading(false);
             setDiagramList(api.data.erdList);
         }
     }, []);
