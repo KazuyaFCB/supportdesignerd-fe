@@ -124,7 +124,9 @@ export default function DiagramList({currentUser, diagramList, setDiagramList, s
 
     async function deleteDiagram(deleteId) {
         let index = deleteId.substr(2);
+        setOpenLoading(true);
         const api = await axios.get('/api/erds/delete-erd-by-id/' + diagramList[index]._id);
+        setOpenLoading(false);
         let tmpDiagramList = diagramList.slice();
         tmpDiagramList.splice(index, 1);
         setDiagramList(tmpDiagramList);

@@ -342,7 +342,9 @@ export default function User() {
             let isUpdate = window.confirm("This diagram is exist. Do you want to update it?");
             if (isUpdate) {
                 while(!erdName) erdName = prompt("Please type new ERD name:", currentViewedErd.erdName);
+                setOpenLoading(true);
                 const api = await axios.post("/api/erds/update-erd-by-id", {"erdId": currentViewedErd._id, "erdName": erdName, "imgSrc": imgSrc, "elementJSON": JSON.stringify(elementJSON), "linkJSON": JSON.stringify(linkJSON), "updatedDate": new Date()});
+                setOpenLoading(false);
                 if (api.data) {
                     alert("Update diagram successfully");
                 }
@@ -358,7 +360,9 @@ export default function User() {
         } else {
             while(!erdName) erdName = prompt("Please type new ERD name:");
         }
+        setOpenLoading(true);
         const api = await axios.post("/api/erds/create-erd", {"userIdCreated": currentUser._id, "erdName": erdName, "imgSrc": imgSrc, "elementJSON": JSON.stringify(elementJSON), "linkJSON": JSON.stringify(linkJSON), "createdDate": new Date(), "updatedDate": new Date()});
+        setOpenLoading(false);
         if (api.data) {
             alert("Save diagram successfully");
         }
