@@ -11,7 +11,7 @@ export class elementTools_Boundary {
 export class elementTools_RemoveButton {
     constructor(fontSize) {
         return new joint.elementTools.Remove({
-            x: '50%',
+            x: '100%',
             y: '50%',
             markup: [{
                 tagName: 'circle',
@@ -86,7 +86,7 @@ export class linkTools_RemoveButton {
     constructor(fontSize) {
         return new joint.linkTools.Remove({
             //distance: 20
-            x: '50%',
+            x: '80%',
             y: '50%',
             markup: [{
                 tagName: 'circle',

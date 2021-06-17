@@ -35,8 +35,8 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
     let paper = null;
     let erd = joint.shapes.erd;
     
-    let fontSize = 20;
-    const elementHeight = 40;
+    let fontSize = 40;
+    const elementHeight = 80;
     let zoom = 0.5; // 40%
 
     let elements = [];
@@ -173,7 +173,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
     // CREATE element when click on panel
     async function createElement(panelItem, panelIndex) {
       if (panelIndex <= 9) {
-        let item = { id: elementJSON.elements.length + 1, x: 0, y: 0, type: panelItem.title, paragraph: "      ", width: fontSize * 6, height: fontSize * 4};
+        let item = { id: elementJSON.elements.length + 1, x: 0, y: 0, type: panelItem.title, paragraph: "      ", width: 200, height: 100};
         elementJSON.elements.push(item);
         updateInputElementJSON();
         if (!graph) {
@@ -330,7 +330,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
         }
         addClickOutsideTextBlockEvent("element");
       });
-      paper.on('link:pointerdblclick', function(linkView, evt) {
+      paper.on('link:pointerdblclick', function(linkView) {
         objectSelectedToUpdate = linkView.model;
         let linkX = (elementJSON.elements[linkJSON.links[mapLinkIdToNumber[objectSelectedToRead.id] - 1].sourceId - 1].x + elementJSON.elements[linkJSON.links[mapLinkIdToNumber[objectSelectedToRead.id] - 1].targetId - 1].x) / 2;
         let linkY = (elementJSON.elements[linkJSON.links[mapLinkIdToNumber[objectSelectedToRead.id] - 1].sourceId - 1].y + elementJSON.elements[linkJSON.links[mapLinkIdToNumber[objectSelectedToRead.id] - 1].targetId - 1].y) / 2;
@@ -373,7 +373,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
 
     function updateObjectParagraph(elementOrLink) {
       let newObjectParagraph = editText.value;
-      if (newObjectParagraph == "") {
+      if (newObjectParagraph == "" && elementOrLink == "element") {
         newObjectParagraph = "      ";
       }
       if (objectSelectedToUpdate.resize && elementJSON.elements[objectSelectedToUpdate.prop('id') - 1].type !== "AssociativeEntity" && elementJSON.elements[objectSelectedToUpdate.prop('id') - 1].type !== "PartialKeyAttribute")
@@ -396,6 +396,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
         if (linkJSON.links[mapLinkIdToNumber[objectSelectedToUpdate.id] - 1]) {
           linkJSON.links[mapLinkIdToNumber[objectSelectedToUpdate.id] - 1].paragraph = newObjectParagraph;
           updateInputLinkJSON();
+          changeBindingErrorList();
         }
       }
 
@@ -511,6 +512,14 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
         drawDiagram();
       } else {
         let link = createLinkFromItem(item);
+        link.addTo(graph).set({
+          labels: [{
+              attrs: {
+                  text: { text: item.paragraph, fill: 'blue', 'font-size': fontSize, 'font-weight': 'bold' },
+                  rect: { fill: 'none' }
+              }
+          }]
+        })
         graph.addCell(link);
         changeBindingErrorList();
         mapLinkIdToNumber[graph.getLastCell().id] = item.id;
@@ -522,8 +531,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
     function createElementFromItem(item) {
       // let words = item.paragraph.split("\n");
       // let maxWordLen = Math.max(words.map((item) => {
-      //   if (item.length>=8) return item.length-2;
-      //   return 6;
+      //   return item.length;
       // }));
       //const fontSize = 25;
       let itemWidth = item.width;
@@ -630,11 +638,11 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
         let maxWordLen = Math.max(words.map((item) => {
           return item.length;
         }));
-        //if (maxWordLen <= 0) maxWordLen = 1;
-        if (fontSize > elementJSON.elements[i].width / (maxWordLen))
-          fontSize = elementJSON.elements[i].width / (maxWordLen);
+        //if (maxWordLen <= 2) maxWordLen = 3;
+        if (fontSize > elementJSON.elements[i].width / (maxWordLen) + 10)
+          fontSize = elementJSON.elements[i].width / (maxWordLen) + 10;
       }
-      if (fontSize == Number.MAX_VALUE) fontSize = 15;
+      if (fontSize == Number.MAX_VALUE) fontSize = 30;
       
       // duyệt mảng JSON từ input, lấy các giá trị id, type, paragraph, x, y gán vào elements
       elements = [];
@@ -677,7 +685,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
       let result = []
       elementJSON.elements.forEach((element) => {
         if (element) {
-          let errorName = checkElementBindingError(element, linkJSON);
+          let errorName = checkElementBindingError(element, elementJSON, linkJSON);
           let elementView = graph.getCell(element.id).findView(paper);
           if (errorName) {
             elementView.addTools(new joint.dia.ToolsView({
@@ -710,6 +718,9 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
             bindingErrorMap[mapNumberToLinkId[link.id]] = errorName;
             result.push(errorName);
           }
+          else {
+            linkView.removeTools();
+          }
         }
       })
       //setBindingErrorList(result);
@@ -731,6 +742,12 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
 
       changeBindingErrorList();
     }
+
+    function newDiagram(){
+      initDiagram();
+      window.location.reload();
+    }
+
     // set height that use viewport percentages
     //https://stackoverflow.com/questions/18934141/set-div-height-to-fit-to-the-browser-using-css/18934195
     return (
@@ -752,6 +769,11 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
             onChange={(event, value) => { zoom = value; paper.scale(zoom, zoom); }}
           />
           <ul style={{ marginLeft: '-50px', overflowY: 'scroll', overflowX: 'hidden', listStyleType: 'none'}} component="nav" aria-label="secondary mailbox folders" >
+            <li>
+              <Button style={{height:'30px', width: '90px'}} variant="contained" color="secondary" onClick={newDiagram}>
+                NEW
+              </Button>
+            </li>
             <li>
               <Button style={{height:'30px', width: '90px'}} variant="contained" color="secondary" hidden={!currentUser} onClick={saveDiagram}>
                 SAVE
