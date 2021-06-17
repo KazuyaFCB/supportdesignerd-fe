@@ -55,11 +55,11 @@ export function checkElementBindingError(element, elementJSON, linkJSON) {
             return errorName;
         }
 
-        if(connectedLinkCount>3){
-            let errorName = "Lỗi mối kết hợp " + element.paragraph + " có nhiều hơn ba liên kết tới";
-            if(!element.paragraph) errorName += " và không có nội dung";
-            return errorName;
-        }
+        // if(connectedLinkCount>3){
+        //     let errorName = "Lỗi mối kết hợp " + element.paragraph + " có nhiều hơn ba liên kết tới";
+        //     if(!element.paragraph) errorName += " và không có nội dung";
+        //     return errorName;
+        // }
     }
 
     // Lỗi thuộc tính đứng một mình hoặc liên kết tới nhiều thực thể (mối kết hợp)
