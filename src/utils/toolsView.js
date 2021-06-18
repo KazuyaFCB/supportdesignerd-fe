@@ -85,9 +85,7 @@ export class linkTools_Vertices {
 export class linkTools_RemoveButton {
     constructor(fontSize) {
         return new joint.linkTools.Remove({
-            //distance: 20
-            x: '85%',
-            y: '85%',
+            distance: '80%',
             markup: [{
                 tagName: 'circle',
                 selector: 'button',
@@ -118,9 +116,7 @@ export class linkTools_RemoveButton {
 export class linkTools_ErrorButton {
     constructor(fontSize) {
         return new joint.linkTools.Button({
-            //distance: '35%',
-            x: '15%',
-            y: '15%',
+            distance: '20%',
             markup: [{
                 tagName: 'circle',
                 selector: 'button',

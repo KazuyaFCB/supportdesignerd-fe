@@ -17,14 +17,14 @@ export default function DiagramList({currentUser, diagramList, setDiagramList, s
     let currentStartPage = 1;
     let currentEndPage = numShownPage;
     
-    useEffect(async() => {
-        if (currentUser) {
-            setOpenLoading(true);
-            const api = await axios.get('/api/erds/find-erd-by-userIdCreated/' + currentUser._id);
-            setOpenLoading(false);
-            setDiagramList(api.data.erdList);
-        }
-    }, []);
+    // useEffect(async() => {
+    //     if (currentUser) {
+    //         setOpenLoading(true);
+    //         const api = await axios.get('/api/erds/find-erd-by-userIdCreated/' + currentUser._id);
+    //         setOpenLoading(false);
+    //         setDiagramList(api.data.erdList);
+    //     }
+    // }, []);
 
     useEffect(() => {
         if (diagramList && diagramList.length > 0) {

@@ -41,11 +41,6 @@ export default function User() {
     let [imgId, setImgId] = useState("000000000000000000000000");
 
     useEffect(async () => {
-        let currentUsername = Cookies.get(['currentUsername']);
-        if (currentUsername) {
-            const api = await axios.get("/api/users/find-user-by-username/" + currentUsername);
-            setCurrentUser(api.data);
-        }
         const elementJSONStr = sessionStorage.getItem("elementJSON");
         const linkJSONStr = sessionStorage.getItem("linkJSON");
         const imgSrcStr = sessionStorage.getItem("imgSrc");
@@ -54,6 +49,11 @@ export default function User() {
         if (linkJSONStr) setLinkJSON(JSON.parse(linkJSONStr));
         if (imgSrcStr) setImgSrc(imgSrcStr);
         if (imgIdStr) setImgId(imgIdStr);
+        let currentUsername = Cookies.get(['currentUsername']);
+        if (currentUsername) {
+            const api = await axios.get("/api/users/find-user-by-username/" + currentUsername);
+            setCurrentUser(api.data);
+        }
     }, []);
     useEffect(async() => {
         if (currentUser) {
@@ -69,8 +69,8 @@ export default function User() {
         sessionStorage.setItem("imgId", imgId);
     }  
 
-    window.onunload = async function() {
-        await axios.get('/api/tmp-uploaded-imgs/delete-tmp-uploaded-img-by-id/' + imgId);
+    window.onunload = function() {
+        axios.get('/api/tmp-uploaded-imgs/delete-tmp-uploaded-img-by-id/' + imgId);
     }
 
     const useScript = url => {
@@ -170,7 +170,7 @@ export default function User() {
         setElementJSON(api.data.elementJSON);
         setLinkJSON(api.data.linkJSON);
         setCurrentViewedErd(null);
-        //window.location.reload();
+        window.location.reload();
     }
 
     async function getShapePredictions(imageData) {

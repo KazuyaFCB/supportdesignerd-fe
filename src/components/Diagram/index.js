@@ -379,7 +379,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
       if (objectSelectedToUpdate.resize && elementJSON.elements[objectSelectedToUpdate.prop('id') - 1].type !== "AssociativeEntity" && elementJSON.elements[objectSelectedToUpdate.prop('id') - 1].type !== "PartialKeyAttribute")
         objectSelectedToUpdate.resize(newObjectParagraph.length * fontSize, elementHeight);
       
-      if (elementOrLink === "element" && elementJSON.elements[objectSelectedToUpdate.prop('id') - 1].type === "PartialKeyAttribute") {
+      if (elementOrLink === "element" && elementJSON.elements[objectSelectedToUpdate.prop('id') - 1] && elementJSON.elements[objectSelectedToUpdate.prop('id') - 1].type === "PartialKeyAttribute") {
         objectSelectedToUpdate.attr('label/text', newObjectParagraph);
       } else {
         objectSelectedToUpdate.attr('text/text', newObjectParagraph);
