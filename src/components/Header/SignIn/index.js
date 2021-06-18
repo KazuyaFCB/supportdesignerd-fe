@@ -70,11 +70,11 @@ export default function SignIn() {
                 <input type="password" name="password" placeholder="Password" />
                 <input type="submit" name="signup_submit" value="SIGN IN" />
                 <br/><br/>
-                <a style={{color: 'blue'}} href="/forget-password">Quên mật khẩu</a>
+                {/* <a style={{color: 'blue'}} href="/forget-password">Quên mật khẩu</a> */}
             </form>
             
 
-            <div class="right">
+            {/* <div class="right">
                 <span class="loginwith" style={{color: 'black'}}>Sign in with<br />social network</span>
 
                 <button class="social-signin facebook">
@@ -84,7 +84,7 @@ export default function SignIn() {
                     <a href={signInWithGooglePath}>Sign in with Google+</a>
                 </button>
             </div>
-            <div class="or">OR</div>
+            <div class="or">OR</div> */}
         </div>
     );
 }

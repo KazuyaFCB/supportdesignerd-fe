@@ -76,7 +76,7 @@ export default function SignUp() {
                 <input type="submit" name="signup_submit" value="SIGN UP" />
             </form>
 
-            <div class="right">
+            {/* <div class="right">
                 <span class="loginwith" style={{color: 'black'}}>Sign in with<br />social network</span>
 
                 <button class="social-signin facebook">
@@ -86,7 +86,7 @@ export default function SignUp() {
                     <a href={signInWithGooglePath}>Sign in with Google+</a>
                 </button>
             </div>
-            <div class="or">OR</div>
+            <div class="or">OR</div> */}
         </div>
     );
 }

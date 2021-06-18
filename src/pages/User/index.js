@@ -170,6 +170,7 @@ export default function User() {
         setElementJSON(api.data.elementJSON);
         setLinkJSON(api.data.linkJSON);
         setCurrentViewedErd(null);
+        //window.location.reload();
     }
 
     async function getShapePredictions(imageData) {
@@ -412,7 +413,7 @@ export default function User() {
                                 </div>
                             </Route>   
                             <Route path={'/image-to-diagram'}>
-                                <div style={{backgroundColor: 'rgba(230, 246, 254, 1)', display: 'inline-block', width: '30%', height: '90vh'}}>
+                                <div style={{backgroundColor: 'rgba(220, 250, 254, 1)', display: 'inline-block', width: '30%', height: '90vh'}}>
                                     <img id='img' src={imgSrc} width='100%' height='60%'/>
                                     <form style={{height: '40%'}} encType="multipart/form-data" onSubmit={(e) => {e.preventDefault(); convertImageToDiagram()}} >
                                         <label for="img">Select image:</label>

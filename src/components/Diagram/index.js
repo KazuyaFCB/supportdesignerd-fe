@@ -107,7 +107,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
       }
     ]
 
-    useEffect(async() => {
+    useEffect(() => {
       updateInputElementJSON();
       updateInputLinkJSON();
       drawDiagram();
@@ -334,13 +334,13 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
         objectSelectedToUpdate = linkView.model;
         let linkX = (elementJSON.elements[linkJSON.links[mapLinkIdToNumber[objectSelectedToRead.id] - 1].sourceId - 1].x + elementJSON.elements[linkJSON.links[mapLinkIdToNumber[objectSelectedToRead.id] - 1].targetId - 1].x) / 2;
         let linkY = (elementJSON.elements[linkJSON.links[mapLinkIdToNumber[objectSelectedToRead.id] - 1].sourceId - 1].y + elementJSON.elements[linkJSON.links[mapLinkIdToNumber[objectSelectedToRead.id] - 1].targetId - 1].y) / 2;
-        displayTextBlockToType(linkX, linkY, 100, 50, linkView.model.label()['attrs']['text']['text']);
+        displayTextBlockToType(linkX, linkY, (linkView.model.label()['attrs']['text']['text'].length + 5) * fontSize, elementHeight, linkView.model.label()['attrs']['text']['text']);
         addClickOutsideTextBlockEvent("link");
       });
     }
 
     function displayTextBlockToType(objectX, objectY, objectWidth, objectHeight, text) {
-      let contentHTML = '<div><input id="editText" type="text" style="background-color:white; color:orange; font-weight:bold;" value="' + text + '"/></div>';
+      let contentHTML = '<div><input id="editText" type="text" style="background-color:white; color:orange; font-weight:bold; font-size:' + fontSize +  'px" value="' + text + '"/></div>';
       editTextBlock = new joint.shapes.basic.TextBlock({
         position: { x: objectX, y: objectY},
         size: { width: objectWidth, height: objectHeight },
@@ -546,7 +546,9 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
             id: item.id,
             position: { x: item.x, y: item.y },
             size: { width: itemWidth, height: itemHeight },
-            attrs: { text: { text: item.paragraph, 'font-size': fontSize } }
+            attrs: { 
+              text: { text: item.paragraph, fill: "black", 'font-size': fontSize } 
+            }
           });
           element.addTo(graph);
           element = element.diamond;
@@ -556,10 +558,32 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
             id: item.id,
             position: { x: item.x, y: item.y },
             size: { width: itemWidth, height: itemHeight },
-            attrs: { text: { text: item.paragraph, 'font-size': fontSize } }
+            attrs: { 
+              text: { text: item.paragraph, fill: "red", 'font-size': fontSize }
+            }
           });
           element.addTo(graph);
           element = element.text;
+          break;
+        case "Key":
+          element = {
+            id: item.id,
+            type: "erd." + item.type,
+            position: { x: item.x, y: item.y },
+            size: { width: itemWidth, height: itemHeight },
+            attrs: { 
+              text: { text: item.paragraph, fill: "red", 'font-size': fontSize, 'font-weight': 'bold' },
+              //https://github.com/clientIO/joint/blob/master/demo/erd/src/erd.js
+              '.outer': {
+                fill: 'white',
+                stroke: 'black'
+              },
+              '.inner': {
+                  fill: 'white',
+                  stroke: 'black'
+              } 
+            }
+          };
           break;
         default:
           element = {
@@ -568,7 +592,16 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
             position: { x: item.x, y: item.y },
             size: { width: itemWidth, height: itemHeight },
             attrs: { 
-              text: { text: item.paragraph, fill: "white", 'font-size': fontSize, 'font-weight': 'bold' } 
+              text: { text: item.paragraph, fill: "black", 'font-size': fontSize, 'font-weight': 'bold' },
+              //https://github.com/clientIO/joint/blob/master/demo/erd/src/erd.js
+              '.outer': {
+                fill: 'white',
+                stroke: 'black'
+              },
+              '.inner': {
+                  fill: 'white',
+                  stroke: 'black'
+              } 
             }
           };
       }
@@ -599,11 +632,10 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
     }
 
     function initDiagram() {
-      if (graph || paper) {
-        graph.clear();
-        paper.remove();
-      }
-
+      // if (graph || paper) {
+      //   graph.clear();
+      //   paper.remove();
+      // }      
       graph = new joint.dia.Graph();
       
       customizeGraph(graph);
@@ -753,7 +785,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
     return (
       <div>
         <div style={{display: 'inline-block', float: 'left', width: '85%'}}>
-          <div style={{backgroundColor: 'rgba(255, 240, 255, 1)', height: '90vh', overflow: 'scroll'}}>
+          <div style={{backgroundColor: 'rgba(230, 246, 254, 1)', height: '90vh', overflow: 'scroll'}}>
             <div id="paper"></div>
           </div>
         </div>
@@ -770,10 +802,11 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
           />
           <ul style={{ marginLeft: '-50px', overflowY: 'scroll', overflowX: 'hidden', listStyleType: 'none'}} component="nav" aria-label="secondary mailbox folders" >
             <li>
-              <Button style={{height:'30px', width: '90px'}} variant="contained" color="secondary" onClick={newDiagram}>
+              <Button style={{height:'30px', width: '90px'}} variant="contained" color="primary" onClick={() => newDiagram()}>
                 NEW
               </Button>
             </li>
+            <li><br/></li>
             <li>
               <Button style={{height:'30px', width: '90px'}} variant="contained" color="secondary" hidden={!currentUser} onClick={saveDiagram}>
                 SAVE
