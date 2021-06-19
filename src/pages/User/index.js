@@ -55,12 +55,12 @@ export default function User() {
             setCurrentUser(api.data);
         }
     }, []);
-    useEffect(async() => {
-        if (currentUser) {
-            const api = await axios.get('/api/erds/find-erd-by-userIdCreated/' + currentUser._id);
-            setDiagramList(api.data.erdList);
-        }
-    }, [currentUser]);
+    // useEffect(async() => {
+    //     if (currentUser) {
+    //         const api = await axios.get('/api/erds/find-erd-by-userIdCreated/' + currentUser._id);
+    //         setDiagramList(api.data.erdList);
+    //     }
+    // }, [currentUser]);
 
     window.onbeforeunload = function() {
         sessionStorage.setItem("elementJSON", JSON.stringify(elementJSON));

@@ -714,10 +714,29 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
 
     function changeBindingErrorList() {
       //setBindingErrorList([]);
+      let attributeMap = [];
+      elementJSON.elements.forEach((element) => {
+        attributeMap.push([]);
+      });
+      linkJSON.links.forEach((link) => {
+        if (link){
+          let element = elementJSON.elements[link.sourceId - 1];
+          if (element){
+            if (element.type==="Attribute" || element.type==="Normal" || element.type==="Key" || element.type==="Multivalued" || element.type==="Derived" || element.type==="PartialKeyAttribute")
+              attributeMap[element.id - 1].push(link);
+          }
+          element = elementJSON.elements[link.targetId - 1];
+          if (element){
+            if (element.type==="Attribute" || element.type==="Normal" || element.type==="Key" || element.type==="Multivalued" || element.type==="Derived" || element.type==="PartialKeyAttribute")
+              attributeMap[element.id - 1].push(link);
+          }
+        }
+      });
+
       let result = []
       elementJSON.elements.forEach((element) => {
         if (element) {
-          let errorName = checkElementBindingError(element, elementJSON, linkJSON);
+          let errorName = checkElementBindingError(element, elementJSON, linkJSON, attributeMap);
           let elementView = graph.getCell(element.id).findView(paper);
           if (errorName) {
             elementView.addTools(new joint.dia.ToolsView({

@@ -72,7 +72,7 @@ export class PartialKeyAttribute {
         size: { width: _width, height: _height },
         attrs: { 
           body: { fill: "transparent", "stroke-width": 0 },
-          label: { text: _text, style: { color: _fill, textDecoration: 'underline dashed', 'font-size': _fontSize} }
+          label: { text: _text, style: { color: _fill, textDecoration: 'underline dashed', 'font-size': _fontSize, 'font-weight': 'bold'} }
         }
       });
       this.text.embed(this.partialKeyAttribute);

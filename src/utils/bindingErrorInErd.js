@@ -1,16 +1,10 @@
-export function checkElementBindingError(element, elementJSON, linkJSON) {
+export function checkElementBindingError(element, elementJSON, linkJSON, attributeMap) {
     if (!linkJSON || !element) return "";
     element.paragraph = element.paragraph.trim();
-    // let array_errors = [' Loi moi ket hop dung mot minh',
-    // ' Loi moi ket hop chi co mot lien ket toi',
-    // ' Loi thuoc tinh dung mot minh',
-    // ' Loi thuoc tinh ket hop toi nhieu thuc the hoac moi ket hop',
-    // ' Loi moi ket hop yeu ket hop voi thuc the yeu nhung lai ve lien ket don',
-    // ' Loi moi ket hop yeu ket hop voi thuc the manh nhung lai ve lien ket doi',
-    // ' Loi moi ket hop manh voi thuc the manh nhung lai ve lien ket doi',
-    // ' Loi moi ket hop manh voi thuc the yeu nhung lai ve lien ket doi',
-    // ' Loi hai thuc the lien ket truc tiep voi nhau ma khong co moi ket hop'];
-    
+    // Lỗi mối kết hợp đứng một mình hoặc chỉ có một liên kết tới
+    // Lỗi (CỤM) thuộc tính đứng một mình hoặc liên kết tới nhiều thực thể (mối kết hợp)
+    // Lỗi thuộc tính/mối kết hợp/thực thể  không có nội dung
+     
     let connectedLinkCount = 0;
     let isAloneAttribute = true;
     linkJSON.links.forEach((link) => {
@@ -41,7 +35,7 @@ export function checkElementBindingError(element, elementJSON, linkJSON) {
         }
     })
 
-    // Lỗi mối kết hợp đứng một mình hoặc có một liên kết tới hoặc có nhiều hơn ba liên kết tới
+    // Lỗi mối kết hợp đứng một mình hoặc chỉ có một liên kết tới
     if(element.type==="Relationship" || element.type==="IdentifyingRelationship" || element.type==="ISA"){
         if(connectedLinkCount===0){
             let errorName = "Lỗi mối kết hợp " + element.paragraph + " đứng một mình";
@@ -62,7 +56,7 @@ export function checkElementBindingError(element, elementJSON, linkJSON) {
         // }
     }
 
-    // Lỗi thuộc tính đứng một mình hoặc liên kết tới nhiều thực thể (mối kết hợp)
+    // Lỗi (CỤM) thuộc tính đứng một mình hoặc liên kết tới nhiều thực thể (mối kết hợp)
     if(element.type==="Attribute" || element.type==="Normal" || element.type==="Key" || element.type==="Multivalued" || element.type==="Derived" || element.type==="PartialKeyAttribute"){
         if(connectedLinkCount === 0 && isAloneAttribute) {
             let errorName = "Lỗi thuộc tính " + element.paragraph + " đứng một mình";
@@ -77,6 +71,10 @@ export function checkElementBindingError(element, elementJSON, linkJSON) {
         }
     }
 
+    
+
+
+    // Lỗi thuộc tính/mối kết hợp/thực thể  không có nội dung
     if(!element.paragraph) {
         if(element.type==="Relationship" || element.type==="IdentifyingRelationship" || element.type==="ISA")
             return "Lỗi mối kết hợp " + element.paragraph + " không có nội dung";
@@ -91,16 +89,24 @@ export function checkElementBindingError(element, elementJSON, linkJSON) {
 
 export function checkLinkBindingError(link, elementJSON) {
     if (!elementJSON || !link) return "";
+    // Lỗi mối kết hợp yếu với thực thể yếu nhưng lại vẽ liên kết đơn
+    // Lỗi mối kết hợp yếu với thực thể mạnh nhưng lại vẽ liên kết đôi
+    // Lỗi mối kết hợp mạnh với thực thể mạnh nhưng lại vẽ liên kết đôi
+    // Lỗi mối kết hợp mạnh với thực thể yếu nhưng lại vẽ liên kết đôi
 
-    // let array_errors = [' Loi moi ket hop dung mot minh',
-    // ' Loi moi ket hop chi co mot lien ket toi',
-    // ' Loi thuoc tinh dung mot minh',
-    // ' Loi thuoc tinh ket hop toi nhieu thuc the hoac moi ket hop',
-    // ' Loi moi ket hop yeu ket hop voi thuc the yeu nhung lai ve lien ket don',
-    // ' Loi moi ket hop yeu ket hop voi thuc the manh nhung lai ve lien ket doi',
-    // ' Loi moi ket hop manh voi thuc the manh nhung lai ve lien ket doi',
-    // ' Loi moi ket hop manh voi thuc the yeu nhung lai ve lien ket doi',
-    // ' Loi hai thuc the lien ket truc tiep voi nhau ma khong co moi ket hop'];
+    // Lỗi hai thực thể liên kết trực tiếp với nhau mà không có mối kết hợp
+    // Lỗi hai mối kết hợp liên kết trực tiếp với nhau
+
+    // Lỗi hai thuộc tính liên kết trực tiếp với nhau nhưng lại vẽ liên kết đôi
+    // Lỗi hai thuộc tính liên kết trực tiếp với nhau mà có bản số
+
+    // Lỗi thực thể liên kết với thuộc tính nhưng lại vẽ liên kết đôi
+    // Lỗi thực thể liên kết với thuộc tính mà có bản số
+
+    // Lỗi mối kết hợp liên kết với thuộc tính nhưng lại vẽ liên kết đôi
+    // Lỗi mối kết hợp liên kết với thuộc tính mà có bản số
+
+    // Lỗi liên kết giữa thực thể và mối kết hợp không có bản số
 
     let ele1;
     let ele2;
@@ -161,26 +167,45 @@ export function checkLinkBindingError(link, elementJSON) {
         return "Lỗi hai mối kết hợp " + ele1.paragraph + " và " + ele2.paragraph + " liên kết trực tiếp với nhau";
     }
 
+    // Lỗi hai thuộc tính liên kết trực tiếp với nhau nhưng lại vẽ liên kết đôi
+    // Lỗi hai thuộc tính liên kết trực tiếp với nhau mà có bản số
+    if ((ele1.type==="Attribute" || ele1.type==="Normal" || ele1.type==="Key" || ele1.type==="Multivalued" || ele1.type==="Derived" || ele1.type==="PartialKeyAttribute") && (ele2.type==="Attribute" || ele2.type==="Normal" || ele2.type==="Key" || ele2.type==="Multivalued" || ele2.type==="Derived" || ele2.type==="PartialKeyAttribute")) {
+        if (link.type==="TotalParticipation")
+            return "Lỗi thuộc tính " + ele1.paragraph + " liên kết với thuộc tính  " + ele2.paragraph + " nhưng lại vẽ liên kết đôi";
+        if (link.paragraph !== "")
+            return "Lỗi thuộc tính " + ele1.paragraph + " liên kết với thuộc tính  " + ele2.paragraph + " mà có bản số";
+    }
+
     // Lỗi thực thể liên kết với thuộc tính nhưng lại vẽ liên kết đôi
+    // Lỗi thực thể liên kết với thuộc tính mà có bản số
     if ((ele1.type==="Entity" || ele1.type==="WeakEntity" || ele1.type==="AssociativeEntity") && (ele2.type==="Attribute" || ele2.type==="Normal" || ele2.type==="Key" || ele2.type==="Multivalued" || ele2.type==="Derived" || ele2.type==="PartialKeyAttribute")) {
         if (link.type==="TotalParticipation")
             return "Lỗi thực thể " + ele1.paragraph + " liên kết với thuộc tính  " + ele2.paragraph + " nhưng lại vẽ liên kết đôi";
+        if (link.paragraph !== "")
+            return "Lỗi thực thể " + ele1.paragraph + " liên kết với thuộc tính  " + ele2.paragraph + " mà có bản số";
     }
 
     if ((ele2.type==="Entity" || ele2.type==="WeakEntity" || ele2.type==="AssociativeEntity") && (ele1.type==="Attribute" || ele1.type==="Normal" || ele1.type==="Key" || ele1.type==="Multivalued" || ele1.type==="Derived" || ele1.type==="PartialKeyAttribute")) {
         if (link.type==="TotalParticipation")
             return "Lỗi thực thể " + ele2.paragraph + " liên kết với thuộc tính  " + ele1.paragraph + " nhưng lại vẽ liên kết đôi";
+        if (link.paragraph !== "")
+            return "Lỗi thực thể " + ele2.paragraph + " liên kết với thuộc tính  " + ele1.paragraph + " mà có bản số";
     }
 
     // Lỗi mối kết hợp liên kết với thuộc tính nhưng lại vẽ liên kết đôi
+    // Lỗi mối kết hợp liên kết với thuộc tính mà có bản số
     if ((ele1.type==="Relationship" || ele1.type==="IdentifyingRelationship" || ele1.type==="ISA") && (ele2.type==="Attribute" || ele2.type==="Normal" || ele2.type==="Key" || ele2.type==="Multivalued" || ele2.type==="Derived" || ele2.type==="PartialKeyAttribute")) {
         if (link.type==="TotalParticipation")
-            return "Lỗi mối kết hợp" + ele1.paragraph + " liên kết với thuộc tính  " + ele2.paragraph + " nhưng lại vẽ liên kết đôi";
+            return "Lỗi mối kết hợp " + ele1.paragraph + " liên kết với thuộc tính  " + ele2.paragraph + " nhưng lại vẽ liên kết đôi";
+        if (link.paragraph !== "")
+            return "Lỗi mối kết hợp " + ele1.paragraph + " liên kết với thuộc tính  " + ele2.paragraph + " mà có bản số";
     }
 
     if ((ele2.type==="Relationship" || ele2.type==="IdentifyingRelationship" || ele2.type==="ISA") && (ele1.type==="Attribute" || ele1.type==="Normal" || ele1.type==="Key" || ele1.type==="Multivalued" || ele1.type==="Derived" || ele1.type==="PartialKeyAttribute")) {
         if (link.type==="TotalParticipation")
-            return "Lỗi mối kết hợp" + ele2.paragraph + " liên kết với thuộc tính  " + ele1.paragraph + " nhưng lại vẽ liên kết đôi";
+            return "Lỗi mối kết hợp " + ele2.paragraph + " liên kết với thuộc tính  " + ele1.paragraph + " nhưng lại vẽ liên kết đôi";
+        if (link.paragraph !== "")
+            return "Lỗi mối kết hợp " + ele2.paragraph + " liên kết với thuộc tính  " + ele1.paragraph + " mà có bản số";
     }
 
     // Lỗi liên kết giữa thực thể và mối kết hợp không có bản số
@@ -194,35 +219,5 @@ export function checkLinkBindingError(link, elementJSON) {
             return "Lỗi thực thể " + ele2.paragraph + " liên kết với mối kết hợp  " + ele1.paragraph + " mà không có bản số";
     }
 
-    // Lỗi liên kết giữa thực thể và thuộc tính mà có bản số
-    if ((ele1.type==="Entity" || ele1.type==="WeakEntity" || ele1.type==="AssociativeEntity") && (ele2.type==="Attribute" || ele2.type==="Normal" || ele2.type==="Key" || ele2.type==="Multivalued" || ele2.type==="Derived" || ele2.type==="PartialKeyAttribute")) {
-        if (link.paragraph !== "")
-            return "Lỗi thực thể " + ele1.paragraph + " liên kết với thuộc tính  " + ele2.paragraph + " mà có bản số";
-    }
-
-    if ((ele2.type==="Entity" || ele2.type==="WeakEntity" || ele2.type==="AssociativeEntity") && (ele1.type==="Attribute" || ele1.type==="Normal" || ele1.type==="Key" || ele1.type==="Multivalued" || ele1.type==="Derived" || ele1.type==="PartialKeyAttribute")) {
-        if (link.paragraph !== "")
-            return "Lỗi thực thể " + ele2.paragraph + " liên kết với thuộc tính  " + ele1.paragraph + " mà có bản số";
-    }
-
-    // Lỗi liên kết giữa mối kết hợp và thuộc tính mà có bản số
-    if ((ele1.type==="Relationship" || ele1.type==="IdentifyingRelationship" || ele1.type==="ISA") && (ele2.type==="Attribute" || ele2.type==="Normal" || ele2.type==="Key" || ele2.type==="Multivalued" || ele2.type==="Derived" || ele2.type==="PartialKeyAttribute")) {
-        if (link.paragraph !== "")
-            return "Lỗi mối kết hợp " + ele1.paragraph + " liên kết với thuộc tính  " + ele2.paragraph + " mà có bản số";
-    }
-
-    if ((ele2.type==="Relationship" || ele2.type==="IdentifyingRelationship" || ele2.type==="ISA") && (ele1.type==="Attribute" || ele1.type==="Normal" || ele1.type==="Key" || ele1.type==="Multivalued" || ele1.type==="Derived" || ele1.type==="PartialKeyAttribute")) {
-        if (link.paragraph !== "")
-            return "Lỗi mối kết hợp " + ele2.paragraph + " liên kết với thuộc tính  " + ele1.paragraph + " mà có bản số";
-    }
-
-    // Lỗi liên kết giữa thuộc tính và thuộc tính mà có bản số
-    if ((ele1.type==="Attribute" || ele1.type==="Normal" || ele1.type==="Key" || ele1.type==="Multivalued" || ele1.type==="Derived" || ele1.type==="PartialKeyAttribute") && (ele2.type==="Attribute" || ele2.type==="Normal" || ele2.type==="Key" || ele2.type==="Multivalued" || ele2.type==="Derived" || ele2.type==="PartialKeyAttribute")) {
-        if (link.paragraph !== "")
-            return "Lỗi thuộc tính " + ele1.paragraph + " liên kết với thuộc tính  " + ele2.paragraph + " mà có bản số";
-    }
-
-
-    
     return "";
 }

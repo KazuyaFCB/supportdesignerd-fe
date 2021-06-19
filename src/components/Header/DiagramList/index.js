@@ -17,32 +17,36 @@ export default function DiagramList({currentUser, diagramList, setDiagramList, s
     let currentStartPage = 1;
     let currentEndPage = numShownPage;
     
-    // useEffect(async() => {
-    //     if (currentUser) {
-    //         setOpenLoading(true);
-    //         const api = await axios.get('/api/erds/find-erd-by-userIdCreated/' + currentUser._id);
-    //         setOpenLoading(false);
-    //         setDiagramList(api.data.erdList);
-    //     }
-    // }, []);
+    useEffect(async() => {
+        if (currentUser) {
+            setOpenLoading(true);
+            const api = await axios.get('/api/erds/find-erd-by-userIdCreated/' + currentUser._id);
+            setOpenLoading(false);
+            setDiagramList(api.data.erdList);
+        }
+    }, [currentUser]);
 
     useEffect(() => {
-        if (diagramList && diagramList.length > 0) {
-            setCurrentPage(1);
-        } else {
-            setCurrentPage(-1);
+        if (currentUser){
+            if (diagramList && diagramList.length > 0) {
+                setCurrentPage(1);
+            } else {
+                setCurrentPage(-1);
+            }
         }
     }, [diagramList])
 
     useEffect(() => {
-        if (currentPage > -1) {
-            endPage = parseInt((diagramList.length-1)/numElementInPage)+1;
-            currentStartPage = (parseInt((currentPage-1)/numShownPage))*numShownPage+1;
-            currentEndPage = (endPage < currentStartPage + numShownPage - 1) ? endPage : (currentStartPage + numShownPage - 1);
-            renderDiagramListView();
-            renderPaginationView();
-        } else {
-            setDiagramListView(<tr><td colSpan="4" align="center">Not found diagram</td></tr>)
+        if (currentUser) {
+            if (currentPage > -1) {
+                endPage = parseInt((diagramList.length-1)/numElementInPage)+1;
+                currentStartPage = (parseInt((currentPage-1)/numShownPage))*numShownPage+1;
+                currentEndPage = (endPage < currentStartPage + numShownPage - 1) ? endPage : (currentStartPage + numShownPage - 1);
+                renderDiagramListView();
+                renderPaginationView();
+            } else {
+                setDiagramListView(<tr><td colSpan="4" align="center">Not found diagram</td></tr>)
+            }
         }
     }, [currentPage])
 
