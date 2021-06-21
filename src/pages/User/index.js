@@ -7,6 +7,7 @@ import {
     Link,
     Redirect
 } from "react-router-dom";
+import Button from '@material-ui/core/Button';
 import * as automl from '@tensorflow/tfjs-automl';
 //import * as cvstfjs from '@microsoft/customvision-tfjs';
 
@@ -338,6 +339,10 @@ export default function User() {
     }
 
     async function saveDiagram() {
+        if(!currentUser){
+            alert("Please sign in to save diagram!");
+            return;
+        }
         let erdName;
         if (currentViewedErd) {
             let isUpdate = window.confirm("This diagram is exist. Do you want to update it?");
@@ -371,6 +376,11 @@ export default function User() {
         const api2 = await axios.get('/api/erds/find-erd-by-userIdCreated/' + currentUser._id);
         setOpenLoading(false);
         setDiagramList(api2.data.erdList);
+    }
+
+    function newDiagram(){
+        setElementJSON({"elements": []});
+        setLinkJSON({"links": []});
     }
 
     function signOut() {
@@ -415,7 +425,7 @@ export default function User() {
                             <Route path={'/image-to-diagram'}>
                                 <div style={{backgroundColor: 'rgba(220, 250, 254, 1)', display: 'inline-block', width: '30%', height: '90vh'}}>
                                     <img id='img' src={imgSrc} width='100%' height='60%'/>
-                                    <form style={{height: '40%'}} encType="multipart/form-data" onSubmit={(e) => {e.preventDefault(); convertImageToDiagram()}} >
+                                    <form style={{height: '30%'}} encType="multipart/form-data" >
                                         <label for="img">Select image:</label>
                                         <input type="file" id="imageFile" name="imageFile" accept="image/*" onChange={(e) => {e.preventDefault(); getImgSrcFromImgFile()}}/>
                                         <br/><br/>
@@ -428,12 +438,21 @@ export default function User() {
                                             <input type="radio" id="english" name="language" onClick={() => setLanguage("en")} checked={language=="en"}/>
                                             English
                                         </label>
-                                        <br/>
-                                        <input type="submit" value="Convert"/>
                                     </form>
+                                    <div style={{height: '10%', width: '100%'}}>
+                                        <Button style={{height:'30px', width: '33%', backgroundColor: 'blue', color: 'white'}} variant="contained" onClick={() => convertImageToDiagram()}>
+                                            CONVERT
+                                        </Button>
+                                        <Button style={{height:'30px', width: '33%', backgroundColor: 'green', color: 'white'}} variant="contained"  onClick={() => newDiagram()}>
+                                            NEW
+                                        </Button>
+                                        <Button style={{height:'30px', width: '33%', backgroundColor: 'red', color: 'white'}} variant="contained" onClick={saveDiagram}>
+                                            SAVE
+                                        </Button>
+                                    </div>
                                 </div>
                                 <div style={{display: "inline-block", float: 'right', width: '70%'}}>
-                                    <Diagram elementJSON={elementJSON} linkJSON={linkJSON} imageWidth={imageWidth} imageHeight={imageHeight} currentUser={currentUser} saveDiagram={saveDiagram}/>
+                                    <Diagram elementJSON={elementJSON} linkJSON={linkJSON} imageWidth={imageWidth} imageHeight={imageHeight} />
                                 </div>
                                 <WaitingDialog openLoading={openLoading}/>
                                 
@@ -445,15 +464,25 @@ export default function User() {
                                         <textarea id="inputElementJSON" style={{width: '100%', height: '80%', backgroundColor: 'rgba(243, 255, 229, 1)'}}></textarea>
                                         <br/>
                                     </form>
-                                    <form style={{height: '55%'}} onSubmit={(e) => {e.preventDefault(); convertJSONToDiagram()}}>
+                                    <form style={{height: '45%'}}>
                                         <h5 style={{color: 'red'}}>Input Link JSON</h5>
-                                        <textarea id="inputLinkJSON" style={{width: '100%', height: '65%', backgroundColor: 'rgba(243, 255, 229, 1)'}}></textarea>
-                                        <input type="submit" value="Convert"></input>
+                                        <textarea id="inputLinkJSON" style={{width: '100%', height: '80%', backgroundColor: 'rgba(243, 255, 229, 1)'}}></textarea>
                                     </form>
+                                    <div style={{height: '10%'}}>
+                                        <Button style={{height:'30px', width: '33%', backgroundColor: 'blue', color: 'white'}} variant="contained" onClick={() => convertJSONToDiagram()}>
+                                            CONVERT
+                                        </Button>
+                                        <Button style={{height:'30px', width: '33%', backgroundColor: 'green', color: 'white'}} variant="contained"  onClick={() => newDiagram()}>
+                                            NEW
+                                        </Button>
+                                        <Button style={{height:'30px', width: '33%', backgroundColor: 'red', color: 'white'}} variant="contained" onClick={saveDiagram}>
+                                            SAVE
+                                        </Button>
+                                    </div>
                                 </div>
                                 
                                 <div style={{display: "inline-block", float: 'right', width: '70%'}}>
-                                    <Diagram elementJSON={elementJSON} linkJSON={linkJSON} imageWidth={imageWidth} imageHeight={imageHeight} currentUser={currentUser} saveDiagram={saveDiagram} />
+                                    <Diagram elementJSON={elementJSON} linkJSON={linkJSON} imageWidth={imageWidth} imageHeight={imageHeight} />
                                 </div>
                             </Route>
                         </Route>

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { makeStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -11,7 +10,7 @@ import Slider from '@material-ui/core/Slider';
 //import AddIcon from '@material-ui/icons/Add';
 //import RemoveIcon from '@material-ui/icons/Remove';
 
-import $ from 'jquery';
+//import $ from 'jquery';
 
 import {AssociativeEntity, PartialKeyAttribute, DashedLine, Line, DoubleLine} from "../../utils/myerd";
 import {checkElementBindingError, checkLinkBindingError} from "../../utils/bindingErrorInErd";
@@ -19,18 +18,9 @@ import {elementTools_Boundary, elementTools_RemoveButton, elementTools_ErrorButt
 import * as joint from 'jointjs';
 window.joint = joint;
 
-const useStyles = makeStyles((theme) => ({
-  gridList: {
-    flexWrap: 'nowrap',
-    // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
-    transform: 'translateZ(0)',
-  }
-}))
-
 export let bindingErrorMap = {};
 
-export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight, currentUser, saveDiagram }) {
-    const classes = useStyles();
+export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight}) {
     let graph = null;
     let paper = null;
     let erd = joint.shapes.erd;
@@ -78,9 +68,6 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
         img: "https://www.conceptdraw.com/How-To-Guide/picture/erd-symbols-and-meanings/ERD-Symbols-Identifying-Relationship.png",
         title: "IdentifyingRelationship"
       }, {
-        img: "https://www.conceptdraw.com/How-To-Guide/picture/erd-symbols-and-meanings/ERD-Symbols-Associative-Entity.png",
-        title: "AssociativeEntity"
-      }, {
         img: "https://www.conceptdraw.com/How-To-Guide/picture/erd-symbols-and-meanings/ERD-Symbols-Attribute.png",
         title: "Attribute"
       }, {
@@ -95,6 +82,9 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
       }, {
         img: "https://vertabelo.com/blog/chen-erd-notation/chen-notation-partial-key-attribute.png",
         title: "PartialKeyAttribute"
+      }, {
+        img: "https://www.conceptdraw.com/How-To-Guide/picture/erd-symbols-and-meanings/ERD-Symbols-Associative-Entity.png",
+        title: "AssociativeEntity"
       }, {
         img: "https://d2slcw3kip6qmk.cloudfront.net/marketing/pages/chart/seo/ERD/discovery/erd-chens-11.svg",
         title: "PartialParticipation"
@@ -794,11 +784,6 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
       changeBindingErrorList();
     }
 
-    function newDiagram(){
-      initDiagram();
-      window.location.reload();
-    }
-
     // set height that use viewport percentages
     //https://stackoverflow.com/questions/18934141/set-div-height-to-fit-to-the-browser-using-css/18934195
     return (
@@ -820,17 +805,6 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight,
             onChange={(event, value) => { zoom = value; paper.scale(zoom, zoom); }}
           />
           <ul style={{ marginLeft: '-50px', overflowY: 'scroll', overflowX: 'hidden', listStyleType: 'none'}} component="nav" aria-label="secondary mailbox folders" >
-            <li>
-              <Button style={{height:'30px', width: '90px'}} variant="contained" color="primary" onClick={() => newDiagram()}>
-                NEW
-              </Button>
-            </li>
-            <li><br/></li>
-            <li>
-              <Button style={{height:'30px', width: '90px'}} variant="contained" color="secondary" hidden={!currentUser} onClick={saveDiagram}>
-                SAVE
-              </Button>
-            </li>
             {panel.map((panelItem, panelIndex) => (
                 <li className="createElementButton" button onClick={() => createElement(panelItem, panelIndex)}>
                   <Button >
