@@ -705,6 +705,7 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight}
     function changeBindingErrorList() {
       //setBindingErrorList([]);
       let attributeMap = [];
+      let relatedAttributes = {};
       elementJSON.elements.forEach((element) => {
         attributeMap.push([]);
       });
@@ -726,7 +727,14 @@ export default function Diagram({elementJSON, linkJSON, imageWidth, imageHeight}
       let result = []
       elementJSON.elements.forEach((element) => {
         if (element) {
-          let errorName = checkElementBindingError(element, elementJSON, linkJSON, attributeMap);
+          let errorName = "";
+          // neu ko lien quan thi check tim loi khac
+          if (!relatedAttributes[element.id - 1]) 
+            errorName = checkElementBindingError(element, elementJSON, linkJSON, attributeMap, relatedAttributes);
+          // thuoc tinh co lien quan den cum thuoc tinh thi khoi check, bao loi luon
+          else
+            errorName = relatedAttributes[element.id - 1];
+
           let elementView = graph.getCell(element.id).findView(paper);
           if (errorName) {
             elementView.addTools(new joint.dia.ToolsView({

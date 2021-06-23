@@ -1,12 +1,12 @@
-export function checkElementBindingError(element, elementJSON, linkJSON, attributeMap) {
+export function checkElementBindingError(element, elementJSON, linkJSON, attributeMap, relatedAttributes) {
     if (!linkJSON || !element) return "";
     element.paragraph = element.paragraph.trim();
     // Lỗi mối kết hợp đứng một mình hoặc chỉ có một liên kết tới
-    // Lỗi (CỤM) thuộc tính đứng một mình hoặc liên kết tới nhiều thực thể (mối kết hợp)
+    // Lỗi (CỤM) thuộc tính liên kết tới nhiều thực thể (mối kết hợp) hoặc tạo thành chu trình hoặc đứng một mình
     // Lỗi thuộc tính/mối kết hợp/thực thể  không có nội dung
      
     let connectedLinkCount = 0;
-    let isAloneAttribute = true;
+    //let isAloneAttribute = true;
     linkJSON.links.forEach((link) => {
         if(link) {
             let remainingElementId = 0;
@@ -21,17 +21,15 @@ export function checkElementBindingError(element, elementJSON, linkJSON, attribu
                             connectedLinkCount++;
                     }
                 }
-                else if(element.type==="Attribute" || element.type==="Normal" || element.type==="Key" || element.type==="Multivalued" || element.type==="Derived" || element.type==="PartialKeyAttribute"){
-                    if (elementJSON["elements"][remainingElementId - 1]){
-                        if (elementJSON["elements"][remainingElementId - 1].type === "Entity" || elementJSON["elements"][remainingElementId - 1].type === "WeakEntity" || elementJSON["elements"][remainingElementId - 1].type === "AssociativeEntity" || elementJSON["elements"][remainingElementId - 1].type === "Relationship" || elementJSON["elements"][remainingElementId - 1].type === "IdentifyingRelationship" || elementJSON["elements"][remainingElementId - 1].type === "ISA")
-                            connectedLinkCount++;
-                        else if (elementJSON["elements"][remainingElementId - 1].type === "Attribute" || elementJSON["elements"][remainingElementId - 1].type === "Normal" || elementJSON["elements"][remainingElementId - 1].type === "Key" || elementJSON["elements"][remainingElementId - 1].type === "Multivalued" || elementJSON["elements"][remainingElementId - 1].type === "Derived" || elementJSON["elements"][remainingElementId - 1].type === "PartialKeyAttribute")
-                            isAloneAttribute = false;
-                    }
-                }
+                // else if(element.type==="Attribute" || element.type==="Normal" || element.type==="Key" || element.type==="Multivalued" || element.type==="Derived" || element.type==="PartialKeyAttribute"){
+                //     if (elementJSON["elements"][remainingElementId - 1]){
+                //         if (elementJSON["elements"][remainingElementId - 1].type === "Entity" || elementJSON["elements"][remainingElementId - 1].type === "WeakEntity" || elementJSON["elements"][remainingElementId - 1].type === "AssociativeEntity" || elementJSON["elements"][remainingElementId - 1].type === "Relationship" || elementJSON["elements"][remainingElementId - 1].type === "IdentifyingRelationship" || elementJSON["elements"][remainingElementId - 1].type === "ISA")
+                //             connectedLinkCount++;
+                //         else if (elementJSON["elements"][remainingElementId - 1].type === "Attribute" || elementJSON["elements"][remainingElementId - 1].type === "Normal" || elementJSON["elements"][remainingElementId - 1].type === "Key" || elementJSON["elements"][remainingElementId - 1].type === "Multivalued" || elementJSON["elements"][remainingElementId - 1].type === "Derived" || elementJSON["elements"][remainingElementId - 1].type === "PartialKeyAttribute")
+                //             isAloneAttribute = false;
+                //     }
+                // }
             }
-
-            //alert("" + linkConnectedToElement.sourceId + "\t" + linkConnectedToElement.targetId + "\t" + element.paragraph);
         }
     })
 
@@ -56,19 +54,89 @@ export function checkElementBindingError(element, elementJSON, linkJSON, attribu
         // }
     }
 
-    // Lỗi (CỤM) thuộc tính đứng một mình hoặc liên kết tới nhiều thực thể (mối kết hợp)
+    // Lỗi (CỤM) thuộc tính liên kết tới nhiều thực thể (mối kết hợp) hoặc tạo thành chu trình hoặc đứng một mình
     if(element.type==="Attribute" || element.type==="Normal" || element.type==="Key" || element.type==="Multivalued" || element.type==="Derived" || element.type==="PartialKeyAttribute"){
-        if(connectedLinkCount === 0 && isAloneAttribute) {
-            let errorName = "Lỗi thuộc tính " + element.paragraph + " đứng một mình";
-            if(!element.paragraph) errorName += " và không có nội dung";
-            return errorName;
+        let attributeStack = [];
+        let count = 0;
+        let isTrace = [];
+        elementJSON.elements.forEach((element) => isTrace.push(false));
+        isTrace[element.id - 1] = true;
+        let isError = false;
+        let connectToManyEntityOrRelationshipError = false;
+        let makeCycleError = false;
+        let aloneAttributeError = false;
+        let curElement = element;
+        while(1) {
+            // duyet link ke
+            attributeMap[curElement.id-1].forEach((neighborLink) => {
+                if (neighborLink){
+                    // tim dinh ke
+                    let neighborElement;
+                    if (curElement.id===neighborLink.sourceId) neighborElement=elementJSON.elements[neighborLink.targetId - 1];
+                    else neighborElement=elementJSON.elements[neighborLink.sourceId - 1];
+                    // duyet roi thi bo qua
+                    if (!isTrace[neighborElement.id - 1]){
+                        // push dinh ke vao stack
+                        if (neighborElement.type==="Attribute" || neighborElement.type==="Normal" || neighborElement.type==="Key" || neighborElement.type==="Multivalued" || neighborElement.type==="Derived" || neighborElement.type==="PartialKeyAttribute")
+                            attributeStack.push(neighborElement);
+                        // dem element ko phai la attribute
+                        else {
+                            count++;
+                        }
+                    }
+                }
+            });
+            // lien ket voi nhieu thuc the, moi ket hop => loi
+            if (count >= 2) connectToManyEntityOrRelationshipError = true;
+            let topAttributeStack = attributeStack.pop();
+            if (topAttributeStack){
+                // tao thanh chu trinh => loi
+                if (isTrace[topAttributeStack.id-1]) makeCycleError = true;
+                // danh dau dinh vua pop va gan curElement thanh dinh do
+                isTrace[topAttributeStack.id-1] = true;
+                curElement = topAttributeStack;
+            // stack rong thi out
+            } else{
+                break;
+            }
         }
+        // dung mot minh => loi
+        if (count === 0) aloneAttributeError = true;
+        if (connectToManyEntityOrRelationshipError || makeCycleError || aloneAttributeError) {
+            let errorName = "Lỗi (CỤM) thuộc tính ";
+            isTrace.forEach((isTraceItem, index) => {
+                if (isTraceItem){
+                    errorName += elementJSON.elements[index].paragraph + ", "
+                }
+            });
+            errorName = errorName.substr(0, errorName.length - 2);
+            if (connectToManyEntityOrRelationshipError)
+                errorName += " liên kết tới nhiều thực thể  (mối kết hợp), ";
+            if (makeCycleError)
+                errorName += " tạo thành chu trình, ";
+            if (aloneAttributeError)
+                errorName += " đứng một mình, ";
+            errorName = errorName.substr(0, errorName.length - 2);
 
-        if (connectedLinkCount >1) {
-            let errorName = "Lỗi thuộc tính " + element.paragraph + " liên kết tới nhiều thực thể hoặc mối kết hợp";
-            if(!element.paragraph) errorName += " và không có nội dung";
+            isTrace.forEach((isTraceItem, index) => {
+                if (isTraceItem){
+                    relatedAttributes[index] = errorName;
+                }
+            });
             return errorName;
         }
+        
+        // if(connectedLinkCount === 0 && isAloneAttribute) {
+        //     let errorName = "Lỗi thuộc tính " + element.paragraph + " đứng một mình";
+        //     if(!element.paragraph) errorName += " và không có nội dung";
+        //     return errorName;
+        // }
+
+        // if (connectedLinkCount >1) {
+        //     let errorName = "Lỗi thuộc tính " + element.paragraph + " liên kết tới nhiều thực thể hoặc mối kết hợp";
+        //     if(!element.paragraph) errorName += " và không có nội dung";
+        //     return errorName;
+        // }
     }
 
     
