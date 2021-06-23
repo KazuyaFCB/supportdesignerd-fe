@@ -1,0 +1,40 @@
+.diagram_container {
+  display: flex;
+  justify-content: space-between;
+  width: 95vw;
+  height: 90vh;
+  background-color: rgb(175, 175, 175);
+  margin-left: 20px;
+  overflow: hidden;
+  margin-top: 50px;
+}
+
+.diagram-content {
+  overflow: scroll;
+}
+
+.utils-container {
+  background-color: white;
+  width: 250px;
+  display: flex;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.slider-wrapper {
+  height: 300px;
+}
+
+.shapes {
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+.shapes ul {
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+  padding-right: 30px;
+  list-style: none;
+}

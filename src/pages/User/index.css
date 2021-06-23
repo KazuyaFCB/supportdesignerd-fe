@@ -1,0 +1,77 @@
+.btn-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin-top: 30px;
+}
+
+.btn {
+  width: 120px;
+  background-color: white;
+  border: 1px solid black !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  outline: none;
+  position: relative;
+  margin: 0 15px;
+}
+
+.btn:focus {
+  background-color: grey;
+}
+
+.btn img {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  margin-bottom: 2px;
+}
+
+._container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 30px;
+}
+
+.loaded-img {
+  width: 450px;
+}
+
+.footer {
+  height: 100px;
+  width: 100%;
+  background-color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 20px;
+}
+
+.input-items:first-child {
+  margin-top: 15px;
+}
+
+.input-items {
+  padding: 4px 16px;
+}
+
+.input-items label,
+.radio-label > input {
+  margin-right: 10px;
+}
+
+.json-input textarea {
+  width: 500px;
+  height: 300px;
+}
+
+.input-wrapper {
+  width: 80%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
