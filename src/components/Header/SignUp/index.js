@@ -3,12 +3,14 @@ import "./index.css";
 import axios from "../../../utils/axios";
 import domain from "../../../utils/domain";
 import { Redirect } from "react-router-dom";
+import WaitingDialog from "./../../WaitingDialog/index";
 
 export default function SignUp() {
   const signInWithGooglePath = domain + "/auth/google";
   const signInWithFacebookPath = domain + "/auth/facebook";
   const path = domain + "/api/users";
   const [isSignUpSuccess, setIsSignUpSuccess] = useState(false);
+  const [openLoading, setOpenLoading] = useState(false);
 
   function validateEmail(email) {
     const re =
@@ -27,6 +29,7 @@ export default function SignUp() {
   }
 
   async function signUp() {
+    setOpenLoading(true);
     const username = document.getElementsByName("username")[0].value;
     const password = document.getElementsByName("password")[0].value;
     const retypePassword =
@@ -65,16 +68,20 @@ export default function SignUp() {
       email: email,
     });
 
-    if (api.data) {
-      alert("Sign up successfully");
-      setIsSignUpSuccess(true);
-    } else {
-      alert("Sign up unsucessfully");
-    }
+    setOpenLoading(false);
+    setIsSignUpSuccess(true);
+
+    // if (api.data) {
+    //   alert("Sign up successfully");
+    //   setIsSignUpSuccess(true);
+    // } else {
+    //   alert("Sign up unsucessfully");
+    // }
   }
   if (isSignUpSuccess) return <Redirect to="/sign-in" />;
   return (
     <div className="login-box">
+      <WaitingDialog openLoading={openLoading} text="Signing up" />
       <div className="left-box">
         <h2>Ứng dụng hỗ trợ thiết kế mô hình thực thể - kết hợp</h2>
         <img src="/images/authentication-background.png" alt="" />

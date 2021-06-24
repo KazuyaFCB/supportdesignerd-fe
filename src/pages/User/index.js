@@ -558,7 +558,7 @@ export default function User() {
                             onClick={() => setLanguage("en")}
                             checked={language == "en"}
                           />
-                          <label htmlFor="vietnamese">English</label>
+                          <label htmlFor="english">English</label>
                         </div>
                       </div>
                     </form>

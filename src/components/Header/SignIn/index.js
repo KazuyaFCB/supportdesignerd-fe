@@ -4,12 +4,14 @@ import { Redirect } from "react-router-dom";
 import Cookies from "js-cookie";
 import domain from "../../../utils/domain";
 import axios from "../../../utils/axios";
+import WaitingDialog from "./../../WaitingDialog/index";
 
 export default function SignIn() {
   const signInWithUsernameAndPasswordPath = domain + "/api/users/login";
   const signInWithGooglePath = domain + "/auth/google";
   const signInWithFacebookPath = domain + "/auth/facebook";
   const [isSignInSuccess, setIsSignInSuccess] = useState(false);
+  let [openLoading, setOpenLoading] = useState(false);
 
   const specialChars = "<>@!#$%^&*+{}?:;|()[]'\"\\,/~`= ";
   function checkForSpecialChar(string) {
@@ -33,6 +35,7 @@ export default function SignIn() {
   }
 
   async function signIn() {
+    setOpenLoading(true);
     const username = document.getElementsByName("username")[0].value;
     const password = document.getElementsByName("password")[0].value;
 
@@ -54,10 +57,9 @@ export default function SignIn() {
       password: password,
     });
 
-    console.log(api.data);
-
     if (api.data) {
       Cookies.set("currentUsername", api.data.username, { expires: 0.05 });
+      setOpenLoading(true);
       setIsSignInSuccess(true);
     } else {
       alert("Sign in unsuccessfully");
@@ -67,6 +69,7 @@ export default function SignIn() {
 
   return (
     <div className="login-box">
+      <WaitingDialog openLoading={openLoading} text="Logging in" />
       <div className="left-box">
         <h2>Ứng dụng hỗ trợ thiết kế mô hình thực thể - kết hợp</h2>
         <img src="/images/authentication-background.png" alt="" />

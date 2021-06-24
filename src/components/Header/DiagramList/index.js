@@ -242,14 +242,11 @@ export default function DiagramList({
                   <tr>
                     <th>#</th>
                     <th>
-                      ERD Name <i class="fa fa-sort"></i>
+                      {/* ERD Name <i class="fa fa-sort"></i> */}
+                      ERD Name
                     </th>
-                    <th>
-                      Created date<i class="fa fa-sort"></i>
-                    </th>
-                    <th>
-                      Updated date<i class="fa fa-sort"></i>
-                    </th>
+                    <th>Created date</th>
+                    <th>Updated date</th>
                   </tr>
                 </thead>
                 <tbody>{diagramListView}</tbody>
