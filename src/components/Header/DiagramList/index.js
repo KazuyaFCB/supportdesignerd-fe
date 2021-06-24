@@ -223,38 +223,14 @@ export default function DiagramList({
 
   return (
     <html>
-      <head>
+      {/* <head>
         <title>Diagram List</title>
-      </head>
+      </head> */}
       <body>
         <div class="container">
+          <h2>Diagram List</h2>
           <div class="table-responsive">
             <div class="table-wrapper">
-              <div class="table-title">
-                <div class="row">
-                  <div class="col-xs-4">
-                    {/* <div class="show-entries">
-                                            <span>Show</span>
-                                            <select>
-                                                <option>5</option>
-                                                <option>10</option>
-                                            </select>
-                                            <span>entries</span>
-                                        </div> */}
-                  </div>
-                  <div class="col-xs-4" style={{ marginLeft: "350px" }}>
-                    <h2 class="text-center">Diagram List</h2>
-                  </div>
-                  <div class="col-xs-4" style={{}}>
-                    {/* <div class="search-box">
-                                            <div class="input-group">
-                                                <span class="input-group-addon"><i class="material-icons">&#xE8B6;</i></span>
-                                                <input type="text" class="form-control" placeholder="Search&hellip;" />
-                                            </div>
-                                        </div> */}
-                  </div>
-                </div>
-              </div>
               <table class="table table-bordered">
                 <thead
                   style={{
@@ -276,9 +252,7 @@ export default function DiagramList({
                     </th>
                   </tr>
                 </thead>
-                <tbody style={{ backgroundColor: "purple", color: "orange" }}>
-                  {diagramListView}
-                </tbody>
+                <tbody>{diagramListView}</tbody>
               </table>
               <div class="clearfix">
                 <div class="hint-text">

@@ -53,6 +53,9 @@ export default function SignIn() {
       username: username,
       password: password,
     });
+
+    console.log(api.data);
+
     if (api.data) {
       Cookies.set("currentUsername", api.data.username, { expires: 0.05 });
       setIsSignInSuccess(true);
@@ -76,7 +79,7 @@ export default function SignIn() {
           }}
           method="post"
         >
-          <h1>SIGN IN</h1>
+          <h1>LOG IN</h1>
           <div className="input-items">
             <label htmlFor="username">Username</label>
             <input type="text" name="username" autoComplete="off" />

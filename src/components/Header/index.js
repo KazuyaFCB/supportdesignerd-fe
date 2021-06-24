@@ -44,7 +44,7 @@ export default function Header({ currentUser, signOut }) {
                     role="presentation"
                     onClick={() => signOut()}
                   >
-                    Sign Out
+                    Log Out
                   </a>
                 </Link>
               </div>

@@ -1,0 +1,13 @@
+.dialog-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 500px;
+  height: 200px;
+}
+
+.dialog-content img {
+  width: 75px;
+  margin-bottom: 25px;
+}

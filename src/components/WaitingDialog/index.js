@@ -4,7 +4,13 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import "./index.css";
 
-export default function WaitingDialog({ openLoading, content }) {
+export default function WaitingDialog({
+  openLoading,
+  content,
+  text,
+  isConverting,
+  textConverting,
+}) {
   return (
     <Dialog
       open={openLoading}
@@ -13,9 +19,15 @@ export default function WaitingDialog({ openLoading, content }) {
     >
       <DialogContent className="dialog-content">
         <img src="https://c.tenor.com/I6kN-6X7nhAAAAAj/loading-buffering.gif" />
-        <DialogContentText className="dialog-text">
-          Processing your request, please wait a moment...
-        </DialogContentText>
+        {isConverting ? (
+          <DialogContentText className="dialog-text">
+            {textConverting}, please wait a moment...
+          </DialogContentText>
+        ) : (
+          <DialogContentText className="dialog-text">
+            {text}, please wait a moment...
+          </DialogContentText>
+        )}
       </DialogContent>
     </Dialog>
   );

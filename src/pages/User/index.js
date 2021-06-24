@@ -36,6 +36,7 @@ export default function User() {
   let [currentViewedErd, setCurrentViewedErd] = useState(null); //erd viewed when click view button in list
 
   let [openLoading, setOpenLoading] = useState(false);
+  let [isConverting, setIsConverting] = useState(false);
 
   let [imgId, setImgId] = useState("000000000000000000000000");
 
@@ -116,6 +117,7 @@ export default function User() {
       alert("Please choose file size less than 4MB");
       return;
     }
+    setOpenLoading(true);
     var reader = new FileReader();
     reader.onload = function (e) {
       setImgSrc(e.target.result);
@@ -124,7 +126,6 @@ export default function User() {
     const formData = new FormData();
     formData.append("file", imageFile);
     formData.append("imgId", imgId);
-    setOpenLoading(true);
     const api = await axios.post(
       "/api/erds/get-img-src-from-img-file",
       formData
@@ -157,6 +158,8 @@ export default function User() {
       alert("Haven't uploaded the file yet");
       return;
     }
+    setIsConverting(true);
+    setOpenLoading(true);
     // ref: https://stackoverflow.com/questions/42318829/html5-input-type-file-read-image-data
     let imageData = new Image();
     imageData.src = window.URL.createObjectURL(imageFile);
@@ -174,7 +177,6 @@ export default function User() {
     // formData.append("shape_predictions", JSON.stringify(shapePredictions));
     // formData.append("language", language)
     // formData.append("imgId", imgId)
-    setOpenLoading(true);
     //let api = await axios.post("/api/erds/get-erd", formData);
     let api = await axios.post("/api/erds/get-erd", {
       size: imageWidth + "," + imageHeight,
@@ -183,6 +185,7 @@ export default function User() {
       imgId: imgId,
     });
     setOpenLoading(false);
+    setIsConverting(false);
     setElementJSON(api.data.elementJSON);
     setLinkJSON(api.data.linkJSON);
     setCurrentViewedErd(null);
@@ -512,7 +515,10 @@ export default function User() {
                     setImgSrc={setImgSrc}
                     setOpenLoading={setOpenLoading}
                   />
-                  <WaitingDialog openLoading={openLoading} />
+                  <WaitingDialog
+                    openLoading={openLoading}
+                    text="Loading your diagram list"
+                  />
                 </div>
               </Route>
               <Route path={"/image-to-diagram"}>
@@ -587,7 +593,12 @@ export default function User() {
                   </div>
                   <div className="footer">Footer</div>
                 </div>
-                <WaitingDialog openLoading={openLoading} />
+                <WaitingDialog
+                  openLoading={openLoading}
+                  isConverting={isConverting}
+                  textConverting="Converting you image"
+                  text="Loading your image"
+                />
               </Route>
               <Route path={"/json-to-diagram"}>
                 <div className="_container">
