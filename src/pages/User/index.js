@@ -375,18 +375,21 @@ export default function User() {
   }
 
   function convertJSONToDiagram() {
+    setOpenLoading(true);
     if (
       !document.getElementById("inputElementJSON") ||
       !document.getElementById("inputLinkJSON")
-    )
+    ) {
+      setOpenLoading(false);
       return;
+    }
     let inputJSON = document.getElementById("inputElementJSON").value;
     let linkJSON = document.getElementById("inputLinkJSON").value;
 
     setElementJSON(JSON.parse(inputJSON));
     setLinkJSON(JSON.parse(linkJSON));
     setCurrentViewedErd(null);
-
+    setOpenLoading(false);
     //alert(JSON.stringify(inputJSON));
     //alert(JSON.stringify(elementJSON));
   }
@@ -616,7 +619,7 @@ export default function User() {
                   <div className="btn-container">
                     <button
                       className="btn btn-convert"
-                      onClick={() => convertImageToDiagram()}
+                      onClick={() => convertJSONToDiagram()}
                     >
                       <img src="/images/convert.svg" alt="" />
                       Convert
@@ -643,6 +646,12 @@ export default function User() {
                   </div>
                   <div className="footer">Footer</div>
                 </div>
+                <WaitingDialog
+                  openLoading={openLoading}
+                  isConverting={isConverting}
+                  textConverting="Converting you image"
+                  text="Loading your image"
+                />
               </Route>
             </Route>
           </Switch>

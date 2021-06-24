@@ -835,13 +835,15 @@ export default function Diagram({
     //   graph.clear();
     //   paper.remove();
     // }
-    graph = new joint.dia.Graph();
+    // graph = new joint.dia.Graph();
+    graph = new joint.dia.Graph({}, { cellNamespace: joint.shapes });
 
     customizeGraph(graph);
 
     paper = new joint.dia.Paper({
       el: document.getElementById("paper"),
       model: graph,
+      cellViewNamespace: joint.shapes,
       // width: imageWidth,
       // height: imageHeight,
       width: 2667,
@@ -1032,27 +1034,31 @@ export default function Diagram({
   // set height that use viewport percentages
   //https://stackoverflow.com/questions/18934141/set-div-height-to-fit-to-the-browser-using-css/18934195
   return (
-    <div className="diagram_container">
-      <div className="diagram-content">
-        <div id="paper"></div>
+    <div className="_diagram_container">
+      <div className="_diagram-area">
+        <div id="paper">Diagram</div>
       </div>
 
-      <div className="utils-container">
-        <div className="slider-wrapper">
-          <Slider
-            orientation="vertical"
-            min={0}
-            step={0.01}
-            max={1}
-            defaultValue={zoom}
-            aria-labelledby="vertical-slider"
-            onChange={(event, value) => {
-              zoom = value;
-              paper.scale(zoom, zoom);
-            }}
-          />
+      <div className="_utils-container">
+        <div className="_slider-wrapper">
+          <img src="/images/zoom-out.svg" alt="" />
+          <div className="_slider">
+            <Slider
+              orientation="horizontal"
+              min={0.2}
+              step={0.01}
+              max={1}
+              defaultValue={zoom}
+              aria-labelledby="vertical-slider"
+              onChange={(event, value) => {
+                zoom = value;
+                paper.scale(zoom, zoom);
+              }}
+            />
+          </div>
+          <img src="/images/zoom-in.svg" alt="" />
         </div>
-        <div className="shape-wrapper">
+        <div className="_shape-wrapper">
           <div className="shapes">
             <ul component="nav" aria-label="secondary mailbox folders">
               {panel.map((panelItem, panelIndex) => (
