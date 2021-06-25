@@ -78,57 +78,58 @@ export default function Diagram({
 
   // Ref: https://www.conceptdraw.com/How-To-Guide/erd-entity-relationship-diagram-symbols
   // https://www.lucidchart.com/pages/er-diagrams
+  // https://www.conceptdraw.com/How-To-Guide/picture/erd-symbols-and-meanings
   const panel = [
     {
-      img: "https://www.conceptdraw.com/How-To-Guide/picture/erd-symbols-and-meanings/ERD-Symbols-Entity.png",
+      img: "/images/entity.png",
       title: "Entity",
     },
     {
-      img: "https://www.conceptdraw.com/How-To-Guide/picture/erd-symbols-and-meanings/ERD-Symbols-Weak-Entity.png",
+      img: "/images/weak-entity.png",
       title: "WeakEntity",
     },
     {
-      img: "https://www.conceptdraw.com/How-To-Guide/picture/erd-symbols-and-meanings/ERD-Symbols-Relationship.png",
+      img: "/images/relationship.png",
       title: "Relationship",
     },
     {
-      img: "https://www.conceptdraw.com/How-To-Guide/picture/erd-symbols-and-meanings/ERD-Symbols-Identifying-Relationship.png",
+      img: "/images/identifying-relationship.png",
       title: "IdentifyingRelationship",
     },
     {
-      img: "https://www.conceptdraw.com/How-To-Guide/picture/erd-symbols-and-meanings/ERD-Symbols-Attribute.png",
+      img: "/images/attribute.png",
       title: "Attribute",
     },
     {
-      img: "https://www.conceptdraw.com/How-To-Guide/picture/erd-symbols-and-meanings/ERD-Symbols-Key-attribute.png",
+      img: "/images/key-attribute.png",
       title: "Key",
     },
     {
-      img: "https://www.conceptdraw.com/How-To-Guide/picture/erd-symbols-and-meanings/ERD-Symbols-Multivalue-attribute.png",
+      img: "/images/multivalued-attribute.png",
       title: "Multivalued",
     },
     {
-      img: "https://www.conceptdraw.com/How-To-Guide/picture/erd-symbols-and-meanings/ERD-Symbols-Derived-attribute.png",
+      img: "/images/derived-attribute.png",
       title: "Derived",
     },
     {
-      img: "https://vertabelo.com/blog/chen-erd-notation/chen-notation-partial-key-attribute.png",
+      img: "/images/partial-key-attribute.png",
       title: "PartialKeyAttribute",
     },
     {
-      img: "https://www.conceptdraw.com/How-To-Guide/picture/erd-symbols-and-meanings/ERD-Symbols-Associative-Entity.png",
+      img: "/images/associative-entity.png",
       title: "AssociativeEntity",
     },
     {
-      img: "https://d2slcw3kip6qmk.cloudfront.net/marketing/pages/chart/seo/ERD/discovery/erd-chens-11.svg",
+      img: "/images/partial-participation.svg",
       title: "PartialParticipation",
     },
     {
-      img: "https://static.thenounproject.com/png/1729063-200.png",
+      img: "/images/total-participation.png",
       title: "TotalParticipation",
     },
     {
-      img: "https://d2slcw3kip6qmk.cloudfront.net/marketing/pages/chart/seo/ERD/discovery/erd-barkers-04.svg",
+      img: "/images/optional.svg",
       title: "Optional",
     },
   ];

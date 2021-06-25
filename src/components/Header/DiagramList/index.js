@@ -201,10 +201,12 @@ export default function DiagramList({
 
   async function viewDiagram(viewId) {
     let index = viewId.substr(2);
+    const api = await axios.get('/api/erds/find-erd-by-id/' + diagramList[index]._id);
+    
     setCurrentViewedErd(diagramList[index]);
-    setElementJSON(diagramList[index].elementJSON);
-    setLinkJSON(diagramList[index].linkJSON);
-    setImgSrc(diagramList[index].imgSrc);
+    setElementJSON(api.data.elementJSON);
+    setLinkJSON(api.data.linkJSON);
+    setImgSrc(api.data.imgSrc);
     await sleep(1000);
     window.location.href = "/json-to-diagram";
   }

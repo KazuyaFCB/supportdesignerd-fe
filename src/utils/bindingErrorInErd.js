@@ -74,6 +74,7 @@ export function checkElementBindingError(element, elementJSON, linkJSON, attribu
                     let neighborElement;
                     if (curElement.id===neighborLink.sourceId) neighborElement=elementJSON.elements[neighborLink.targetId - 1];
                     else neighborElement=elementJSON.elements[neighborLink.sourceId - 1];
+                    if (!neighborElement) return "";
                     // duyet roi thi bo qua
                     if (!isTrace[neighborElement.id - 1]){
                         // push dinh ke vao stack
