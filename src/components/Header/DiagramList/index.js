@@ -8,7 +8,6 @@ export default function DiagramList({
   currentUser,
   diagramList,
   setDiagramList,
-  setCurrentViewedErd,
   setElementJSON,
   setLinkJSON,
   setImgSrc,
@@ -202,12 +201,11 @@ export default function DiagramList({
   async function viewDiagram(viewId) {
     let index = viewId.substr(2);
     const api = await axios.get('/api/erds/find-erd-by-id/' + diagramList[index]._id);
-    
-    setCurrentViewedErd(diagramList[index]);
+    sessionStorage.setItem("currentViewedErd", JSON.stringify(diagramList[index]));
     setElementJSON(api.data.elementJSON);
     setLinkJSON(api.data.linkJSON);
     setImgSrc(api.data.imgSrc);
-    await sleep(1000);
+    await sleep(1500);
     window.location.href = "/json-to-diagram";
   }
 

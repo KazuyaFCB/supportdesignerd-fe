@@ -683,6 +683,7 @@ export default function Diagram({
 
   function createLink(sourceId, targetId) {
     linkPanelIndexSelectedToCreate = sessionStorage.getItem("linkPanelIndexSelectedToCreate");
+    if (!panel[linkPanelIndexSelectedToCreate]) return;
     let item = {
       id: linkJSON.links.length + 1,
       type: panel[linkPanelIndexSelectedToCreate].title,

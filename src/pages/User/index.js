@@ -40,6 +40,8 @@ export default function User() {
 
   let [imgId, setImgId] = useState("000000000000000000000000");
 
+  let [imageData, setImageData] = useState(null);
+
   useEffect(async () => {
     const elementJSONStr = sessionStorage.getItem("elementJSON");
     const linkJSONStr = sessionStorage.getItem("linkJSON");
@@ -130,6 +132,12 @@ export default function User() {
       "/api/erds/get-img-src-from-img-file",
       formData
     );
+    // ref: https://stackoverflow.com/questions/42318829/html5-input-type-file-read-image-data
+    let _imageData = new Image();
+    _imageData.src = window.URL.createObjectURL(imageFile);
+    setImageData(_imageData);
+    
+
     setOpenLoading(false);
     //setImgSrc(api.data.imgSrc);
     //sessionStorage.setItem("imgSrc", api.data.imgSrc);
@@ -161,8 +169,8 @@ export default function User() {
     setIsConverting(true);
     setOpenLoading(true);
     // ref: https://stackoverflow.com/questions/42318829/html5-input-type-file-read-image-data
-    let imageData = new Image();
-    imageData.src = window.URL.createObjectURL(imageFile);
+    // let imageData = new Image();
+    // imageData.src = window.URL.createObjectURL(imageFile);
     const shapePredictions = await getShapePredictions(imageData);
     //const linkPredictions = await getLinkPredictions(imageData);
     //cropShapeImg(imageData, shapePredictions);
@@ -188,7 +196,7 @@ export default function User() {
     setIsConverting(false);
     setElementJSON(api.data.elementJSON);
     setLinkJSON(api.data.linkJSON);
-    setCurrentViewedErd(null);
+    sessionStorage.removeItem("currentViewedErd");
     window.location.reload();
   }
 
@@ -390,7 +398,7 @@ export default function User() {
 
     setElementJSON(JSON.parse(inputJSON));
     setLinkJSON(JSON.parse(linkJSON));
-    setCurrentViewedErd(null);
+    sessionStorage.removeItem("currentViewedErd");
     setOpenLoading(false);
     await sleep(1000);
     window.location.reload();
@@ -404,6 +412,7 @@ export default function User() {
       return;
     }
     let erdName;
+    let currentViewedErd = JSON.parse(sessionStorage.getItem("currentViewedErd"));
     if (currentViewedErd) {
       let isUpdate = window.confirm(
         "This diagram is exist. Do you want to update it?"
@@ -419,15 +428,17 @@ export default function User() {
         }
         setOpenLoading(true);
         const api = await axios.post("/api/erds/update-erd-by-id", {
-          erdId: currentViewedErd._id,
+          erdIdUpdated: currentViewedErd._id,
           erdName: erdName,
           imgSrc: imgSrc,
           elementJSON: JSON.stringify(elementJSON),
           linkJSON: JSON.stringify(linkJSON),
+          createdDate: currentViewedErd.createdDate,
           updatedDate: new Date(),
         });
         setOpenLoading(false);
         if (api.data) {
+          sessionStorage.setItem("currentViewedErd", JSON.stringify(api.data));
           alert("Update diagram successfully");
         }
         setOpenLoading(true);
@@ -437,11 +448,12 @@ export default function User() {
         setOpenLoading(false);
         setDiagramList(api2.data.erdList);
         return;
-      } else {
-        return;
       }
     }
-    else {
+    let isSave = window.confirm(
+      "Do you want to save new diagram?"
+    );
+    if (isSave) {
       while (true) {
         erdName = prompt("Please type ERD name:");
         if (erdName === null) return;
@@ -450,7 +462,10 @@ export default function User() {
         }
         else break;
       }
+    } else {
+      return;
     }
+    
     setOpenLoading(true);
     const api = await axios.post("/api/erds/create-erd", {
       userIdCreated: currentUser._id,
@@ -461,8 +476,10 @@ export default function User() {
       createdDate: new Date(),
       updatedDate: new Date(),
     });
+    
     setOpenLoading(false);
     if (api.data) {
+      sessionStorage.setItem("currentViewedErd", JSON.stringify(api.data));
       alert("Save diagram successfully");
     }
     setOpenLoading(true);
@@ -525,7 +542,6 @@ export default function User() {
                     currentUser={currentUser}
                     diagramList={diagramList}
                     setDiagramList={setDiagramList}
-                    setCurrentViewedErd={setCurrentViewedErd}
                     setElementJSON={setElementJSON}
                     setLinkJSON={setLinkJSON}
                     setImgSrc={setImgSrc}
@@ -678,7 +694,7 @@ export default function User() {
                     <p>Designed by our team:</p>
                     <ul>
                       <li>Huỳnh Lâm Tứ</li>
-                      <li>Phạm Văn Phước</li>
+                      <li>Phạm Hồng Phước</li>
                       <li>Trương Quốc Đạt</li>
                       <li>Nguyễn Phượng Vỹ</li>
                       <li>Nguyễn Hoàng Vinh</li>
