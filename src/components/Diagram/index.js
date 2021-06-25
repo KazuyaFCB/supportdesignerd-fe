@@ -842,15 +842,17 @@ export default function Diagram({
     //   graph.clear();
     //   paper.remove();
     // }
-    // graph = new joint.dia.Graph();
-    graph = new joint.dia.Graph();
+    window.joint = joint;
+    // https://github.com/clientIO/joint/issues/1133
+    const namespace = joint.shapes; // e.g. { standard: { Rectangle: RectangleElementClass }}
+    graph = new joint.dia.Graph({ /* attributes of the graph */ }, { cellNamespace: namespace });
 
     customizeGraph(graph);
 
     paper = new joint.dia.Paper({
       el: document.getElementById("paper"),
       model: graph,
-      //cellViewNamespace: joint.shapes.erd,
+      cellViewNamespace: namespace,
       // width: imageWidth,
       // height: imageHeight,
       width: 2667,

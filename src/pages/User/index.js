@@ -43,14 +43,6 @@ export default function User() {
   let [imageData, setImageData] = useState(null);
 
   useEffect(async () => {
-    const elementJSONStr = sessionStorage.getItem("elementJSON");
-    const linkJSONStr = sessionStorage.getItem("linkJSON");
-    const imgSrcStr = sessionStorage.getItem("imgSrc");
-    const imgIdStr = sessionStorage.getItem("imgId");
-    if (elementJSONStr) setElementJSON(JSON.parse(elementJSONStr));
-    if (linkJSONStr) setLinkJSON(JSON.parse(linkJSONStr));
-    if (imgSrcStr) setImgSrc(imgSrcStr);
-    if (imgIdStr) setImgId(imgIdStr);
     let currentUsername = Cookies.get(["currentUsername"]);
     if (currentUsername) {
       const api = await axios.get(
@@ -59,6 +51,18 @@ export default function User() {
       setCurrentUser(api.data);
     }
   }, []);
+
+  useEffect(() => {
+    const elementJSONStr = sessionStorage.getItem("elementJSON");
+    const linkJSONStr = sessionStorage.getItem("linkJSON");
+    const imgSrcStr = sessionStorage.getItem("imgSrc");
+    const imgIdStr = sessionStorage.getItem("imgId");
+    if (elementJSONStr) setElementJSON(JSON.parse(elementJSONStr));
+    if (linkJSONStr) setLinkJSON(JSON.parse(linkJSONStr));
+    if (imgSrcStr) setImgSrc(imgSrcStr);
+    if (imgIdStr) setImgId(imgIdStr);
+  }, [currentUser]);
+
   // useEffect(async() => {
   //     if (currentUser) {
   //         const api = await axios.get('/api/erds/find-erd-by-userIdCreated/' + currentUser._id);
@@ -334,9 +338,7 @@ export default function User() {
     return cardinalPredictions;
   }
 
-  function sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
+  function sleep(ms) { return new Promise((resolve) => setTimeout(resolve, ms));}
 
   async function cropShapeImg(imageData, predictions) {
     //alert(predictions.length);
@@ -381,8 +383,6 @@ export default function User() {
       //window.open(image.src.replace(/^data:image\/[^;]+/, 'data:application/octet-stream'),);
     }
   }
-
-  function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms));}
 
   async function convertJSONToDiagram() {
     setOpenLoading(true);
@@ -490,9 +490,13 @@ export default function User() {
     setDiagramList(api2.data.erdList);
   }
 
-  function newDiagram() {
+  function sleep(ms) { return new Promise((resolve) => setTimeout(resolve, ms));}
+
+  async function newDiagram() {
     setElementJSON({ elements: [] });
     setLinkJSON({ links: [] });
+    await sleep(1000);
+    window.location.reload();
   }
 
   function signOut() {
