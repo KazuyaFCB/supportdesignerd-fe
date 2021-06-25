@@ -197,12 +197,16 @@ export default function DiagramList({
     setCurrentPage(page);
   }
 
-  function viewDiagram(viewId) {
+  function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms));}
+
+  async function viewDiagram(viewId) {
     let index = viewId.substr(2);
     setCurrentViewedErd(diagramList[index]);
     setElementJSON(diagramList[index].elementJSON);
     setLinkJSON(diagramList[index].linkJSON);
     setImgSrc(diagramList[index].imgSrc);
+    await sleep(1000);
+    window.location.href = "/json-to-diagram";
   }
 
   async function deleteDiagram(deleteId) {

@@ -374,7 +374,9 @@ export default function User() {
     }
   }
 
-  function convertJSONToDiagram() {
+  function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms));}
+
+  async function convertJSONToDiagram() {
     setOpenLoading(true);
     if (
       !document.getElementById("inputElementJSON") ||
@@ -390,6 +392,8 @@ export default function User() {
     setLinkJSON(JSON.parse(linkJSON));
     setCurrentViewedErd(null);
     setOpenLoading(false);
+    await sleep(1000);
+    window.location.reload();
     //alert(JSON.stringify(inputJSON));
     //alert(JSON.stringify(elementJSON));
   }
@@ -405,11 +409,14 @@ export default function User() {
         "This diagram is exist. Do you want to update it?"
       );
       if (isUpdate) {
-        while (!erdName)
-          erdName = prompt(
-            "Please type new ERD name:",
-            currentViewedErd.erdName
-          );
+        while (!erdName) {
+          erdName = prompt("Please type new ERD name:", currentViewedErd.erdName);
+          if (erdName === null) return;
+          if (erdName.length === 0) {
+            alert("Please type ERD name");
+          }
+          else break;
+        }
         setOpenLoading(true);
         const api = await axios.post("/api/erds/update-erd-by-id", {
           erdId: currentViewedErd._id,
@@ -430,13 +437,19 @@ export default function User() {
         setOpenLoading(false);
         setDiagramList(api2.data.erdList);
         return;
+      } else {
+        return;
       }
     }
-    if (currentViewedErd) {
-      while (!erdName)
-        erdName = prompt("Please type new ERD name:", currentViewedErd.erdName);
-    } else {
-      while (!erdName) erdName = prompt("Please type new ERD name:");
+    else {
+      while (true) {
+        erdName = prompt("Please type ERD name:");
+        if (erdName === null) return;
+        if (erdName.length === 0) {
+          alert("Please type ERD name");
+        }
+        else break;
+      }
     }
     setOpenLoading(true);
     const api = await axios.post("/api/erds/create-erd", {

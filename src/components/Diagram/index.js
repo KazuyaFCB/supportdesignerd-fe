@@ -50,6 +50,7 @@ export default function Diagram({
   let fontSize = 40;
   const elementHeight = 80;
   let zoom = 0.5; // 40%
+  let [_paper, _setPaper] = useState(null);
 
   let elements = [];
   let mapLinkIdToNumber = {}; // convert string to number (id)
@@ -182,7 +183,7 @@ export default function Diagram({
   }
 
   async function unselectLinkPanel() {
-    //alert(rectCoverElementToCreateLink);
+    linkPanelIndexSelectedToCreate = sessionStorage.getItem("linkPanelIndexSelectedToCreate");
     if (linkPanelIndexSelectedToCreate != -1) {
       document.getElementsByClassName("createElementButton")[
         linkPanelIndexSelectedToCreate
@@ -192,6 +193,7 @@ export default function Diagram({
         rectCoverElementToCreateLink = null;
       }
       linkPanelIndexSelectedToCreate = -1;
+      sessionStorage.setItem("linkPanelIndexSelectedToCreate", "-1");
       sourceElementIdConnectedToLinkCreated = -1;
     }
   }
@@ -223,6 +225,7 @@ export default function Diagram({
         panelIndex
       ].style.backgroundColor = "skyblue";
       linkPanelIndexSelectedToCreate = panelIndex;
+      sessionStorage.setItem("linkPanelIndexSelectedToCreate", panelIndex);
       //paper.setInteractivity(false);
     }
     //sessionStorage.setItem("elementJSON", JSON.stringify(elementJSON));
@@ -638,6 +641,7 @@ export default function Diagram({
 
   function addClickElementEvent(paper) {
     paper.on("element:pointerclick", function (elementView) {
+      linkPanelIndexSelectedToCreate = sessionStorage.getItem("linkPanelIndexSelectedToCreate");
       if (
         linkPanelIndexSelectedToCreate != -1 &&
         rectCoverElementToCreateLink != elementView.model
@@ -677,6 +681,7 @@ export default function Diagram({
   }
 
   function createLink(sourceId, targetId) {
+    linkPanelIndexSelectedToCreate = sessionStorage.getItem("linkPanelIndexSelectedToCreate");
     let item = {
       id: linkJSON.links.length + 1,
       type: panel[linkPanelIndexSelectedToCreate].title,
@@ -843,7 +848,7 @@ export default function Diagram({
     paper = new joint.dia.Paper({
       el: document.getElementById("paper"),
       model: graph,
-      cellViewNamespace: joint.shapes.erd,
+      //cellViewNamespace: joint.shapes.erd,
       // width: imageWidth,
       // height: imageHeight,
       width: 2667,
@@ -859,6 +864,7 @@ export default function Diagram({
 
     addDeleteObjectEvent(graph);
     addClickElementEvent(paper);
+    _setPaper(paper);
   }
 
   function drawElement() {
@@ -1052,7 +1058,7 @@ export default function Diagram({
               aria-labelledby="vertical-slider"
               onChange={(event, value) => {
                 zoom = value;
-                paper.scale(zoom, zoom);
+                _paper.scale(zoom, zoom);
               }}
             />
           </div>
