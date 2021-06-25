@@ -40,15 +40,44 @@
 }
 
 .footer {
-  height: 100px;
   width: 100%;
   background-color: black;
   display: flex;
   align-items: center;
-  justify-content: center;
+  flex-direction: column;
   color: white;
-  font-weight: 600;
-  font-size: 20px;
+  font-size: 16px;
+  position: relative;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px 24px;
+}
+
+/* .footer .copyright {
+  margin: 0;
+  padding: 0;
+} */
+
+.footer h4 {
+  color: rgb(160, 160, 25);
+  margin: 10px 0;
+}
+
+.authors {
+  text-align: center;
+}
+
+.author-list {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.author-list h6 {
+  flex-grow: 1;
+  width: 33%;
 }
 
 .input-items:first-child {

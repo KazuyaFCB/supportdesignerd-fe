@@ -836,14 +836,14 @@ export default function Diagram({
     //   paper.remove();
     // }
     // graph = new joint.dia.Graph();
-    graph = new joint.dia.Graph({}, { cellNamespace: joint.shapes });
+    graph = new joint.dia.Graph();
 
     customizeGraph(graph);
 
     paper = new joint.dia.Paper({
       el: document.getElementById("paper"),
       model: graph,
-      cellViewNamespace: joint.shapes,
+      cellViewNamespace: joint.shapes.erd,
       // width: imageWidth,
       // height: imageHeight,
       width: 2667,

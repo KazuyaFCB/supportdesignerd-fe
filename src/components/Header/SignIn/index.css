@@ -18,9 +18,9 @@
   position: absolute;
   padding: 8px 16px;
   background-color: violet;
-  width: 450px;
-  top: 10px;
-  right: -120px;
+  width: 435px;
+  top: 20px;
+  right: -100px;
   box-shadow: 6px 6px 12px 0px rgba(0, 0, 0, 0.5);
 }
 
