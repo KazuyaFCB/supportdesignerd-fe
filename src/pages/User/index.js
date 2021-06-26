@@ -43,6 +43,14 @@ export default function User() {
   let [imageData, setImageData] = useState(null);
 
   useEffect(async () => {
+    const elementJSONStr = sessionStorage.getItem("elementJSON");
+    const linkJSONStr = sessionStorage.getItem("linkJSON");
+    const imgSrcStr = sessionStorage.getItem("imgSrc");
+    const imgIdStr = sessionStorage.getItem("imgId");
+    if (elementJSONStr) setElementJSON(JSON.parse(elementJSONStr));
+    if (linkJSONStr) setLinkJSON(JSON.parse(linkJSONStr));
+    if (imgSrcStr) setImgSrc(imgSrcStr);
+    if (imgIdStr) setImgId(imgIdStr);
     let currentUsername = Cookies.get(["currentUsername"]);
     if (currentUsername) {
       const api = await axios.get(
@@ -52,16 +60,6 @@ export default function User() {
     }
   }, []);
 
-  useEffect(() => {
-    const elementJSONStr = sessionStorage.getItem("elementJSON");
-    const linkJSONStr = sessionStorage.getItem("linkJSON");
-    const imgSrcStr = sessionStorage.getItem("imgSrc");
-    const imgIdStr = sessionStorage.getItem("imgId");
-    if (elementJSONStr) setElementJSON(JSON.parse(elementJSONStr));
-    if (linkJSONStr) setLinkJSON(JSON.parse(linkJSONStr));
-    if (imgSrcStr) setImgSrc(imgSrcStr);
-    if (imgIdStr) setImgId(imgIdStr);
-  }, [currentUser]);
 
   // useEffect(async() => {
   //     if (currentUser) {
@@ -198,6 +196,7 @@ export default function User() {
     });
     setOpenLoading(false);
     setIsConverting(false);
+    setImageData(null);
     setElementJSON(api.data.elementJSON);
     setLinkJSON(api.data.linkJSON);
     sessionStorage.removeItem("currentViewedErd");
@@ -337,8 +336,6 @@ export default function User() {
     }
     return cardinalPredictions;
   }
-
-  function sleep(ms) { return new Promise((resolve) => setTimeout(resolve, ms));}
 
   async function cropShapeImg(imageData, predictions) {
     //alert(predictions.length);

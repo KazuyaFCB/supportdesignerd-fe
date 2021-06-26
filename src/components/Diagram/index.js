@@ -50,7 +50,7 @@ export default function Diagram({
   let fontSize = 40;
   const elementHeight = 80;
   let zoom = 0.5; // 40%
-  let [_paper, _setPaper] = useState(null);
+  //let [_paper, _setPaper] = useState(null);
 
   let elements = [];
   let mapLinkIdToNumber = {}; // convert string to number (id)
@@ -185,7 +185,7 @@ export default function Diagram({
 
   async function unselectLinkPanel() {
     linkPanelIndexSelectedToCreate = sessionStorage.getItem("linkPanelIndexSelectedToCreate");
-    if (linkPanelIndexSelectedToCreate != -1) {
+    if (linkPanelIndexSelectedToCreate >= 10 && linkPanelIndexSelectedToCreate <= 12) {
       document.getElementsByClassName("createElementButton")[
         linkPanelIndexSelectedToCreate
       ].style.backgroundColor = "transparent";
@@ -644,7 +644,7 @@ export default function Diagram({
     paper.on("element:pointerclick", function (elementView) {
       linkPanelIndexSelectedToCreate = sessionStorage.getItem("linkPanelIndexSelectedToCreate");
       if (
-        linkPanelIndexSelectedToCreate != -1 &&
+        linkPanelIndexSelectedToCreate >= 10 && linkPanelIndexSelectedToCreate <= 12 &&
         rectCoverElementToCreateLink != elementView.model
       ) {
         if (rectCoverElementToCreateLink != null) {
@@ -837,12 +837,12 @@ export default function Diagram({
     return link;
   }
 
-  function initDiagram() {
+  async function initDiagram() {
     // if (graph || paper) {
     //   graph.clear();
     //   paper.remove();
     // }
-    window.joint = joint;
+    //window.joint = joint;
     // https://github.com/clientIO/joint/issues/1133
     const namespace = joint.shapes; // e.g. { standard: { Rectangle: RectangleElementClass }}
     graph = new joint.dia.Graph({ /* attributes of the graph */ }, { cellNamespace: namespace });
@@ -868,7 +868,7 @@ export default function Diagram({
 
     addDeleteObjectEvent(graph);
     addClickElementEvent(paper);
-    _setPaper(paper);
+    
   }
 
   function drawElement() {
@@ -1025,12 +1025,13 @@ export default function Diagram({
   }
 
   function drawDiagram() {
-    //window.joint = joint;
+    window.joint = joint;
     // khởi tạo các đối tượng erd, graph, paper
 
     //var erd = joint.shapes.erd;
 
     initDiagram();
+    //_setPaper(paper);
 
     //let elements = new Array(elementJSON.elements.length);
     //let links = new Array(linkJSON.links.length);
@@ -1039,6 +1040,14 @@ export default function Diagram({
     drawLink();
 
     changeBindingErrorList();
+  }
+
+  function paperScale(zoom) {
+    paper.scale(zoom, zoom);
+  }
+
+  function zoomDiagram(zoom) {
+    paperScale(zoom);
   }
 
   // set height that use viewport percentages
@@ -1061,8 +1070,12 @@ export default function Diagram({
               defaultValue={zoom}
               aria-labelledby="vertical-slider"
               onChange={(event, value) => {
-                zoom = value;
-                _paper.scale(zoom, zoom);
+                if (paper) {
+                  zoom = value;
+                  zoomDiagram(value);
+                } else {
+                  drawDiagram();
+                }
               }}
             />
           </div>
