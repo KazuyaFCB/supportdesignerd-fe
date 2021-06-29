@@ -18,8 +18,7 @@ export default function SignUp() {
     return re.test(String(email).toLowerCase());
   }
 
-  const specialChars = "<>@!#$%^&*+{}?:;|()[]'\"\\,/~`= ";
-  function checkForSpecialChar(string) {
+  function checkForSpecialChar(string, specialChars = "<>@!#$%^&*+{}?:;|()[]'\"\\,/~`= ") {
     for (var i = 0; i < specialChars.length; i++) {
       if (string.indexOf(specialChars[i]) > -1) {
         return false;
@@ -38,6 +37,7 @@ export default function SignUp() {
     const email = document.getElementsByName("email")[0].value;
     if (password != retypePassword) {
       alert("Nhập lại mật khẩu không đúng");
+      setOpenLoading(false);
       return;
     }
     if (
@@ -46,19 +46,30 @@ export default function SignUp() {
       fullName.length < 5 ||
       fullName.length > 50
     ) {
-      alert("Username hoặc display name phải từ 5 đến 50 kí tự");
+      alert("Username hoặc Full name phải từ 5 đến 50 kí tự");
+      setOpenLoading(false);
       return;
     }
-    if (!checkForSpecialChar(username)) {
+    let specialChars = "<>@!#$%^&*+{}?:;|()[]'\"\\,/~`= ";
+    if (!checkForSpecialChar(username, specialChars)) {
       alert("Username không được chứa kí tự đặc biệt và khoảng trắng");
+      setOpenLoading(false);
       return;
     }
     if (password.length < 6) {
       alert("Password phải từ 6 kí tự trở lên");
+      setOpenLoading(false);
+      return;
+    }
+    specialChars = "<>@!#$%^&*+{}?:;|()[]'\"\\,/~`=";
+    if (!checkForSpecialChar(fullName, specialChars)) {
+      alert("Full name không được chứa kí tự đặc biệt");
+      setOpenLoading(false);
       return;
     }
     if (!validateEmail(email)) {
       alert("Email không đúng định dạng");
+      setOpenLoading(false);
       return;
     }
     const api = await axios.post("/api/users/sign-up", {
@@ -68,15 +79,17 @@ export default function SignUp() {
       email: email,
     });
 
-    setOpenLoading(false);
-    setIsSignUpSuccess(true);
+    //setOpenLoading(false);
+    //setIsSignUpSuccess(true);
 
-    // if (api.data) {
-    //   alert("Sign up successfully");
-    //   setIsSignUpSuccess(true);
-    // } else {
-    //   alert("Sign up unsucessfully");
-    // }
+    if (api.data) {
+      alert("Đăng ký thành công");
+      setOpenLoading(false);
+      setIsSignUpSuccess(true);
+    } else {
+      setOpenLoading(false);
+      alert("Username đã tồn tại");
+    }
   }
   if (isSignUpSuccess) return <Redirect to="/sign-in" />;
   return (

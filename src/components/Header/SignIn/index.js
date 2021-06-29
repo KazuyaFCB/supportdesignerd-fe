@@ -41,14 +41,17 @@ export default function SignIn() {
 
     if (username.length < 5 || username.length > 50) {
       alert("Username phải từ 5 đến 50 kí tự");
+      setOpenLoading(false);
       return;
     }
     if (!checkForSpecialChar(username)) {
       alert("Username không được chứa kí tự đặc biệt và khoảng trắng");
+      setOpenLoading(false);
       return;
     }
     if (password.length < 6) {
       alert("Password phải từ 6 kí tự trở lên");
+      setOpenLoading(false);
       return;
     }
 
@@ -62,7 +65,8 @@ export default function SignIn() {
       setOpenLoading(true);
       setIsSignInSuccess(true);
     } else {
-      alert("Sign in unsuccessfully");
+      setOpenLoading(false);
+      alert("Đăng nhập thất bại");
     }
   }
   if (isSignInSuccess) window.location.href = "/";
