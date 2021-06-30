@@ -263,15 +263,23 @@ export default function DiagramList({
                 <tbody>{diagramListView}</tbody>
               </table>
               <div class="clearfix">
-                {/* <div class="hint-text">
-                  Showing{" "}
+                <div class="hint-text">
+                  Hiển thị{" "}
                   <b>
-                    {numElementInPage < diagramList.length
+                    {diagramList.length > 0 ?
+                      (
+                        (diagramList.length - (currentPage - 1)*numElementInPage) >= numElementInPage
+                        ? numElementInPage
+                        : (diagramList.length - (currentPage - 1)*numElementInPage)
+                      )
+                      : 0
+                    }
+                    {/* {numElementInPage < diagramList.length
                       ? numElementInPage
-                      : diagramList.length}
+                      : diagramList.length} */}
                   </b>{" "}
-                  out of <b>{diagramList.length}</b> entries
-                </div> */}
+                  trên <b>{diagramList.length}</b> diagram
+                </div>
                 <ul class="pagination">{paginationView}</ul>
               </div>
             </div>
