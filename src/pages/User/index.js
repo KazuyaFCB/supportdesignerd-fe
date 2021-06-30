@@ -405,7 +405,7 @@ export default function User() {
 
   async function saveDiagram() {
     if (!currentUser) {
-      alert("Please sign in to save diagram!");
+      alert("Vui lòng đăng nhập để lưu diagram này!");
       return;
     }
     let erdName;
@@ -414,17 +414,17 @@ export default function User() {
     );
     if (currentViewedErd) {
       let isUpdate = window.confirm(
-        "This diagram is exist. Do you want to update it?"
+        "Digram này đã tồn tại, bạn có muốn cập nhật?"
       );
       if (isUpdate) {
         while (!erdName) {
           erdName = prompt(
-            "Please type new ERD name:",
+            "Nhập tên Diagram muốn lưu:",
             currentViewedErd.erdName
           );
           if (erdName === null) return;
           if (erdName.length === 0) {
-            alert("Please type ERD name");
+            alert("Nhập tên Diagram muốn lưu:");
           } else break;
         }
         setOpenLoading(true);
@@ -553,7 +553,7 @@ export default function User() {
                   />
                   <WaitingDialog
                     openLoading={openLoading}
-                    text="Loading your diagram list"
+                    text="Đang tải danh sách diagram của bạn"
                   />
                 </div>
               </Route>
@@ -609,7 +609,7 @@ export default function User() {
                           onClick={() => convertImageToDiagram()}
                         >
                           <img src="/images/convert.svg" alt="" />
-                          Chuyển đổi
+                          Tạo Diagram
                         </button>
                         <button
                           className="btn btn-new"
@@ -655,42 +655,68 @@ export default function User() {
                 <WaitingDialog
                   openLoading={openLoading}
                   isConverting={isConverting}
-                  textConverting="Converting you image"
-                  text="Loading your image"
+                  textConverting="Đang tạo diagram"
+                  text="Đang tải ảnh lên"
                 />
               </Route>
               <Route path={"/json-to-diagram"}>
                 <div className="_container">
-                  <div className="input-wrapper">
-                    <form className="element-json json-input">
-                      <h5>Input Element JSON</h5>
-                      <textarea id="inputElementJSON"></textarea>
-                    </form>
-                    <form className="link-json json-input">
-                      <h5>Input Link JSON</h5>
-                      <textarea id="inputLinkJSON"></textarea>
-                    </form>
-                  </div>
-                  <div className="btn-container">
-                    <p>Choose your diagram's language</p>
-                    <button
-                      className="btn btn-convert"
-                      onClick={() => convertJSONToDiagram()}
-                    >
-                      <img src="/images/convert.svg" alt="" />
-                      Convert
-                    </button>
-                    <button
-                      className="btn btn-new"
-                      onClick={() => newDiagram()}
-                    >
-                      <img src="/images/new.svg" alt="" />
-                      New
-                    </button>
-                    <button className="btn btn-save" onClick={saveDiagram}>
-                      <img src="/images/save.svg" alt="" />
-                      Save
-                    </button>
+                  <div className="input-data-container">
+                    <div className="input-data-content-json">
+                      <div className="input-wrapper">
+                        <form className="element-json json-input">
+                          <h5>Nhập Element JSON</h5>
+                          <textarea id="inputElementJSON"></textarea>
+                        </form>
+                        <form className="link-json json-input">
+                          <h5>Nhập Link JSON</h5>
+                          <textarea id="inputLinkJSON"></textarea>
+                        </form>
+                      </div>
+                      <div className="input-items json">
+                        <p>Chọn ngôn ngữ của diagram:</p>
+                        <div className="radio-label">
+                          <input
+                            type="radio"
+                            id="vietnamese"
+                            name="language"
+                            onClick={() => setLanguage("vn")}
+                            checked={language == "vn"}
+                          />
+                          <label htmlFor="vietnamese">Tiếng Việt</label>
+                        </div>
+                        <div className="radio-label">
+                          <input
+                            type="radio"
+                            id="english"
+                            name="language"
+                            onClick={() => setLanguage("en")}
+                            checked={language == "en"}
+                          />
+                          <label htmlFor="english">English</label>
+                        </div>
+                      </div>
+                      <div className="btn-container">
+                        <button
+                          className="btn btn-convert"
+                          onClick={() => convertJSONToDiagram()}
+                        >
+                          <img src="/images/convert.svg" alt="" />
+                          Tạo diagram
+                        </button>
+                        <button
+                          className="btn btn-new"
+                          onClick={() => newDiagram()}
+                        >
+                          <img src="/images/new.svg" alt="" />
+                          Diagram mới
+                        </button>
+                        <button className="btn btn-save" onClick={saveDiagram}>
+                          <img src="/images/save.svg" alt="" />
+                          Lưu diagram
+                        </button>
+                      </div>
+                    </div>
                   </div>
                   <Guide />
                   <div className="diagram-content">
@@ -717,8 +743,8 @@ export default function User() {
                 <WaitingDialog
                   openLoading={openLoading}
                   isConverting={isConverting}
-                  textConverting="Converting you image"
-                  text="Loading your image"
+                  textConverting="Đang tạo diagram"
+                  // text="Đang tải ảnh lên"
                 />
               </Route>
             </Route>

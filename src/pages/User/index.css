@@ -43,8 +43,15 @@
   padding: 30px;
 }
 
+.input-data-content-json {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
 .loaded-img {
-  height: 400px;
+  width: 100%;
 }
 
 .footer {
@@ -102,20 +109,23 @@
 }
 
 .json-input textarea {
-  width: 500px;
+  width: 550px;
   height: 300px;
 }
 
 .input-wrapper {
-  width: 80%;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 85vw;
 }
 
 .input-items p {
   padding: 0;
-  margin: 0;
   margin-bottom: 10px;
   font-weight: 550;
+}
+
+.input-items.json {
+  padding-left: 80px;
 }

@@ -61,7 +61,7 @@ export default function DiagramList({
         setDiagramListView(
           <tr>
             <td colSpan="4" align="center">
-              Not found diagram
+              Không tìm thấy diagram
             </td>
           </tr>
         );
@@ -129,7 +129,7 @@ export default function DiagramList({
       result.push(
         <li class="page-item disabled">
           <a onClick={() => goToPreviousPagination()} class="page-link">
-            Previous
+            Trang trước
           </a>
         </li>
       );
@@ -137,7 +137,7 @@ export default function DiagramList({
       result.push(
         <li class="page-item">
           <a onClick={() => goToPreviousPagination()} class="page-link">
-            Previous
+            Trang trước
           </a>
         </li>
       );
@@ -163,7 +163,7 @@ export default function DiagramList({
       result.push(
         <li class="page-item disabled">
           <a onClick={() => goToNextPagination()} class="page-link">
-            Next
+            Trang sau
           </a>
         </li>
       );
@@ -171,7 +171,7 @@ export default function DiagramList({
       result.push(
         <li class="page-item">
           <a onClick={() => goToNextPagination()} class="page-link">
-            Next
+            Trang sau
           </a>
         </li>
       );
@@ -228,7 +228,7 @@ export default function DiagramList({
     setDiagramList(tmpDiagramList);
     setCurrentPage(-1);
     if (api.data.status) {
-      alert("Delete diagram successfully");
+      alert("Xoá diagram thành công");
     }
   }
 
