@@ -11,7 +11,8 @@ export default function SignIn() {
   const signInWithGooglePath = domain + "/auth/google";
   const signInWithFacebookPath = domain + "/auth/facebook";
   const [isSignInSuccess, setIsSignInSuccess] = useState(false);
-  let [openLoading, setOpenLoading] = useState(false);
+  const [openLoading, setOpenLoading] = useState(false);
+  const [validateError, setValidateError] = useState(null);
 
   const specialChars = "<>@!#$%^&*+{}?:;|()[]'\"\\,/~`= ";
   function checkForSpecialChar(string) {
@@ -22,6 +23,15 @@ export default function SignIn() {
     }
     return true;
   }
+
+  const setValidationError = (type, content) => {
+    const error = {
+      type,
+      content,
+    };
+    setValidateError(error);
+    setOpenLoading(false);
+  };
 
   async function findUser() {
     const api = await axios.get("/api/users/find-user");
@@ -36,22 +46,20 @@ export default function SignIn() {
 
   async function signIn() {
     setOpenLoading(true);
+    setValidateError(null);
     const username = document.getElementsByName("username")[0].value;
     const password = document.getElementsByName("password")[0].value;
 
     if (username.length < 5 || username.length > 50) {
-      alert("Username phải từ 5 đến 50 kí tự");
-      setOpenLoading(false);
+      setValidationError("username", "Username must be in 5 to 50 characters");
       return;
     }
     if (!checkForSpecialChar(username)) {
-      alert("Username không được chứa kí tự đặc biệt và khoảng trắng");
-      setOpenLoading(false);
+      setValidationError("username", "Username must not include space");
       return;
     }
     if (password.length < 6) {
-      alert("Password phải từ 6 kí tự trở lên");
-      setOpenLoading(false);
+      setValidationError("password", "Password be at least 6 characters");
       return;
     }
 
@@ -66,7 +74,7 @@ export default function SignIn() {
       setIsSignInSuccess(true);
     } else {
       setOpenLoading(false);
-      alert("Đăng nhập thất bại");
+      setValidationError("username", "Incorrect username or password");
     }
   }
   if (isSignInSuccess) window.location.href = "/";
@@ -90,14 +98,20 @@ export default function SignIn() {
           <div className="input-items">
             <label htmlFor="username">Username</label>
             <input type="text" name="username" autoComplete="off" />
+            {validateError && validateError.type === "username" && (
+              <p className="error">{validateError.content}</p>
+            )}
           </div>
           <div className="input-items">
             <label htmlFor="username">Password</label>
             <input type="password" name="password" />
+            {validateError && validateError.type === "password" && (
+              <p className="error">{validateError.content}</p>
+            )}
           </div>
-          <input type="submit" name="signin_submit" value="SIGN IN" />
-          <br />
-          <br />
+          <div className="submit-btn">
+            <input type="submit" name="signin_submit" value="SIGN IN" />
+          </div>
         </form>
       </div>
     </div>

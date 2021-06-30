@@ -23,7 +23,7 @@ input[type="text"],
 input[type="password"] {
   display: block;
   box-sizing: border-box;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   padding: 4px;
   width: 220px;
   height: 32px;
@@ -43,7 +43,6 @@ input[type="password"]:focus {
 }
 
 input[type="submit"] {
-  margin-top: 28px;
   width: 120px;
   height: 32px;
   background: #16a085;

@@ -52,3 +52,16 @@
   list-style: none;
   display: flex;
 }
+
+._shapes-items {
+  border: 1px solid grey;
+}
+
+._shapes-items img {
+  width: 85px;
+  height: 85px;
+}
+
+._selected-rela-shape button {
+  background-color: greenyellow;
+}

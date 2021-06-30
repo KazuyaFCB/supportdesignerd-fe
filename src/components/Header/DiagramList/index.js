@@ -196,12 +196,19 @@ export default function DiagramList({
     setCurrentPage(page);
   }
 
-  function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms));}
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
 
   async function viewDiagram(viewId) {
     let index = viewId.substr(2);
-    const api = await axios.get('/api/erds/find-erd-by-id/' + diagramList[index]._id);
-    sessionStorage.setItem("currentViewedErd", JSON.stringify(diagramList[index]));
+    const api = await axios.get(
+      "/api/erds/find-erd-by-id/" + diagramList[index]._id
+    );
+    sessionStorage.setItem(
+      "currentViewedErd",
+      JSON.stringify(diagramList[index])
+    );
     setElementJSON(api.data.elementJSON);
     setLinkJSON(api.data.linkJSON);
     setImgSrc(api.data.imgSrc);

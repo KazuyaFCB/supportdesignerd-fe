@@ -134,6 +134,8 @@ export default function Diagram({
     },
   ];
 
+  const [selectedRelaShapeIndex, setSelectedRelaShapeIndex] = useState(null);
+
   useEffect(() => {
     updateInputElementJSON();
     updateInputLinkJSON();
@@ -184,8 +186,13 @@ export default function Diagram({
   }
 
   async function unselectLinkPanel() {
-    linkPanelIndexSelectedToCreate = sessionStorage.getItem("linkPanelIndexSelectedToCreate");
-    if (linkPanelIndexSelectedToCreate >= 10 && linkPanelIndexSelectedToCreate <= 12) {
+    linkPanelIndexSelectedToCreate = sessionStorage.getItem(
+      "linkPanelIndexSelectedToCreate"
+    );
+    if (
+      linkPanelIndexSelectedToCreate >= 10 &&
+      linkPanelIndexSelectedToCreate <= 12
+    ) {
       document.getElementsByClassName("createElementButton")[
         linkPanelIndexSelectedToCreate
       ].style.backgroundColor = "transparent";
@@ -222,11 +229,12 @@ export default function Diagram({
         changeBindingErrorList();
       }
     } else {
-      document.getElementsByClassName("createElementButton")[
-        panelIndex
-      ].style.backgroundColor = "skyblue";
+      // document.getElementsByClassName("createElementButton")[
+      //   panelIndex
+      // ].style.backgroundColor = "skyblue";
       linkPanelIndexSelectedToCreate = panelIndex;
       sessionStorage.setItem("linkPanelIndexSelectedToCreate", panelIndex);
+      setSelectedRelaShapeIndex(panelIndex);
       //paper.setInteractivity(false);
     }
     //sessionStorage.setItem("elementJSON", JSON.stringify(elementJSON));
@@ -642,9 +650,12 @@ export default function Diagram({
 
   function addClickElementEvent(paper) {
     paper.on("element:pointerclick", function (elementView) {
-      linkPanelIndexSelectedToCreate = sessionStorage.getItem("linkPanelIndexSelectedToCreate");
+      linkPanelIndexSelectedToCreate = sessionStorage.getItem(
+        "linkPanelIndexSelectedToCreate"
+      );
       if (
-        linkPanelIndexSelectedToCreate >= 10 && linkPanelIndexSelectedToCreate <= 12 &&
+        linkPanelIndexSelectedToCreate >= 10 &&
+        linkPanelIndexSelectedToCreate <= 12 &&
         rectCoverElementToCreateLink != elementView.model
       ) {
         if (rectCoverElementToCreateLink != null) {
@@ -682,7 +693,9 @@ export default function Diagram({
   }
 
   function createLink(sourceId, targetId) {
-    linkPanelIndexSelectedToCreate = sessionStorage.getItem("linkPanelIndexSelectedToCreate");
+    linkPanelIndexSelectedToCreate = sessionStorage.getItem(
+      "linkPanelIndexSelectedToCreate"
+    );
     if (!panel[linkPanelIndexSelectedToCreate]) return;
     let item = {
       id: linkJSON.links.length + 1,
@@ -845,9 +858,23 @@ export default function Diagram({
     //window.joint = joint;
     // https://github.com/clientIO/joint/issues/1133
     const namespace = joint.shapes; // e.g. { standard: { Rectangle: RectangleElementClass }}
-    graph = new joint.dia.Graph({ /* attributes of the graph */ }, { cellNamespace: namespace });
+    graph = new joint.dia.Graph(
+      {
+        /* attributes of the graph */
+      },
+      { cellNamespace: namespace }
+    );
 
     customizeGraph(graph);
+
+    // tạo lại DOM paper mới để tránh trg hợp ko thoát chuột đc,
+    // vì nếu còn DOM paper cũ sẽ ảnh hưởng, DOM cũ nó còn lưu event changePosition
+    document.getElementById("paper").remove();
+    let paperDOM = document.createElement("div");
+    paperDOM.setAttribute("id", "paper");
+    let textNode = document.createTextNode("Diagram");
+    paperDOM.appendChild(textNode);
+    document.getElementsByClassName("_diagram-area")[0].appendChild(paperDOM);
 
     paper = new joint.dia.Paper({
       el: document.getElementById("paper"),
@@ -868,7 +895,6 @@ export default function Diagram({
 
     addDeleteObjectEvent(graph);
     addClickElementEvent(paper);
-    
   }
 
   function drawElement() {
@@ -1086,17 +1112,19 @@ export default function Diagram({
             <ul component="nav" aria-label="secondary mailbox folders">
               {panel.map((panelItem, panelIndex) => (
                 <li
-                  className="createElementButton"
+                  className={
+                    panelIndex === selectedRelaShapeIndex
+                      ? "createElementButton _selected-rela-shape"
+                      : "createElementButton"
+                  }
                   button
                   onClick={() => createElement(panelItem, panelIndex)}
                 >
-                  <Button>
+                  <Button className="_shapes-items">
                     <img
-                      style={{ backgroundColor: "green" }}
                       src={panelItem.img}
                       alt={panelItem.title}
                       title={panelItem.title}
-                      style={{ height: "80px", width: "90px" }}
                     />
                   </Button>
                 </li>
