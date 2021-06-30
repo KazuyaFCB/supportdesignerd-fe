@@ -14,7 +14,11 @@ function Guide() {
             type="checkbox"
             onClick={() => setIsShowing(isShowing === "off" ? "on" : "off")}
           />
-          <span class="slider round"></span>
+          <span
+            class={isShowing === "on" ? "slider round" : "slider round hide"}
+          >
+            {isShowing === "on" ? "Hiển thị" : "Ẩn"}
+          </span>
         </label>
       </div>
       {isShowing === "on" && (

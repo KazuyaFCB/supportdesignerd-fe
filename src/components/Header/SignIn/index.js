@@ -51,15 +51,15 @@ export default function SignIn() {
     const password = document.getElementsByName("password")[0].value;
 
     if (username.length < 5 || username.length > 50) {
-      setValidationError("username", "Username must be in 5 to 50 characters");
+      setValidationError("username", "Username phải chứa từ 5 đến 50 kí tự");
       return;
     }
     if (!checkForSpecialChar(username)) {
-      setValidationError("username", "Username must not include space");
+      setValidationError("username", "Username không được chứa khoảng trắng");
       return;
     }
     if (password.length < 6) {
-      setValidationError("password", "Password be at least 6 characters");
+      setValidationError("password", "Mật khẩu phải gồm ít nhất 6 kí tự");
       return;
     }
 
@@ -74,14 +74,14 @@ export default function SignIn() {
       setIsSignInSuccess(true);
     } else {
       setOpenLoading(false);
-      setValidationError("username", "Incorrect username or password");
+      setValidationError("username", "Username hoặc mật khẩu không đúng");
     }
   }
   if (isSignInSuccess) window.location.href = "/";
 
   return (
     <div className="login-box">
-      <WaitingDialog openLoading={openLoading} text="Logging in" />
+      <WaitingDialog openLoading={openLoading} text="Đang đăng nhập" />
       <div className="left-box">
         <h2>Ứng dụng hỗ trợ thiết kế mô hình thực thể - kết hợp</h2>
         <img src="/images/authentication-background.png" alt="" />
@@ -94,7 +94,7 @@ export default function SignIn() {
           }}
           method="post"
         >
-          <h1>LOG IN</h1>
+          <h1>ĐĂNG NHẬP</h1>
           <div className="input-items">
             <label htmlFor="username">Username</label>
             <input type="text" name="username" autoComplete="off" />
@@ -103,14 +103,14 @@ export default function SignIn() {
             )}
           </div>
           <div className="input-items">
-            <label htmlFor="username">Password</label>
+            <label htmlFor="username">Mật khẩu</label>
             <input type="password" name="password" />
             {validateError && validateError.type === "password" && (
               <p className="error">{validateError.content}</p>
             )}
           </div>
           <div className="submit-btn">
-            <input type="submit" name="signin_submit" value="SIGN IN" />
+            <input type="submit" name="signin_submit" value="Đăng nhập" />
           </div>
         </form>
       </div>

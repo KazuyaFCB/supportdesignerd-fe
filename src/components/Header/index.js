@@ -20,7 +20,7 @@ export default function Header({ currentUser, signOut }) {
       <div class="container">
         <div class="collapse navbar-collapse" id="navcol-1">
           <Link to={"/"}>
-            <div class="navbar-brand">Home</div>
+            <div class="navbar-brand">Trang chủ</div>
           </Link>
           <ul class="nav navbar-nav form-inline mr-auto">
             <li hidden={!currentUser} class="dropdown">
@@ -35,7 +35,7 @@ export default function Header({ currentUser, signOut }) {
                 <Link to={"/diagram-list"}>
                   <a class="dropdown-item" role="presentation">
                     {" "}
-                    My Diagram List
+                    Danh sách Diagram
                   </a>
                 </Link>
                 <Link to={"/"}>
@@ -44,7 +44,7 @@ export default function Header({ currentUser, signOut }) {
                     role="presentation"
                     onClick={() => signOut()}
                   >
-                    Log Out
+                    Đăng xuất
                   </a>
                 </Link>
               </div>
@@ -55,17 +55,17 @@ export default function Header({ currentUser, signOut }) {
                 data-toggle="dropdown"
                 aria-expanded="false"
               >
-                Draw Diagram
+                Tạo Diagram
               </a>
               <div class="dropdown-menu" role="menu">
                 <Link to={"/image-to-diagram"}>
                   <a class="dropdown-item" role="presentation">
-                    From Image
+                    Từ ảnh
                   </a>
                 </Link>
                 <Link to={"/json-to-diagram"}>
                   <a class="dropdown-item" role="presentation">
-                    From JSON
+                    Từ JSON
                   </a>
                 </Link>
               </div>
@@ -74,17 +74,17 @@ export default function Header({ currentUser, signOut }) {
           <div hidden={currentUser}>
             <Link to={"/sign-in"}>
               <span class="navbar-text">
-                <div class="login">Log In</div>
+                <div class="login">Đăng nhập</div>
               </span>
             </Link>
             <Link to={"/sign-up"}>
               <div class="btn action-button" role="button">
-                Sign Up
+                Đăng ký
               </div>
             </Link>
           </div>
           <div hidden={!currentUser}>
-            <span class="login">Hello {fullName}</span>
+            <span class="login">Xin chào {fullName}</span>
           </div>
         </div>
       </div>

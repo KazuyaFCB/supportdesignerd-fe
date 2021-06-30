@@ -559,65 +559,70 @@ export default function User() {
               </Route>
               <Route path={"/image-to-diagram"}>
                 <div className="_container">
-                  <div className="img-content">
-                    <img class="loaded-img" src={imgSrc} />
-                    <form encType="multipart/form-data">
-                      <div className="input-items">
-                        <label for="img">Select image:</label>
-                        <input
-                          type="file"
-                          id="imageFile"
-                          name="imageFile"
-                          accept="image/*"
-                          onChange={(e) => {
-                            e.preventDefault();
-                            getImgSrcFromImgFile();
-                          }}
-                        />
-                      </div>
-                      <div className="input-items">
-                        <p>Choose your diagram's language</p>
-                        <div className="radio-label">
+                  <div className="input-data-container">
+                    <div className="input-data-content">
+                      <img
+                        class="loaded-img"
+                        src={imgSrc ? imgSrc : "/images/image-placeholder.png"}
+                      />
+                      <form encType="multipart/form-data">
+                        <div className="input-items">
+                          <label for="img">Tải hình ảnh diagram:</label>
                           <input
-                            type="radio"
-                            id="vietnamese"
-                            name="language"
-                            onClick={() => setLanguage("vn")}
-                            checked={language == "vn"}
+                            type="file"
+                            id="imageFile"
+                            name="imageFile"
+                            accept="image/*"
+                            onChange={(e) => {
+                              e.preventDefault();
+                              getImgSrcFromImgFile();
+                            }}
                           />
-                          <label htmlFor="vietnamese">Vietnamese</label>
                         </div>
-                        <div className="radio-label">
-                          <input
-                            type="radio"
-                            id="english"
-                            name="language"
-                            onClick={() => setLanguage("en")}
-                            checked={language == "en"}
-                          />
-                          <label htmlFor="english">English</label>
+                        <div className="input-items">
+                          <p>Chọn ngôn ngữ của diagram:</p>
+                          <div className="radio-label">
+                            <input
+                              type="radio"
+                              id="vietnamese"
+                              name="language"
+                              onClick={() => setLanguage("vn")}
+                              checked={language == "vn"}
+                            />
+                            <label htmlFor="vietnamese">Tiếng Việt</label>
+                          </div>
+                          <div className="radio-label">
+                            <input
+                              type="radio"
+                              id="english"
+                              name="language"
+                              onClick={() => setLanguage("en")}
+                              checked={language == "en"}
+                            />
+                            <label htmlFor="english">English</label>
+                          </div>
                         </div>
+                      </form>
+                      <div className="btn-container">
+                        <button
+                          className="btn btn-convert"
+                          onClick={() => convertImageToDiagram()}
+                        >
+                          <img src="/images/convert.svg" alt="" />
+                          Chuyển đổi
+                        </button>
+                        <button
+                          className="btn btn-new"
+                          onClick={() => newDiagram()}
+                        >
+                          <img src="/images/new.svg" alt="" />
+                          Diagram mới
+                        </button>
+                        <button className="btn btn-save" onClick={saveDiagram}>
+                          <img src="/images/save.svg" alt="" />
+                          Lưu diagram
+                        </button>
                       </div>
-                    </form>
-                    <div className="btn-container">
-                      <button
-                        className="btn btn-convert"
-                        onClick={() => convertImageToDiagram()}
-                      >
-                        <img src="/images/convert.svg" alt="" />
-                        Convert
-                      </button>
-                      <button
-                        className="btn btn-new"
-                        onClick={() => newDiagram()}
-                      >
-                        <img src="/images/new.svg" alt="" />
-                        New
-                      </button>
-                      <button className="btn btn-save" onClick={saveDiagram}>
-                        <img src="/images/save.svg" alt="" />
-                        Save
-                      </button>
                     </div>
                   </div>
                   <Guide />
@@ -656,7 +661,6 @@ export default function User() {
               </Route>
               <Route path={"/json-to-diagram"}>
                 <div className="_container">
-                  {/* <div className="img-content"></div> */}
                   <div className="input-wrapper">
                     <form className="element-json json-input">
                       <h5>Input Element JSON</h5>

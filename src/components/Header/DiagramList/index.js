@@ -239,7 +239,7 @@ export default function DiagramList({
       </head> */}
       <body>
         <div class="container">
-          <h2>Diagram List</h2>
+          <h2>Danh sách Diagram</h2>
           <div class="table-responsive">
             <div class="table-wrapper">
               <table class="table table-bordered">
@@ -254,10 +254,10 @@ export default function DiagramList({
                     <th>#</th>
                     <th>
                       {/* ERD Name <i class="fa fa-sort"></i> */}
-                      ERD Name
+                      Tên ERD
                     </th>
-                    <th>Created date</th>
-                    <th>Updated date</th>
+                    <th>Ngày tạo</th>
+                    <th>Ngày cập nhật</th>
                   </tr>
                 </thead>
                 <tbody>{diagramListView}</tbody>

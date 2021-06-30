@@ -6,7 +6,6 @@ import "./index.css";
 
 export default function WaitingDialog({
   openLoading,
-  content,
   text,
   isConverting,
   textConverting,
@@ -21,11 +20,11 @@ export default function WaitingDialog({
         <img src="https://c.tenor.com/I6kN-6X7nhAAAAAj/loading-buffering.gif" />
         {isConverting ? (
           <DialogContentText className="dialog-text">
-            {textConverting}, please wait a moment...
+            {textConverting}, vui lòng đợi...
           </DialogContentText>
         ) : (
           <DialogContentText className="dialog-text">
-            {text}, please wait a moment...
+            {text}, vui lòng đợi...
           </DialogContentText>
         )}
       </DialogContent>

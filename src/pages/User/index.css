@@ -6,7 +6,7 @@
 }
 
 .btn {
-  width: 120px;
+  width: 150px;
   background-color: white;
   border: 1px solid black !important;
   display: flex;
@@ -32,11 +32,19 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 30px;
+}
+
+.input-data-container {
+  background-color: rgba(224, 222, 220, 0.75);
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
 }
 
 .loaded-img {
-  width: 450px;
+  height: 400px;
 }
 
 .footer {

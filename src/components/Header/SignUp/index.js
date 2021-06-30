@@ -52,25 +52,28 @@ export default function SignUp() {
     const email = document.getElementsByName("email")[0].value;
     if (password != retypePassword) {
       setOpenLoading(false);
-      setValidationError("retype password", "Retype password is not matched");
+      setValidationError(
+        "retype password",
+        "Mật khẩu nhập lại không trùng khớp"
+      );
       return;
     }
     if (username.length < 5 || username.length > 50) {
-      setValidationError("username", "Username must be in 5 to 50 characters");
+      setValidationError("username", "Username phải chứa từ 5 đến 50 kí tự");
       return;
     }
 
     if (fullName.length < 5 || fullName.length > 50) {
-      setValidationError("fullname", "Full name must be in 5 to 50 characters");
+      setValidationError("fullname", "Họ và tên phải chứa từ 5 đến 50 kí tự");
       return;
     }
     let specialChars = "<>@!#$%^&*+{}?:;|()[]'\"\\,/~`= ";
     if (!checkForSpecialChar(username, specialChars)) {
-      setValidationError("username", "Username must not include space");
+      setValidationError("username", "Username không được chứa ký tự dặc biệt");
       return;
     }
     if (password.length < 6) {
-      setValidationError("password", "Password must be at least 6 characters");
+      setValidationError("password", "Mật khẩu phải gồm ít nhất 6 kí tự");
       setOpenLoading(false);
       return;
     }
@@ -78,12 +81,12 @@ export default function SignUp() {
     if (!checkForSpecialChar(fullName, specialChars)) {
       setValidationError(
         "fullname",
-        "Full name must not contain special character"
+        "Họ và tên không được chứa ký tự dặc biệt"
       );
       return;
     }
     if (!validateEmail(email)) {
-      setValidationError("email", "Email is not valid");
+      setValidationError("email", "Email không đúng định dạng");
       return;
     }
     const api = await axios.post("/api/users/sign-up", {
@@ -97,14 +100,16 @@ export default function SignUp() {
     //setIsSignUpSuccess(true);
 
     if (api.data) {
-      setWaitingDialogContent("Sign up successful! Redirecting to login page");
+      setWaitingDialogContent(
+        "Đăng ký thành công! Đang chuyển hướng đến trang Đăng nhập"
+      );
       setTimeout(() => {
         setOpenLoading(false);
         setIsSignUpSuccess(true);
       }, 1500);
     } else {
       setOpenLoading(false);
-      setValidationError("username", "Username is already registered");
+      setValidationError("username", "Username đã tồn tại");
     }
   }
   if (isSignUpSuccess) return <Redirect to="/sign-in" />;
@@ -122,7 +127,7 @@ export default function SignUp() {
             signUp();
           }}
         >
-          <h1>SIGN UP</h1>
+          <h1>ĐĂNG KÝ</h1>
 
           <div className="input-items">
             <label htmlFor="username">Username</label>
@@ -132,21 +137,21 @@ export default function SignUp() {
             )}
           </div>
           <div className="input-items">
-            <label htmlFor="username">Password</label>
+            <label htmlFor="username">Mật khẩu</label>
             <input type="password" name="password" required />
             {validateError && validateError.type === "password" && (
               <p className="error">{validateError.content}</p>
             )}
           </div>
           <div className="input-items">
-            <label htmlFor="username">Retype password</label>
+            <label htmlFor="username">Nhập lại mật khẩu</label>
             <input type="password" name="retypePassword" required />
             {validateError && validateError.type === "retype password" && (
               <p className="error">{validateError.content}</p>
             )}
           </div>
           <div className="input-items">
-            <label htmlFor="username">Full name</label>
+            <label htmlFor="username">Họ và tên</label>
             <input type="text" name="fullName" autoComplete="off" required />
             {validateError && validateError.type === "fullname" && (
               <p className="error">{validateError.content}</p>
@@ -159,7 +164,7 @@ export default function SignUp() {
               <p className="error">{validateError.content}</p>
             )}
           </div>
-          <input type="submit" name="signup_submit" value="SIGN UP" />
+          <input type="submit" name="signup_submit" value="Đăng ký" />
         </form>
       </div>
     </div>
