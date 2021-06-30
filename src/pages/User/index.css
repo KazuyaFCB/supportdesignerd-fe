@@ -104,3 +104,24 @@
   align-items: center;
   justify-content: space-between;
 }
+
+.help-container {
+  margin-top: 50px;
+  padding: 0 150px;
+}
+
+.help-wrapper {
+  margin: 0 125px;
+  list-style: circle;
+}
+
+.help-wrapper li {
+  margin-bottom: 10px;
+}
+
+.input-items p {
+  padding: 0;
+  margin: 0;
+  margin-bottom: 10px;
+  font-weight: 550;
+}

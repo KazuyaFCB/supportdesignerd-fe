@@ -212,7 +212,7 @@ export default function DiagramList({
     setElementJSON(api.data.elementJSON);
     setLinkJSON(api.data.linkJSON);
     setImgSrc(api.data.imgSrc);
-    //await sleep(1500);
+    await sleep(1500);
     //window.location.href = "/json-to-diagram";
   }
 

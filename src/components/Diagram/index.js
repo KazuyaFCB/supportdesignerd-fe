@@ -880,15 +880,6 @@ export default function Diagram({
     paperDOM.appendChild(textNode);
     document.getElementsByClassName("_diagram-area")[0].appendChild(paperDOM);
 
-    // tạo lại DOM paper mới để tránh trg hợp ko thoát chuột đc,
-    // vì nếu còn DOM paper cũ sẽ ảnh hưởng, DOM cũ nó còn lưu event changePosition
-    document.getElementById("paper").remove();
-    let paperDOM = document.createElement("div");
-    paperDOM.setAttribute("id", "paper");
-    let textNode = document.createTextNode("Diagram");
-    paperDOM.appendChild(textNode);
-    document.getElementsByClassName("_diagram-area")[0].appendChild(paperDOM);
-
     paper = new joint.dia.Paper({
       el: document.getElementById("paper"),
       model: graph,

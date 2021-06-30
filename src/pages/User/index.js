@@ -60,7 +60,6 @@ export default function User() {
     }
   }, []);
 
-
   // useEffect(async() => {
   //     if (currentUser) {
   //         const api = await axios.get('/api/erds/find-erd-by-userIdCreated/' + currentUser._id);
@@ -139,7 +138,6 @@ export default function User() {
     let _imageData = new Image();
     _imageData.src = window.URL.createObjectURL(imageFile);
     setImageData(_imageData);
-    
 
     setOpenLoading(false);
     //setImgSrc(api.data.imgSrc);
@@ -410,19 +408,23 @@ export default function User() {
       return;
     }
     let erdName;
-    let currentViewedErd = JSON.parse(sessionStorage.getItem("currentViewedErd"));
+    let currentViewedErd = JSON.parse(
+      sessionStorage.getItem("currentViewedErd")
+    );
     if (currentViewedErd) {
       let isUpdate = window.confirm(
         "This diagram is exist. Do you want to update it?"
       );
       if (isUpdate) {
         while (!erdName) {
-          erdName = prompt("Please type new ERD name:", currentViewedErd.erdName);
+          erdName = prompt(
+            "Please type new ERD name:",
+            currentViewedErd.erdName
+          );
           if (erdName === null) return;
           if (erdName.length === 0) {
             alert("Please type ERD name");
-          }
-          else break;
+          } else break;
         }
         setOpenLoading(true);
         const api = await axios.post("/api/erds/update-erd-by-id", {
@@ -448,22 +450,19 @@ export default function User() {
         return;
       }
     }
-    let isSave = window.confirm(
-      "Do you want to save new diagram?"
-    );
+    let isSave = window.confirm("Do you want to save new diagram?");
     if (isSave) {
       while (true) {
         erdName = prompt("Please type ERD name:");
         if (erdName === null) return;
         if (erdName.length === 0) {
           alert("Please type ERD name");
-        }
-        else break;
+        } else break;
       }
     } else {
       return;
     }
-    
+
     setOpenLoading(true);
     const api = await axios.post("/api/erds/create-erd", {
       userIdCreated: currentUser._id,
@@ -474,7 +473,7 @@ export default function User() {
       createdDate: new Date(),
       updatedDate: new Date(),
     });
-    
+
     setOpenLoading(false);
     if (api.data) {
       sessionStorage.setItem("currentViewedErd", JSON.stringify(api.data));
@@ -488,7 +487,9 @@ export default function User() {
     setDiagramList(api2.data.erdList);
   }
 
-  function sleep(ms) { return new Promise((resolve) => setTimeout(resolve, ms));}
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
 
   async function newDiagram() {
     setElementJSON({ elements: [] });
@@ -574,6 +575,7 @@ export default function User() {
                         />
                       </div>
                       <div className="input-items">
+                        <p>Choose your diagram's language</p>
                         <div className="radio-label">
                           <input
                             type="radio"
@@ -617,36 +619,57 @@ export default function User() {
                       </button>
                     </div>
                   </div>
-                  <div>
+                  <div className="help-container">
                     <h3>Lưu ý:</h3>
-                    <p>
-                      - Để vẽ <strong>thực thể/mối kết hợp/thuộc tính</strong> lên diagram, 
-                      click vào các <strong>ký hiệu hình chữ nhật/hình thoi/hình elip </strong> 
-                      trên thanh nằm ngang, sẽ có 1 thực thể/mối kết hợp/thuộc tính 
-                      được tạo ở góc trái trên của diagram
-                    </p>
-                    <p>
-                      - Để vẽ <strong>đường nối</strong> giữa 2 <strong>thực thể/mối kết hợp/thuộc tính</strong> lên diagram, 
-                      click vào các <strong>ký hiệu đường nối</strong> trên thanh nằm ngang. 
-                      Rồi click vào <strong>thực thể/mối kết hợp/thuộc tính THỨ 1 </strong> 
-                      (click khoảng 1-2 lần vào nó đến khi có <strong>hình chữ nhật màu xanh đè lên</strong>). 
-                      Rồi click vào <strong>thực thể/mối kết hợp/thuộc tính THỨ 2 </strong> 
-                      (click khoảng 1-2 lần vào nó đến khi có <strong>đường nối được tạo</strong>)
-                    </p>
-                    <p>
-                      - Lỡ click <strong>ký hiệu đường nối</strong> trên thanh nằm ngang mà <strong>muốn hủy chọn </strong>
-                      đường nối thì <strong>click chuột vào khoảng trống</strong> trên diagram
-                    </p>
-                    <p>
-                      - Muốn chỉnh sửa nội dung <strong>thực thể/mối kết hợp/thuộc tính/đường nối </strong> 
-                      thì click đúp chuột vào chúng, rồi nhập nội dung cần sửa 
-                      và click khoảng trống trên diagram
-                    </p>
-                    <p>
-                      - Muốn xóa <strong>thực thể/mối kết hợp/thuộc tính/đường nối</strong> trên diagram 
-                      thì đưa chuột vào hình vẽ cần xóa, sẽ có <strong>icon "X"</strong> hiện lên, 
-                      click vào <strong>icon "X"</strong> là sẽ xóa được
-                    </p>
+                    <ul className="help-wrapper">
+                      <li className="help-items">
+                        Để vẽ <strong>thực thể/mối kết hợp/thuộc tính</strong>{" "}
+                        lên diagram, click vào các{" "}
+                        <strong>
+                          ký hiệu hình chữ nhật/hình thoi/hình elip{" "}
+                        </strong>
+                        trên thanh công cụ ở dưới, sẽ có 1 thực thể/mối kết
+                        hợp/thuộc tính được tạo ở góc trái trên của diagram.
+                      </li>
+                      <li className="help-items">
+                        Để vẽ <strong>đường nối</strong> giữa 2{" "}
+                        <strong>thực thể/mối kết hợp/thuộc tính</strong> lên
+                        diagram, click vào các{" "}
+                        <strong>ký hiệu đường nối</strong> trên thanh nằm ngang.
+                        Rồi click vào{" "}
+                        <strong>thực thể/mối kết hợp/thuộc tính THỨ 1 </strong>
+                        {/* (click khoảng 1-2 lần vào nó đến khi có{" "}
+                        <strong>hình chữ nhật màu xanh đè lên</strong>)  */}
+                        và tiếp đó click vào{" "}
+                        <strong>thực thể/mối kết hợp/thuộc tính THỨ 2 </strong>
+                        {/* (click khoảng 1-2 lần vào nó đến khi có{" "} */}
+                        {/* <strong>đường nối được tạo</strong>). */}
+                      </li>
+                      <li className="help-items">
+                        Lỡ click <strong>ký hiệu đường nối</strong> trên thanh
+                        nằm ngang mà <strong>muốn hủy chọn </strong>
+                        đường nối thì{" "}
+                        <strong>click chuột vào khoảng trống</strong> trên
+                        diagram.
+                      </li>
+                      <li className="help-items">
+                        Muốn chỉnh sửa nội dung{" "}
+                        <strong>
+                          thực thể/mối kết hợp/thuộc tính/đường nối{" "}
+                        </strong>
+                        thì click đúp chuột vào chúng, rồi nhập nội dung cần sửa
+                        và click khoảng trống trên diagram.
+                      </li>
+                      <li className="help-items">
+                        Muốn xóa{" "}
+                        <strong>
+                          thực thể/mối kết hợp/thuộc tính/đường nối
+                        </strong>{" "}
+                        trên diagram thì đưa chuột vào hình vẽ cần xóa, sẽ có{" "}
+                        <strong>icon "X"</strong> hiện lên, click vào{" "}
+                        <strong>icon "X"</strong> là sẽ xóa được.
+                      </li>
+                    </ul>
                   </div>
                   <div className="diagram-content">
                     <Diagram
