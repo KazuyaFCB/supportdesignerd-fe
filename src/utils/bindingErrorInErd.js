@@ -1,7 +1,7 @@
 export function checkElementBindingError(element, elementJSON, linkJSON, attributeMap, relatedAttributes) {
     if (!linkJSON || !element) return "";
     element.paragraph = element.paragraph.trim();
-    // Lỗi mối kết hợp đứng một mình hoặc chỉ có một liên kết tới
+    // Lỗi mối kết hợp không liên kết với thực thể nào hoặc chỉ liên kết với 1 thực thể
     // Lỗi (CỤM) thuộc tính liên kết tới nhiều thực thể (mối kết hợp) hoặc tạo thành chu trình hoặc đứng một mình
     // Lỗi thuộc tính/mối kết hợp/thực thể  không có nội dung
      
@@ -33,16 +33,16 @@ export function checkElementBindingError(element, elementJSON, linkJSON, attribu
         }
     })
 
-    // Lỗi mối kết hợp đứng một mình hoặc chỉ có một liên kết tới
+    // Lỗi mối kết hợp không liên kết với thực thể nào hoặc chỉ liên kết với 1 thực thể
     if(element.type==="Relationship" || element.type==="IdentifyingRelationship" || element.type==="ISA"){
         if(connectedLinkCount===0){
-            let errorName = "Lỗi mối kết hợp " + element.paragraph + " đứng một mình";
+            let errorName = "Lỗi mối kết hợp " + element.paragraph + " không liên kết với thực thể nào";
             if(!element.paragraph) errorName += " và không có nội dung";
             return errorName;
         } 
 
         if(connectedLinkCount===1){
-            let errorName = "Lỗi mối kết hợp " + element.paragraph + " chỉ có một liên kết tới";
+            let errorName = "Lỗi mối kết hợp " + element.paragraph + " chỉ liên kết với 1 thực thể";
             if(!element.paragraph) errorName += " và không có nội dung";
             return errorName;
         }
