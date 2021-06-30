@@ -74,6 +74,13 @@ function Guide({ inJsonPage }) {
             <strong>icon "X"</strong> hiện lên, click vào{" "}
             <strong>icon "X"</strong> để xoá hình.
           </li>
+          <li className="help-items">
+            Để xem nội dung <strong>lỗi logic (nếu có)</strong> của {" "}
+            <strong>
+              thực thể/mối kết hợp/thuộc tính/đường nối
+            </strong> {" "}
+            thì click vào <strong>icon "!"</strong> ở các hình vẽ đó.
+          </li>
         </ul>
       )}
     </div>
