@@ -201,7 +201,7 @@ export default function User() {
     setElementJSON(api.data.elementJSON);
     setLinkJSON(api.data.linkJSON);
     sessionStorage.removeItem("currentViewedErd");
-    window.location.reload();
+    //window.location.reload();
   }
 
   async function getShapePredictions(imageData) {
@@ -399,7 +399,7 @@ export default function User() {
     sessionStorage.removeItem("currentViewedErd");
     setOpenLoading(false);
     await sleep(1000);
-    window.location.reload();
+    //window.location.reload();
     //alert(JSON.stringify(inputJSON));
     //alert(JSON.stringify(elementJSON));
   }
@@ -494,7 +494,7 @@ export default function User() {
     setElementJSON({ elements: [] });
     setLinkJSON({ links: [] });
     await sleep(1000);
-    window.location.reload();
+    //window.location.reload();
   }
 
   function signOut() {
@@ -635,7 +635,7 @@ export default function User() {
                     </p>
                     <p>
                       - Lỡ click <strong>ký hiệu đường nối</strong> trên thanh nằm ngang mà <strong>muốn hủy chọn </strong>
-                      đường nối thì <strong>click đúp chuột vào khoảng trống</strong> trên diagram
+                      đường nối thì <strong>click chuột vào khoảng trống</strong> trên diagram
                     </p>
                     <p>
                       - Muốn chỉnh sửa nội dung <strong>thực thể/mối kết hợp/thuộc tính/đường nối </strong> 
