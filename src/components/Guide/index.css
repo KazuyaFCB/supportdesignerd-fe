@@ -85,7 +85,7 @@ input:checked + .slider:before {
 }
 
 .help-wrapper {
-  margin: 0 125px;
+  margin: 15px 125px;
   list-style: circle;
 }
 
