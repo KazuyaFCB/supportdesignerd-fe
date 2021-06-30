@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import "./index.css";
+import DiagramList from "./../Header/DiagramList/index";
 
-function Guide() {
+function Guide({ inJsonPage }) {
   const [isShowing, setIsShowing] = useState("on");
 
   return (
@@ -23,6 +24,22 @@ function Guide() {
       </div>
       {isShowing === "on" && (
         <ul className="help-wrapper">
+          {inJsonPage && (
+            <React.Fragment>
+              <li className="help-items">
+                <strong>Element JSON</strong> là phần json data thể hiện cấu
+                trúc của các <strong> thực thể/mối kết hợp/thuộc tính</strong>{" "}
+                trên diagram, có thể chỉnh sửa để thay đổi nội dung của diagram.
+                Bao gồm kích thước, thể loại, id, nội dung, vị trí,...
+              </li>
+              <li className="help-items">
+                <strong>Link JSON</strong> là phần json data thể hiện của các
+                <strong> đường nối </strong> trên diagram, có thể chỉnh sửa để
+                thay đổi nội dung của diagram. Bao gồm thể loại, id, thực thể 1,
+                thực thể 2,...
+              </li>
+            </React.Fragment>
+          )}
           <li className="help-items">
             Để vẽ <strong>thực thể/mối kết hợp/thuộc tính</strong> lên diagram,
             click vào các{" "}

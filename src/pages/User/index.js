@@ -718,7 +718,7 @@ export default function User() {
                       </div>
                     </div>
                   </div>
-                  <Guide />
+                  <Guide inJsonPage={true} />
                   <div className="diagram-content">
                     <Diagram
                       elementJSON={elementJSON}
