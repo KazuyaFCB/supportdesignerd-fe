@@ -73,6 +73,7 @@ export default function User() {
     sessionStorage.setItem("linkJSON", JSON.stringify(linkJSON));
     sessionStorage.setItem("imgSrc", imgSrc);
     sessionStorage.setItem("imgId", imgId);
+    sessionStorage.setItem("linkPanelIndexSelectedToCreate", "-1");
   };
 
   window.onunload = function () {
@@ -200,7 +201,7 @@ export default function User() {
     setElementJSON(api.data.elementJSON);
     setLinkJSON(api.data.linkJSON);
     sessionStorage.removeItem("currentViewedErd");
-    window.location.reload();
+    //window.location.reload();
   }
 
   async function getShapePredictions(imageData) {
@@ -398,7 +399,7 @@ export default function User() {
     sessionStorage.removeItem("currentViewedErd");
     setOpenLoading(false);
     await sleep(1000);
-    window.location.reload();
+    //window.location.reload();
     //alert(JSON.stringify(inputJSON));
     //alert(JSON.stringify(elementJSON));
   }
@@ -493,7 +494,7 @@ export default function User() {
     setElementJSON({ elements: [] });
     setLinkJSON({ links: [] });
     await sleep(1000);
-    window.location.reload();
+    //window.location.reload();
   }
 
   function signOut() {
@@ -615,6 +616,37 @@ export default function User() {
                         Save
                       </button>
                     </div>
+                  </div>
+                  <div>
+                    <h3>Lưu ý:</h3>
+                    <p>
+                      - Để vẽ <strong>thực thể/mối kết hợp/thuộc tính</strong> lên diagram, 
+                      click vào các <strong>ký hiệu hình chữ nhật/hình thoi/hình elip </strong> 
+                      trên thanh nằm ngang, sẽ có 1 thực thể/mối kết hợp/thuộc tính 
+                      được tạo ở góc trái trên của diagram
+                    </p>
+                    <p>
+                      - Để vẽ <strong>đường nối</strong> giữa 2 <strong>thực thể/mối kết hợp/thuộc tính</strong> lên diagram, 
+                      click vào các <strong>ký hiệu đường nối</strong> trên thanh nằm ngang. 
+                      Rồi click vào <strong>thực thể/mối kết hợp/thuộc tính THỨ 1 </strong> 
+                      (click khoảng 1-2 lần vào nó đến khi có <strong>hình chữ nhật màu xanh đè lên</strong>). 
+                      Rồi click vào <strong>thực thể/mối kết hợp/thuộc tính THỨ 2 </strong> 
+                      (click khoảng 1-2 lần vào nó đến khi có <strong>đường nối được tạo</strong>)
+                    </p>
+                    <p>
+                      - Lỡ click <strong>ký hiệu đường nối</strong> trên thanh nằm ngang mà <strong>muốn hủy chọn </strong>
+                      đường nối thì <strong>click chuột vào khoảng trống</strong> trên diagram
+                    </p>
+                    <p>
+                      - Muốn chỉnh sửa nội dung <strong>thực thể/mối kết hợp/thuộc tính/đường nối </strong> 
+                      thì click đúp chuột vào chúng, rồi nhập nội dung cần sửa 
+                      và click khoảng trống trên diagram
+                    </p>
+                    <p>
+                      - Muốn xóa <strong>thực thể/mối kết hợp/thuộc tính/đường nối</strong> trên diagram 
+                      thì đưa chuột vào hình vẽ cần xóa, sẽ có <strong>icon "X"</strong> hiện lên, 
+                      click vào <strong>icon "X"</strong> là sẽ xóa được
+                    </p>
                   </div>
                   <div className="diagram-content">
                     <Diagram
