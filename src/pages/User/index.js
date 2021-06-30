@@ -628,14 +628,14 @@ export default function User() {
                         <strong>
                           ký hiệu hình chữ nhật/hình thoi/hình elip{" "}
                         </strong>
-                        trên thanh công cụ ở dưới, sẽ có 1 thực thể/mối kết
-                        hợp/thuộc tính được tạo ở góc trái trên của diagram.
+                        trên thanh công cụ ở dưới, sẽ có 1 <strong>thực thể/mối kết
+                        hợp/thuộc tính </strong> được tạo ở góc trái trên của diagram.
                       </li>
                       <li className="help-items">
                         Để vẽ <strong>đường nối</strong> giữa 2{" "}
                         <strong>thực thể/mối kết hợp/thuộc tính</strong> lên
                         diagram, click vào các{" "}
-                        <strong>ký hiệu đường nối</strong> trên thanh nằm ngang.
+                        <strong>ký hiệu đường nối</strong> trên thanh công cụ  ở dưới.
                         Rồi click vào{" "}
                         <strong>thực thể/mối kết hợp/thuộc tính THỨ 1 </strong>
                         {/* (click khoảng 1-2 lần vào nó đến khi có{" "}
@@ -646,14 +646,14 @@ export default function User() {
                         {/* <strong>đường nối được tạo</strong>). */}
                       </li>
                       <li className="help-items">
-                        Lỡ click <strong>ký hiệu đường nối</strong> trên thanh
+                        Nếu lỡ click <strong>ký hiệu đường nối</strong> trên thanh
                         nằm ngang mà <strong>muốn hủy chọn </strong>
                         đường nối thì{" "}
                         <strong>click chuột vào khoảng trống</strong> trên
                         diagram.
                       </li>
                       <li className="help-items">
-                        Muốn chỉnh sửa nội dung{" "}
+                        Để chỉnh sửa nội dung{" "}
                         <strong>
                           thực thể/mối kết hợp/thuộc tính/đường nối{" "}
                         </strong>
@@ -661,13 +661,20 @@ export default function User() {
                         và click khoảng trống trên diagram.
                       </li>
                       <li className="help-items">
-                        Muốn xóa{" "}
+                        Để xóa{" "}
                         <strong>
                           thực thể/mối kết hợp/thuộc tính/đường nối
                         </strong>{" "}
                         trên diagram thì đưa chuột vào hình vẽ cần xóa, sẽ có{" "}
                         <strong>icon "X"</strong> hiện lên, click vào{" "}
-                        <strong>icon "X"</strong> là sẽ xóa được.
+                        <strong>icon "X"</strong>.
+                      </li>
+                      <li className="help-items">
+                        Để xem nội dung <strong>lỗi logic (nếu có)</strong> của {" "}
+                        <strong>
+                          thực thể/mối kết hợp/thuộc tính/đường nối
+                        </strong> {" "}
+                        thì click vào <strong>icon "!"</strong> ở các hình vẽ đó.
                       </li>
                     </ul>
                   </div>

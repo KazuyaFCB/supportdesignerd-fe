@@ -69,7 +69,7 @@ export default function Diagram({
   let elementSelectedToDelete = null;
   //let [objectSelectedToUpdate, setobjectSelectedToUpdate] = useState(null);
   let linkSelectedToDelete = null;
-  let linkPanelIndexSelectedToCreate = -1;
+  let [linkPanelIndexSelectedToCreate, setLinkPanelIndexSelectedToCreate] = useState(-1);
   let sourceElementIdConnectedToLinkCreated = -1;
   let rectCoverElementToCreateLink = null;
 
@@ -134,7 +134,7 @@ export default function Diagram({
     },
   ];
 
-  const [selectedRelaShapeIndex, setSelectedRelaShapeIndex] = useState(null);
+  // const [selectedRelaShapeIndex, setSelectedRelaShapeIndex] = useState(null);
 
   useEffect(() => {
     updateInputElementJSON();
@@ -186,7 +186,7 @@ export default function Diagram({
   }
 
   async function unselectLinkPanel() {
-    linkPanelIndexSelectedToCreate = sessionStorage.getItem(
+    let linkPanelIndexSelectedToCreate = sessionStorage.getItem(
       "linkPanelIndexSelectedToCreate"
     );
     if (
@@ -200,9 +200,10 @@ export default function Diagram({
         graph.removeCells([rectCoverElementToCreateLink]);
         rectCoverElementToCreateLink = null;
       }
-      linkPanelIndexSelectedToCreate = -1;
+      setLinkPanelIndexSelectedToCreate(-1);
       sessionStorage.setItem("linkPanelIndexSelectedToCreate", "-1");
       sourceElementIdConnectedToLinkCreated = -1;
+      //setSelectedRelaShapeIndex(null);
     }
   }
 
@@ -233,9 +234,9 @@ export default function Diagram({
       // document.getElementsByClassName("createElementButton")[
       //   panelIndex
       // ].style.backgroundColor = "skyblue";
-      linkPanelIndexSelectedToCreate = panelIndex;
+      setLinkPanelIndexSelectedToCreate(panelIndex);
       sessionStorage.setItem("linkPanelIndexSelectedToCreate", panelIndex);
-      setSelectedRelaShapeIndex(panelIndex);
+      //setSelectedRelaShapeIndex(panelIndex);
       //paper.setInteractivity(false);
     }
     //sessionStorage.setItem("elementJSON", JSON.stringify(elementJSON));
@@ -384,7 +385,8 @@ export default function Diagram({
     //const fontSize = 20;
     let rectWidth = text.length * fontSize;
     let rectHeight = fontSize * 2;
-    let diff = 0;
+    let diffX = 0;
+    let diffY = 0;
     if (elementOrLink === "element") {
       if (!elementJSON.elements[objectSelectedToRead.id - 1]) return;
     } else {
@@ -392,11 +394,14 @@ export default function Diagram({
         return;
     }
 
-    if (objectSelectedToRead.prop("size"))
-      diff = -(rectWidth - objectSelectedToRead.prop("size").width) / 2;
-
+    if (objectSelectedToRead.prop("size")) {
+      diffX = -(rectWidth - objectSelectedToRead.prop("size").width) / 2;
+      diffY = objectSelectedToRead.prop("size").height;
+    } else {
+      diffY = rectHeight * 2;
+    }
     rect = new joint.shapes.basic.Rect({
-      position: { x: objectX + diff, y: objectY - rectHeight },
+      position: { x: objectX + diffX, y: objectY - rectHeight >= 0 ? objectY - rectHeight : objectY + diffY },
       size: { width: rectWidth, height: rectHeight },
       attrs: {
         rect: { fill: "pink" },
@@ -655,7 +660,7 @@ export default function Diagram({
 
   function addClickElementEvent(paper) {
     paper.on("element:pointerclick", function (elementView) {
-      linkPanelIndexSelectedToCreate = sessionStorage.getItem(
+      let linkPanelIndexSelectedToCreate = sessionStorage.getItem(
         "linkPanelIndexSelectedToCreate"
       );
       if (
@@ -698,7 +703,7 @@ export default function Diagram({
   }
 
   function createLink(sourceId, targetId) {
-    linkPanelIndexSelectedToCreate = sessionStorage.getItem(
+    let linkPanelIndexSelectedToCreate = sessionStorage.getItem(
       "linkPanelIndexSelectedToCreate"
     );
     if (!panel[linkPanelIndexSelectedToCreate]) return;
@@ -1118,7 +1123,7 @@ export default function Diagram({
               {panel.map((panelItem, panelIndex) => (
                 <li
                   className={
-                    panelIndex === selectedRelaShapeIndex
+                    panelIndex === linkPanelIndexSelectedToCreate
                       ? "createElementButton _selected-rela-shape"
                       : "createElementButton"
                   }
