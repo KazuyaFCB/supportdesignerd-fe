@@ -202,6 +202,7 @@ export default function Diagram({
   // CREATE element when click on panel
   async function createElement(panelItem, panelIndex) {
     if (panelIndex <= 9) {
+      unselectLinkPanel();
       let item = {
         id: elementJSON.elements.length + 1,
         x: 0,
@@ -222,6 +223,7 @@ export default function Diagram({
         changeBindingErrorList();
       }
     } else {
+      unselectLinkPanel();
       document.getElementsByClassName("createElementButton")[
         panelIndex
       ].style.backgroundColor = "skyblue";
@@ -233,7 +235,7 @@ export default function Diagram({
   }
 
   function addClickToBlankEvent(paper) {
-    paper.on("blank:click", function () {
+    paper.on("blank:pointerdblclick", function () {
       unselectLinkPanel();
     });
   }
@@ -412,9 +414,10 @@ export default function Diagram({
   // UPDATE object paragraph when double click
   async function addDoubleClickObjectEvent(paper) {
     paper.on("element:pointerdblclick", async function (elementView) {
+      await unselectLinkPanel();
       //setobjectSelectedToUpdate(elementView.model);
       objectSelectedToUpdate = elementView.model;
-      if (
+      if (elementJSON.elements[elementView.model.prop("id") - 1] &&
         elementJSON.elements[elementView.model.prop("id") - 1].type ===
         "PartialKeyAttribute"
       ) {
@@ -436,7 +439,8 @@ export default function Diagram({
       }
       addClickOutsideTextBlockEvent("element");
     });
-    paper.on("link:pointerdblclick", function (linkView) {
+    paper.on("link:pointerdblclick", async function (linkView) {
+      await unselectLinkPanel();
       objectSelectedToUpdate = linkView.model;
       let linkX =
         (elementJSON.elements[
@@ -518,7 +522,7 @@ export default function Diagram({
       newObjectParagraph = "      ";
     }
     if (
-      objectSelectedToUpdate.resize &&
+      objectSelectedToUpdate.resize && elementJSON.elements[objectSelectedToUpdate.prop("id") - 1] &&
       elementJSON.elements[objectSelectedToUpdate.prop("id") - 1].type !==
         "AssociativeEntity" &&
       elementJSON.elements[objectSelectedToUpdate.prop("id") - 1].type !==
@@ -983,19 +987,20 @@ export default function Diagram({
           );
         // thuoc tinh co lien quan den cum thuoc tinh thi khoi check, bao loi luon
         else errorName = relatedAttributes[element.id - 1];
-
-        let elementView = graph.getCell(element.id).findView(paper);
-        if (errorName) {
-          elementView.addTools(
-            new joint.dia.ToolsView({
-              name: "has-error-button",
-              tools: [new elementTools_ErrorButton(fontSize)],
-            })
-          );
-          bindingErrorMap[element.id] = errorName;
-          result.push(errorName);
-        } else {
-          elementView.removeTools();
+        if (graph.getCell(element.id)){
+          let elementView = graph.getCell(element.id).findView(paper);
+          if (errorName) {
+            elementView.addTools(
+              new joint.dia.ToolsView({
+                name: "has-error-button",
+                tools: [new elementTools_ErrorButton(fontSize)],
+              })
+            );
+            bindingErrorMap[element.id] = errorName;
+            result.push(errorName);
+          } else {
+            elementView.removeTools();
+          }
         }
       }
     });
