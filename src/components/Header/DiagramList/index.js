@@ -263,7 +263,7 @@ export default function DiagramList({
                 <tbody>{diagramListView}</tbody>
               </table>
               <div class="clearfix">
-                <div class="hint-text">
+                {/* <div class="hint-text">
                   Showing{" "}
                   <b>
                     {numElementInPage < diagramList.length
@@ -271,7 +271,7 @@ export default function DiagramList({
                       : diagramList.length}
                   </b>{" "}
                   out of <b>{diagramList.length}</b> entries
-                </div>
+                </div> */}
                 <ul class="pagination">{paginationView}</ul>
               </div>
             </div>

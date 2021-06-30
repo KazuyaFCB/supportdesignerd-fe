@@ -673,7 +673,7 @@ export default function User() {
                           <textarea id="inputLinkJSON"></textarea>
                         </form>
                       </div>
-                      <div className="input-items json">
+                      {/* <div className="input-items json">
                         <p>Chọn ngôn ngữ của diagram:</p>
                         <div className="radio-label">
                           <input
@@ -695,7 +695,7 @@ export default function User() {
                           />
                           <label htmlFor="english">English</label>
                         </div>
-                      </div>
+                      </div> */}
                       <div className="btn-container">
                         <button
                           className="btn btn-convert"
