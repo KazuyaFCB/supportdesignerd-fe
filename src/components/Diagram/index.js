@@ -134,6 +134,22 @@ export default function Diagram({
     },
   ];
 
+  let panelTitleFromEngToVieMap = {
+    "Entity": "Thực thể mạnh",
+    "WeakEntity": "Thực thể yếu",
+    "Relationship": "Mối kết hợp mạnh",
+    "IdentifyingRelationship": "Mối kết hợp yếu",
+    "Attribute": "Thuộc tính thường",
+    "Key": "Khóa chính",
+    "Multivalued": "Thuộc tính đa trị",
+    "Derived": "Thuộc tính suy diễn",
+    "PartialKeyAttribute": "Khóa yếu",
+    "AssociativeEntity": "Thực thể kết hợp",
+    "PartialParticipation": "Liên kết một phần",
+    "TotalParticipation": "Liên kết toàn phần",
+    "Optional": "Liên kết tùy chọn"
+  }
+
   // const [selectedRelaShapeIndex, setSelectedRelaShapeIndex] = useState(null);
 
   useEffect(() => {
@@ -261,7 +277,7 @@ export default function Diagram({
       readObjectType(
         objectSelectedToRead.prop("position").x,
         objectSelectedToRead.prop("position").y,
-        elementJSON.elements[objectSelectedToRead.id - 1].type,
+        panelTitleFromEngToVieMap[elementJSON.elements[objectSelectedToRead.id - 1].type],
         "element"
       );
 
@@ -319,7 +335,7 @@ export default function Diagram({
       readObjectType(
         linkX,
         linkY,
-        linkJSON.links[mapLinkIdToNumber[objectSelectedToRead.id] - 1].type,
+        panelTitleFromEngToVieMap[linkJSON.links[mapLinkIdToNumber[objectSelectedToRead.id] - 1].type],
         "link"
       );
 
@@ -383,7 +399,7 @@ export default function Diagram({
 
   function readObjectType(objectX, objectY, text, elementOrLink) {
     //const fontSize = 20;
-    let rectWidth = text.length * fontSize;
+    let rectWidth = text.length * fontSize * 0.6;
     let rectHeight = fontSize * 2;
     let diffX = 0;
     let diffY = 0;
@@ -1134,7 +1150,7 @@ export default function Diagram({
                     <img
                       src={panelItem.img}
                       alt={panelItem.title}
-                      title={panelItem.title}
+                      title={panelTitleFromEngToVieMap[panelItem.title]}
                     />
                   </Button>
                 </li>

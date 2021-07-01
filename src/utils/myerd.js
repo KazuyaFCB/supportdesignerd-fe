@@ -15,9 +15,27 @@ export class AssociativeEntity {
       size: { width: _width, height: _height },
       attrs: {
         rect: { fill: "white" },
-        text: { text: "" },
+        text: { text: _text, fill: _fill, "font-size": _fontSize },
       },
     });
+
+    // this.diamond = new joint.shapes.erd.Relationship({
+    //   position: { x: _x, y: _y },
+    //   size: { width: _width, height: _height },
+    //   attrs: {
+    //     text: { text: "", /*fill: _fill, "font-size": _fontSize*/ },
+    //     ".outer": {
+    //       fill: "white",
+    //       stroke: "black",
+    //     },
+    //     ".inner": {
+    //       fill: "white",
+    //       stroke: "black",
+    //     },
+    //     //text: { text: _text, fill: 'white', 'text-decoration': 'underline dotted white', 'text-underline-position': 'under' },
+    //   },
+    // });
+
     this.diamond = new joint.shapes.basic.Path({
       id: _id,
       position: { x: _x, y: _y },
@@ -26,7 +44,7 @@ export class AssociativeEntity {
         path: { d: "M 30 0 L 60 30 30 60 0 30 z", fill: "white" },
         text: {
           text: _text,
-          "ref-y": -35,
+          "y": -_height/2,
           fill: _fill,
           style: { "font-size": _fontSize },
         },

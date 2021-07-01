@@ -88,7 +88,7 @@ export default function DiagramList({
           <td>{diagramList[i].createdDate}</td>
           <td>{diagramList[i].updatedDate}</td>
           <td>
-            <Link to={"/json-to-diagram"}>
+            <Link to={"/image-to-diagram"}>
               {/* <a onClick={(e) => viewDiagram(e.currentTarget.id)} id={viewId} class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE417;</i></a> */}
               <a
                 onClick={(e) => viewDiagram(e.currentTarget.id)}
@@ -201,6 +201,7 @@ export default function DiagramList({
   }
 
   async function viewDiagram(viewId) {
+    setOpenLoading(true);
     let index = viewId.substr(2);
     const api = await axios.get(
       "/api/erds/find-erd-by-id/" + diagramList[index]._id
@@ -212,7 +213,8 @@ export default function DiagramList({
     setElementJSON(api.data.elementJSON);
     setLinkJSON(api.data.linkJSON);
     setImgSrc(api.data.imgSrc);
-    await sleep(1500);
+    setOpenLoading(false);
+    //await sleep(1500);
     //window.location.href = "/json-to-diagram";
   }
 
@@ -263,15 +265,23 @@ export default function DiagramList({
                 <tbody>{diagramListView}</tbody>
               </table>
               <div class="clearfix">
-                {/* <div class="hint-text">
-                  Showing{" "}
+                <div class="hint-text">
+                  Hiển thị{" "}
                   <b>
-                    {numElementInPage < diagramList.length
+                    {diagramList.length > 0 ?
+                      (
+                        (diagramList.length - (currentPage - 1)*numElementInPage) >= numElementInPage
+                        ? numElementInPage
+                        : (diagramList.length - (currentPage - 1)*numElementInPage)
+                      )
+                      : 0
+                    }
+                    {/* {numElementInPage < diagramList.length
                       ? numElementInPage
-                      : diagramList.length}
+                      : diagramList.length} */}
                   </b>{" "}
-                  out of <b>{diagramList.length}</b> entries
-                </div> */}
+                  trên <b>{diagramList.length}</b> diagram
+                </div>
                 <ul class="pagination">{paginationView}</ul>
               </div>
             </div>

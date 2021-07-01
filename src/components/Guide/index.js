@@ -80,6 +80,11 @@ function Guide({ inJsonPage }) {
             vẫn xuất hiện, <strong>vui lòng refresh lại trang (ấn F5)</strong>{" "}
             để nạp lại diagram và điền lại bảng số.
           </li>
+          <li className="help-items">
+            Để xem nội dung <strong>lỗi logic (nếu có)</strong> của{" "}
+            <strong>thực thể/mối kết hợp/thuộc tính/đường nối</strong> thì click
+            vào <strong>icon "!"</strong> ở các hình vẽ đó.
+          </li>
         </ul>
       )}
     </div>
