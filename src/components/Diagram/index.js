@@ -242,7 +242,7 @@ export default function Diagram({
         drawDiagram();
       } else {
         let element = createElementFromItem(item);
-        graph.addCell(element);
+        if (element) graph.addCell(element);
         elements.push(element);
         changeBindingErrorList();
       }
@@ -825,7 +825,9 @@ export default function Diagram({
           },
         };
         break;
-      default:
+      case "Entity": case "WeakEntity": case "Relationship": 
+      case "IdentifyingRelationship": case "Attribute": 
+      case "Multivalued": case "Derived":
         element = {
           id: item.id,
           type: "erd." + item.type,
@@ -849,6 +851,8 @@ export default function Diagram({
             },
           },
         };
+        default: 
+          break;
     }
     return element;
   }
@@ -869,10 +873,13 @@ export default function Diagram({
         link = new DashedLine();
         break;
       default:
-        link = new erd.Line();
+        break;
+        //link = new erd.Line();
     }
-    link.source(elements[item.sourceId - 1]);
-    link.target(elements[item.targetId - 1]);
+    if (link && elements[item.sourceId - 1] && elements[item.targetId - 1]) {
+      link.source(elements[item.sourceId - 1]);
+      link.target(elements[item.targetId - 1]);
+    }
     return link;
   }
 
@@ -945,7 +952,7 @@ export default function Diagram({
     elementJSON.elements.forEach((item) => {
       if (item) {
         let element = createElementFromItem(item);
-        graph.addCell(element);
+        if (element) graph.addCell(element);
         elements.push(element);
         //alert(JSON.stringify(graph.getCell(item.id)))
       } else {
@@ -960,25 +967,27 @@ export default function Diagram({
     linkJSON.links.forEach((item, index) => {
       if (item) {
         let link = createLinkFromItem(item);
-        link.addTo(graph).set({
-          labels: [
-            {
-              attrs: {
-                text: {
-                  text: item.paragraph,
-                  fill: "blue",
-                  "font-size": fontSize,
-                  "font-weight": "bold",
+        if (link) {
+          link.addTo(graph).set({
+            labels: [
+              {
+                attrs: {
+                  text: {
+                    text: item.paragraph,
+                    fill: "blue",
+                    "font-size": fontSize,
+                    "font-weight": "bold",
+                  },
+                  rect: { fill: "none" },
                 },
-                rect: { fill: "none" },
               },
-            },
-          ],
-        });
-        //.set('smooth', true);
-        graph.addCell(link);
-        mapLinkIdToNumber[graph.getLastCell().id] = index + 1;
-        mapNumberToLinkId[index + 1] = graph.getLastCell().id;
+            ],
+          });
+          //.set('smooth', true);
+          graph.addCell(link);
+          mapLinkIdToNumber[graph.getLastCell().id] = index + 1;
+          mapNumberToLinkId[index + 1] = graph.getLastCell().id;
+        }
       }
     });
   }

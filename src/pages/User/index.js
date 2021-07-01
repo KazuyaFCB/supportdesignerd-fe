@@ -381,6 +381,13 @@ export default function User() {
     }
   }
 
+  function hasProp(obj, prop){
+    for (let i=0;i<prop.length;i++){
+      if(!(prop[i] in obj)) return false;
+    }
+    return true;
+  }
+
   async function convertJSONToDiagram() {
     setOpenLoading(true);
     if (
@@ -390,14 +397,60 @@ export default function User() {
       setOpenLoading(false);
       return;
     }
-    let inputJSON = document.getElementById("inputElementJSON").value;
-    let linkJSON = document.getElementById("inputLinkJSON").value;
+    let inputElementJSON = document.getElementById("inputElementJSON").value;
+    let inputLinkJSON = document.getElementById("inputLinkJSON").value;
+    try {
+      let elementJSONTmp = JSON.parse(inputElementJSON);
+      let linkJSONTmp = JSON.parse(inputLinkJSON);
+      //setElementJSON(JSON.parse(inputElementJSON));
+      //setLinkJSON(JSON.parse(inputLinkJSON));
+      // check json is correct
+      let isCorrect = true;
+      // check elementJSON
+      let elementJSONProp = ["elements"];
+      if (!hasProp(elementJSONTmp, elementJSONProp)) isCorrect = false;
 
-    setElementJSON(JSON.parse(inputJSON));
-    setLinkJSON(JSON.parse(linkJSON));
+      // check linkJSON
+      if (isCorrect) {
+        let linkJSONProp = ["links"];
+        if (!hasProp(linkJSONTmp, linkJSONProp)) isCorrect = false;
+      }
+      
+      // check elementJSON.elements
+      if (isCorrect) {
+        let elementJSONElementsProp = ["id", "x", "y", "type", "paragraph", "width", "height"];
+        for (let i=0;i<elementJSONTmp.elements.length; i++) {
+          if (!hasProp(elementJSONTmp.elements[i], elementJSONElementsProp)) {
+            isCorrect = false;
+            break;
+          }
+        }
+      }
+
+      // check linkJSON.links
+      if (isCorrect) {
+        let linkJSONLinksProp = ["id", "type", "paragraph", "sourceId", "targetId"];
+        for (let i=0;i<linkJSONTmp.links.length;i++) {
+          if (!hasProp(linkJSONTmp.links[i], linkJSONLinksProp)) {
+            isCorrect = false;
+            break;
+          }
+        }
+      }
+      if (isCorrect && (!Array.isArray(elementJSONTmp.elements) || !Array.isArray(linkJSONTmp.links))) isCorrect = false;
+      if (isCorrect) {
+        setElementJSON(elementJSONTmp);
+        setLinkJSON(linkJSONTmp);
+      } else {
+        alert("JSON không đúng cú pháp");
+      }
+    } catch(e) {
+      alert("JSON không đúng cú pháp");
+    }
+    
     sessionStorage.removeItem("currentViewedErd");
     setOpenLoading(false);
-    await sleep(1000);
+    //await sleep(1000);
     //window.location.reload();
     //alert(JSON.stringify(inputJSON));
     //alert(JSON.stringify(elementJSON));
@@ -666,11 +719,30 @@ export default function User() {
                       <div className="input-wrapper">
                         <form className="element-json json-input">
                           <h5>Nhập Element JSON</h5>
-                          <textarea id="inputElementJSON"></textarea>
+                          <textarea 
+                            id="inputElementJSON"
+                            placeholder='{"elements":
+                              [{
+                                "id":1, "x":0, "y":0,
+                                "type":"", "paragraph":"",
+                                "width":100,"height":50
+                              }]
+                            }'
+                          >
+                          </textarea>
                         </form>
                         <form className="link-json json-input">
                           <h5>Nhập Link JSON</h5>
-                          <textarea id="inputLinkJSON"></textarea>
+                          <textarea id="inputLinkJSON"
+                          placeholder='{"links":
+                            [{
+                              "id":1,
+                              "type":"", "paragraph":"",
+                              "sourceId":1,"targetId":2
+                            }]
+                          }'
+                          >
+                          </textarea>
                         </form>
                       </div>
                       {/* <div className="input-items json">

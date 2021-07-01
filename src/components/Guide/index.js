@@ -33,10 +33,48 @@ function Guide({ inJsonPage }) {
                 Bao gồm kích thước, thể loại, id, nội dung, vị trí,...
               </li>
               <li className="help-items">
+                <strong>Cấu trúc của elementJSON: </strong>
+                {`
+                { "elements":
+                  [{
+                    "id":1, "x":0, "y":0,
+                    "type":"", "paragraph":"",
+                    "width":100,"height":50
+                  }]
+                }
+                `}
+              </li>
+              <li className="help-items">
+                Trong đó <strong>elements</strong> là mảng mà mỗi phần tử của nó là 1 object đại diện cho 
+                {" "}<strong>thực thể/mối kết hợp/thuộc tính</strong>
+                {" .Còn "}<strong>x, y, type, paragraph, width, height, lần lượt là 
+                  tọa độ, thể loại, nội dung, kích cỡ của thực thể/mối kết hợp/thuộc tính 
+                  trên diagram</strong>
+              </li>
+              <li className="help-items">
                 <strong>Link JSON</strong> là phần json data thể hiện của các
                 <strong> đường nối </strong> trên diagram, có thể chỉnh sửa để
                 thay đổi nội dung của diagram. Bao gồm thể loại, id, thực thể 1,
                 thực thể 2,...
+              </li>
+              <li className="help-items">
+                <strong>Cấu trúc của linkJSON: </strong>
+                {`
+                { "links":
+                  [{
+                    "id":1,
+                    "type":"", "paragraph":"",
+                    "sourceId":1,"targetId":2
+                  }]
+                }
+                `}
+              </li>
+              <li className="help-items">
+                Trong đó <strong>links</strong> là mảng mà mỗi phần tử của nó là 1 object đại diện cho 
+                {" "}<strong>đường nối</strong>
+                {" .Còn "}<strong>type, paragraph, sourceId, targetId lần lượt là 
+                  thể loại, nội dung, id thực thể/mối kết hợp/thuộc tính tại 2 đầu mút
+                  của đường nối trên diagram</strong>
               </li>
             </React.Fragment>
           )}
