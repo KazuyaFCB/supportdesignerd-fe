@@ -47,9 +47,14 @@ function Guide({ inJsonPage }) {
               <li className="help-items">
                 Trong đó <strong>elements</strong> là mảng mà mỗi phần tử của nó là 1 object đại diện cho 
                 {" "}<strong>thực thể/mối kết hợp/thuộc tính</strong>
-                {" .Còn "}<strong>x, y, type, paragraph, width, height, lần lượt là 
-                  tọa độ, thể loại, nội dung, kích cỡ của thực thể/mối kết hợp/thuộc tính 
-                  trên diagram</strong>
+                {" .Còn "}<strong>id, x, y, type, paragraph, width, height</strong>, lần lượt là 
+                  <strong>{" "}id, tọa độ, thể loại, nội dung, kích cỡ</strong> của <strong>thực thể/mối kết hợp/thuộc tính{" "}</strong> 
+                  trên diagram. Đồng thời <strong>id</strong> phải bắt đầu từ 1.
+                Ngoài ra, <strong>type</strong>
+                {` phải là 1 trong các chuỗi sau: `}
+                <strong>"Entity", "WeakEntity", "Relationship", "IdentifyingRelationship", 
+                "Attribute", "Key", "Multivalued", "Derived", 
+                "PartialKeyAttribute", "AssociativeEntity"</strong>
               </li>
               <li className="help-items">
                 <strong>Link JSON</strong> là phần json data thể hiện của các
@@ -72,9 +77,13 @@ function Guide({ inJsonPage }) {
               <li className="help-items">
                 Trong đó <strong>links</strong> là mảng mà mỗi phần tử của nó là 1 object đại diện cho 
                 {" "}<strong>đường nối</strong>
-                {" .Còn "}<strong>type, paragraph, sourceId, targetId lần lượt là 
-                  thể loại, nội dung, id thực thể/mối kết hợp/thuộc tính tại 2 đầu mút
-                  của đường nối trên diagram</strong>
+                {" .Còn "}<strong>id, type, paragraph, sourceId, targetId</strong> lần lượt là 
+                  <strong>{" "}id, thể loại, nội dung, id thực thể/mối kết hợp/thuộc tính tại 2 đầu mút
+                  của đường nối trên diagram</strong>. 
+                  Đồng thời <strong>id</strong> phải bắt đầu từ 1.
+                  Ngoài ra, <strong>type</strong>
+                  {` phải là 1 trong các chuỗi sau: `}
+                  <strong>"PartialParticipation", "TotalParticipation", "Optional"</strong>
               </li>
             </React.Fragment>
           )}
