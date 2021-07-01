@@ -11,13 +11,13 @@
 
 .left-box img {
   width: 700px;
-  margin-left: 8%;
+  margin-left: 20%;
 }
 
 @media (max-width: 1400px) {
   .left-box img {
     width: 550px;
-    margin-left: 6%;
+    margin-left: 8%;
   }
 }
 
@@ -26,14 +26,14 @@
   padding: 8px 16px;
   background-color: violet;
   width: 435px;
-  top: 20px;
-  right: -100px;
+  top: -50px;
+  right: 0;
   box-shadow: 6px 6px 12px 0px rgba(0, 0, 0, 0.5);
 }
 
 .right-box {
   padding: 40px 80px;
-  margin-right: 8%;
+  margin-right: 6%;
   min-width: 400px;
 }
 

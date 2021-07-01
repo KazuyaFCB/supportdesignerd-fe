@@ -74,6 +74,12 @@ function Guide({ inJsonPage }) {
             <strong>icon "X"</strong> hiện lên, click vào{" "}
             <strong>icon "X"</strong> để xoá hình.
           </li>
+          <li className="help-items">
+            Trong trường hợp có cảnh báo lỗi chưa điền bảng số, sau đó{" "}
+            <strong>đã điền bảng số</strong> cho các liên kết nhưng cảnh báo lỗi
+            vẫn xuất hiện, <strong>vui lòng refresh lại trang (ấn F5)</strong>{" "}
+            để nạp lại diagram và điền lại bảng số.
+          </li>
         </ul>
       )}
     </div>
