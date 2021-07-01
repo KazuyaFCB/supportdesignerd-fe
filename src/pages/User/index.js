@@ -43,6 +43,8 @@ export default function User() {
 
   let [imageData, setImageData] = useState(null);
 
+  let [fileName, setFileName] = useState("");
+
   useEffect(async () => {
     const elementJSONStr = sessionStorage.getItem("elementJSON");
     const linkJSONStr = sessionStorage.getItem("linkJSON");
@@ -119,7 +121,7 @@ export default function User() {
     if (!imageFile) return;
     if (imageFile.size + 128 >= 4 * 1024 * 1024) {
       document.getElementById("imageFile").value = null;
-      alert("Please choose file size less than 4MB");
+      alert("Vui lòng chọn ảnh có kích cỡ nhỏ hơn 4MB!");
       return;
     }
     setOpenLoading(true);
@@ -165,7 +167,7 @@ export default function User() {
   async function convertImageToDiagram() {
     const imageFile = document.getElementById("imageFile").files[0];
     if (!imageFile) {
-      alert("Haven't uploaded the file yet");
+      alert("Chưa chọn tệp");
       return;
     }
     setIsConverting(true);
@@ -200,6 +202,8 @@ export default function User() {
     setElementJSON(api.data.elementJSON);
     setLinkJSON(api.data.linkJSON);
     sessionStorage.removeItem("currentViewedErd");
+    document.getElementById("imageFile").value = "";
+    setFileName("");
     //window.location.reload();
   }
 
@@ -381,6 +385,14 @@ export default function User() {
     }
   }
 
+  function hasProp(obj, prop) {
+    if (obj === null) return true;
+    for (let i = 0; i < prop.length; i++) {
+      if (!(prop[i] in obj)) return false;
+    }
+    return true;
+  }
+
   async function convertJSONToDiagram() {
     setOpenLoading(true);
     if (
@@ -390,14 +402,79 @@ export default function User() {
       setOpenLoading(false);
       return;
     }
-    let inputJSON = document.getElementById("inputElementJSON").value;
-    let linkJSON = document.getElementById("inputLinkJSON").value;
+    let inputElementJSON = document.getElementById("inputElementJSON").value;
+    let inputLinkJSON = document.getElementById("inputLinkJSON").value;
+    try {
+      let elementJSONTmp = JSON.parse(inputElementJSON);
+      let linkJSONTmp = JSON.parse(inputLinkJSON);
+      //setElementJSON(JSON.parse(inputElementJSON));
+      //setLinkJSON(JSON.parse(inputLinkJSON));
+      // check json is correct
+      let isCorrect = true;
+      // check elementJSON
+      let elementJSONProp = ["elements"];
+      if (!hasProp(elementJSONTmp, elementJSONProp)) isCorrect = false;
 
-    setElementJSON(JSON.parse(inputJSON));
-    setLinkJSON(JSON.parse(linkJSON));
+      // check linkJSON
+      if (isCorrect) {
+        let linkJSONProp = ["links"];
+        if (!hasProp(linkJSONTmp, linkJSONProp)) isCorrect = false;
+      }
+
+      // check elementJSON.elements
+      if (isCorrect) {
+        let elementJSONElementsProp = [
+          "id",
+          "x",
+          "y",
+          "type",
+          "paragraph",
+          "width",
+          "height",
+        ];
+        for (let i = 0; i < elementJSONTmp.elements.length; i++) {
+          if (!hasProp(elementJSONTmp.elements[i], elementJSONElementsProp)) {
+            isCorrect = false;
+            break;
+          }
+        }
+      }
+
+      // check linkJSON.links
+      if (isCorrect) {
+        let linkJSONLinksProp = [
+          "id",
+          "type",
+          "paragraph",
+          "sourceId",
+          "targetId",
+        ];
+        for (let i = 0; i < linkJSONTmp.links.length; i++) {
+          if (!hasProp(linkJSONTmp.links[i], linkJSONLinksProp)) {
+            isCorrect = false;
+            break;
+          }
+        }
+      }
+      if (
+        isCorrect &&
+        (!Array.isArray(elementJSONTmp.elements) ||
+          !Array.isArray(linkJSONTmp.links))
+      )
+        isCorrect = false;
+      if (isCorrect) {
+        setElementJSON(elementJSONTmp);
+        setLinkJSON(linkJSONTmp);
+      } else {
+        alert("JSON không đúng cú pháp");
+      }
+    } catch (e) {
+      alert("JSON không đúng cú pháp");
+    }
+
     sessionStorage.removeItem("currentViewedErd");
     setOpenLoading(false);
-    await sleep(1000);
+    //await sleep(1000);
     //window.location.reload();
     //alert(JSON.stringify(inputJSON));
     //alert(JSON.stringify(elementJSON));
@@ -405,7 +482,7 @@ export default function User() {
 
   async function saveDiagram() {
     if (!currentUser) {
-      alert("Vui lòng đăng nhập để lưu diagram này!");
+      alert("Vui lòng đăng nhập để lưu mô hình này!");
       return;
     }
     let erdName;
@@ -414,17 +491,17 @@ export default function User() {
     );
     if (currentViewedErd) {
       let isUpdate = window.confirm(
-        "Digram này đã tồn tại, bạn có muốn cập nhật?"
+        "Mô hình này đã tồn tại, bạn có muốn cập nhật?"
       );
       if (isUpdate) {
         while (!erdName) {
           erdName = prompt(
-            "Nhập tên Diagram muốn lưu:",
+            "Nhập tên mô hình muốn lưu:",
             currentViewedErd.erdName
           );
           if (erdName === null) return;
           if (erdName.length === 0) {
-            alert("Nhập tên Diagram muốn lưu:");
+            alert("Nhập tên mô hình muốn lưu");
           } else break;
         }
         setOpenLoading(true);
@@ -440,7 +517,7 @@ export default function User() {
         setOpenLoading(false);
         if (api.data) {
           sessionStorage.setItem("currentViewedErd", JSON.stringify(api.data));
-          alert("Update diagram successfully");
+          alert("Cập nhật mô hình thành công");
         }
         setOpenLoading(true);
         const api2 = await axios.get(
@@ -451,13 +528,13 @@ export default function User() {
         return;
       }
     }
-    let isSave = window.confirm("Do you want to save new diagram?");
+    let isSave = window.confirm("Bạn có muốn tạo mô hình mới?");
     if (isSave) {
       while (true) {
-        erdName = prompt("Please type ERD name:");
+        erdName = prompt("Nhập tên mô hình muốn lưu:");
         if (erdName === null) return;
         if (erdName.length === 0) {
-          alert("Please type ERD name");
+          alert("Nhập tên mô hình muốn lưu");
         } else break;
       }
     } else {
@@ -478,7 +555,7 @@ export default function User() {
     setOpenLoading(false);
     if (api.data) {
       sessionStorage.setItem("currentViewedErd", JSON.stringify(api.data));
-      alert("Save diagram successfully");
+      alert("Lưu mô hình thành công");
     }
     setOpenLoading(true);
     const api2 = await axios.get(
@@ -553,7 +630,7 @@ export default function User() {
                   />
                   <WaitingDialog
                     openLoading={openLoading}
-                    text="Đang tải danh sách diagram của bạn"
+                    text="Đang tải danh sách mô hình của bạn"
                   />
                 </div>
               </Route>
@@ -567,20 +644,37 @@ export default function User() {
                       />
                       <form encType="multipart/form-data">
                         <div className="input-items">
-                          <label for="img">Tải hình ảnh diagram:</label>
+                          <label for="img">Tải hình ảnh mô hình:</label>
+                          <br />
+                          {/* https://stackoverflow.com/questions/1944267/how-to-change-the-button-text-of-input-type-file */}
+                          <input
+                            type="button"
+                            id="_imageFile"
+                            value="Chọn tệp"
+                            onClick={() => {
+                              document.getElementById("imageFile").click();
+                            }}
+                          />
+                          {fileName ? fileName : "Không có tệp nào được chọn"}
                           <input
                             type="file"
                             id="imageFile"
                             name="imageFile"
                             accept="image/*"
+                            style={{ display: "none" }}
                             onChange={(e) => {
                               e.preventDefault();
+                              setFileName(
+                                "Đã chọn tệp " +
+                                  document.getElementById("imageFile").files[0]
+                                    .name
+                              );
                               getImgSrcFromImgFile();
                             }}
                           />
                         </div>
                         <div className="input-items">
-                          <p>Chọn ngôn ngữ của diagram:</p>
+                          <p>Chọn ngôn ngữ của mô hình:</p>
                           <div className="radio-label">
                             <input
                               type="radio"
@@ -599,7 +693,7 @@ export default function User() {
                               onClick={() => setLanguage("en")}
                               checked={language == "en"}
                             />
-                            <label htmlFor="english">English</label>
+                            <label htmlFor="english">Tiếng Anh</label>
                           </div>
                         </div>
                       </form>
@@ -609,18 +703,18 @@ export default function User() {
                           onClick={() => convertImageToDiagram()}
                         >
                           <img src="/images/convert.svg" alt="" />
-                          Tạo Diagram
+                          Tạo mô hình
                         </button>
                         <button
                           className="btn btn-new"
                           onClick={() => newDiagram()}
                         >
                           <img src="/images/new.svg" alt="" />
-                          Diagram mới
+                          Mô hình mới
                         </button>
                         <button className="btn btn-save" onClick={saveDiagram}>
                           <img src="/images/save.svg" alt="" />
-                          Lưu diagram
+                          Lưu mô hình
                         </button>
                       </div>
                     </div>
@@ -637,7 +731,7 @@ export default function User() {
                   <div className="footer">
                     <h4>Ứng dụng hỗ trợ thiết kế mô hình thực thể - kết hợp</h4>
                     <div className="authors">
-                      <p className="">Designed by our team:</p>
+                      <p className="">Được thiết kế bởi:</p>
                       <div className="author-list">
                         <h6>Trương Quốc Đạt</h6>
                         <h6>Phạm Văn Vương</h6>
@@ -652,7 +746,7 @@ export default function User() {
                 <WaitingDialog
                   openLoading={openLoading}
                   isConverting={isConverting}
-                  textConverting="Đang tạo diagram"
+                  textConverting="Đang tạo mô hình"
                   text="Đang tải ảnh lên"
                 />
               </Route>
@@ -663,54 +757,49 @@ export default function User() {
                       <div className="input-wrapper">
                         <form className="element-json json-input">
                           <h5>Nhập Element JSON</h5>
-                          <textarea id="inputElementJSON"></textarea>
+                          <textarea
+                            id="inputElementJSON"
+                            placeholder='{"elements":
+                              [{
+                                "id":1, "x":0, "y":0,
+                                "type":"", "paragraph":"",
+                                "width":100,"height":50
+                              }]
+                            }'
+                          ></textarea>
                         </form>
                         <form className="link-json json-input">
                           <h5>Nhập Link JSON</h5>
-                          <textarea id="inputLinkJSON"></textarea>
+                          <textarea
+                            id="inputLinkJSON"
+                            placeholder='{"links":
+                            [{
+                              "id":1,
+                              "type":"", "paragraph":"",
+                              "sourceId":1,"targetId":2
+                            }]
+                          }'
+                          ></textarea>
                         </form>
                       </div>
-                      {/* <div className="input-items json">
-                        <p>Chọn ngôn ngữ của diagram:</p>
-                        <div className="radio-label">
-                          <input
-                            type="radio"
-                            id="vietnamese"
-                            name="language"
-                            onClick={() => setLanguage("vn")}
-                            checked={language == "vn"}
-                          />
-                          <label htmlFor="vietnamese">Tiếng Việt</label>
-                        </div>
-                        <div className="radio-label">
-                          <input
-                            type="radio"
-                            id="english"
-                            name="language"
-                            onClick={() => setLanguage("en")}
-                            checked={language == "en"}
-                          />
-                          <label htmlFor="english">English</label>
-                        </div>
-                      </div> */}
                       <div className="btn-container">
                         <button
                           className="btn btn-convert"
                           onClick={() => convertJSONToDiagram()}
                         >
                           <img src="/images/convert.svg" alt="" />
-                          Tạo diagram
+                          Tạo mô hình
                         </button>
                         <button
                           className="btn btn-new"
                           onClick={() => newDiagram()}
                         >
                           <img src="/images/new.svg" alt="" />
-                          Diagram mới
+                          Mô hình mới
                         </button>
                         <button className="btn btn-save" onClick={saveDiagram}>
                           <img src="/images/save.svg" alt="" />
-                          Lưu diagram
+                          Lưu mô hình
                         </button>
                       </div>
                     </div>
@@ -727,7 +816,7 @@ export default function User() {
                   <div className="footer">
                     <h4>Ứng dụng hỗ trợ thiết kế mô hình thực thể - kết hợp</h4>
                     <div className="authors">
-                      <p className="">Designed by our team:</p>
+                      <p className="">Được thiết kế bởi:</p>
                       <div className="author-list">
                         <h6>Trương Quốc Đạt</h6>
                         <h6>Phạm Văn Vương</h6>
@@ -742,7 +831,7 @@ export default function User() {
                 <WaitingDialog
                   openLoading={openLoading}
                   isConverting={isConverting}
-                  textConverting="Đang tạo diagram"
+                  textConverting="Đang tạo mô hình"
                   // text="Đang tải ảnh lên"
                 />
               </Route>
