@@ -382,6 +382,7 @@ export default function User() {
   }
 
   function hasProp(obj, prop){
+    if (obj === null) return true;
     for (let i=0;i<prop.length;i++){
       if(!(prop[i] in obj)) return false;
     }
