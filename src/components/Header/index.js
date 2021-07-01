@@ -29,13 +29,13 @@ export default function Header({ currentUser, signOut }) {
                 data-toggle="dropdown"
                 aria-expanded="false"
               >
-                Dashboard
+                Bảng điều khiển
               </a>
               <div class="dropdown-menu" role="menu">
                 <Link to={"/diagram-list"}>
                   <a class="dropdown-item" role="presentation">
                     {" "}
-                    Danh sách Diagram
+                    Danh sách mô hình
                   </a>
                 </Link>
                 <Link to={"/"}>
@@ -55,7 +55,7 @@ export default function Header({ currentUser, signOut }) {
                 data-toggle="dropdown"
                 aria-expanded="false"
               >
-                Tạo Diagram
+                Tạo mô hình
               </a>
               <div class="dropdown-menu" role="menu">
                 <Link to={"/image-to-diagram"}>

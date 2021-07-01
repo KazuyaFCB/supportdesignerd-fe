@@ -61,7 +61,7 @@ export default function DiagramList({
         setDiagramListView(
           <tr>
             <td colSpan="4" align="center">
-              Không tìm thấy diagram
+              Không tìm thấy mô hình
             </td>
           </tr>
         );
@@ -85,8 +85,8 @@ export default function DiagramList({
         <tr>
           <td>{i + 1}</td>
           <td>{diagramList[i].erdName}</td>
-          <td>{diagramList[i].createdDate}</td>
-          <td>{diagramList[i].updatedDate}</td>
+          <td>{(new Date(diagramList[i].createdDate)).toLocaleString("vi-VN")}</td>
+          <td>{(new Date(diagramList[i].updatedDate)).toLocaleString("vi-VN")}</td>
           <td>
             <Link to={"/image-to-diagram"}>
               {/* <a onClick={(e) => viewDiagram(e.currentTarget.id)} id={viewId} class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE417;</i></a> */}
@@ -230,7 +230,7 @@ export default function DiagramList({
     setDiagramList(tmpDiagramList);
     setCurrentPage(-1);
     if (api.data.status) {
-      alert("Xoá diagram thành công");
+      alert("Xoá mô hình thành công");
     }
   }
 
@@ -241,7 +241,7 @@ export default function DiagramList({
       </head> */}
       <body>
         <div class="container">
-          <h2>Danh sách Diagram</h2>
+          <h2>Danh sách mô hình</h2>
           <div class="table-responsive">
             <div class="table-wrapper">
               <table class="table table-bordered">
@@ -256,7 +256,7 @@ export default function DiagramList({
                     <th>#</th>
                     <th>
                       {/* ERD Name <i class="fa fa-sort"></i> */}
-                      Tên ERD
+                      Tên mô hình
                     </th>
                     <th>Ngày tạo</th>
                     <th>Ngày cập nhật</th>
@@ -280,7 +280,7 @@ export default function DiagramList({
                       ? numElementInPage
                       : diagramList.length} */}
                   </b>{" "}
-                  trên <b>{diagramList.length}</b> diagram
+                  trên <b>{diagramList.length}</b> mô hình
                 </div>
                 <ul class="pagination">{paginationView}</ul>
               </div>
