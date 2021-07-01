@@ -135,9 +135,9 @@ export default function Diagram({
   ];
 
   let panelTitleFromEngToVieMap = {
-    "Entity": "Thực thể",
+    "Entity": "Thực thể mạnh",
     "WeakEntity": "Thực thể yếu",
-    "Relationship": "Mối kết hợp",
+    "Relationship": "Mối kết hợp mạnh",
     "IdentifyingRelationship": "Mối kết hợp yếu",
     "Attribute": "Thuộc tính thường",
     "Key": "Khóa chính",
