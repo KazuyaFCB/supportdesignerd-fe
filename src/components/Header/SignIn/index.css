@@ -42,8 +42,8 @@
 }
 
 .input-items {
-  margin: 14px 0;
-  height: 100px;
+  margin: 0px 0;
+  /* height: 100px; */
   width: 380px;
   padding-left: 0;
 }
