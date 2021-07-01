@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import "./index.css";
-import DiagramList from "./../Header/DiagramList/index";
 
 function Guide({ inJsonPage }) {
-  const [isShowing, setIsShowing] = useState("on");
+  const [isShowing, setIsShowing] = useState("off");
 
   return (
     <div className="help-container">

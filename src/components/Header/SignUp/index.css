@@ -139,3 +139,9 @@ button.social-signin.twitter {
 button.social-signin.google {
   background: #dd4b39;
 }
+
+@media (max-width: 768px) {
+  .right-box {
+    text-align: center;
+  }
+}

@@ -85,8 +85,8 @@ export default function DiagramList({
         <tr>
           <td>{i + 1}</td>
           <td>{diagramList[i].erdName}</td>
-          <td>{diagramList[i].createdDate}</td>
-          <td>{diagramList[i].updatedDate}</td>
+          <td className="hide-for-mobile">{diagramList[i].createdDate}</td>
+          <td className="hide-for-mobile">{diagramList[i].updatedDate}</td>
           <td>
             <Link to={"/image-to-diagram"}>
               {/* <a onClick={(e) => viewDiagram(e.currentTarget.id)} id={viewId} class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE417;</i></a> */}
@@ -258,8 +258,8 @@ export default function DiagramList({
                       {/* ERD Name <i class="fa fa-sort"></i> */}
                       Tên ERD
                     </th>
-                    <th>Ngày tạo</th>
-                    <th>Ngày cập nhật</th>
+                    <th className="hide-for-mobile">Ngày tạo</th>
+                    <th className="hide-for-mobile">Ngày cập nhật</th>
                   </tr>
                 </thead>
                 <tbody>{diagramListView}</tbody>
@@ -268,14 +268,14 @@ export default function DiagramList({
                 <div class="hint-text">
                   Hiển thị{" "}
                   <b>
-                    {diagramList.length > 0 ?
-                      (
-                        (diagramList.length - (currentPage - 1)*numElementInPage) >= numElementInPage
+                    {diagramList.length > 0
+                      ? diagramList.length -
+                          (currentPage - 1) * numElementInPage >=
+                        numElementInPage
                         ? numElementInPage
-                        : (diagramList.length - (currentPage - 1)*numElementInPage)
-                      )
-                      : 0
-                    }
+                        : diagramList.length -
+                          (currentPage - 1) * numElementInPage
+                      : 0}
                     {/* {numElementInPage < diagramList.length
                       ? numElementInPage
                       : diagramList.length} */}

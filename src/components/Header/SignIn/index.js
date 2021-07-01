@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useLocation } from "react";
 import "./index.css";
-import { Redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
 import domain from "../../../utils/domain";
 import axios from "../../../utils/axios";
@@ -113,6 +113,12 @@ export default function SignIn() {
             <input type="submit" name="signin_submit" value="Đăng nhập" />
           </div>
         </form>
+        <div className="sign-up-container">
+          <p>Chưa có tài khoản?</p>
+          <Link to={"/sign-up"}>
+            <div className="sign-up-btn">Đăng ký tài khoản</div>
+          </Link>
+        </div>
       </div>
     </div>
   );

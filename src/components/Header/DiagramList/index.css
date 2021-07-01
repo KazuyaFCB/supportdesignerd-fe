@@ -17,7 +17,7 @@ body {
   margin-bottom: 30px;
 }
 .table-wrapper {
-  min-width: 1000px;
+  /* min-width: 1000px; */
   background: #fff;
   padding: 20px;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
@@ -143,4 +143,27 @@ table.table td i {
   float: left;
   margin-top: 10px;
   font-size: 13px;
+}
+
+@media (max-width: 768px) {
+  .hide-for-mobile {
+    display: none;
+  }
+
+  .table-wrapper {
+    width: 100%;
+    margin: 0 auto;
+    min-width: none !important;
+  }
+
+  .clearfix {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .clearfix > div {
+    margin-bottom: 15px;
+  }
 }

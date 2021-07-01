@@ -43,6 +43,13 @@
   padding: 30px;
 }
 
+.input-data-content {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
 .input-data-content-json {
   display: flex;
   justify-content: center;
@@ -77,6 +84,7 @@
 .footer h4 {
   color: rgb(160, 160, 25);
   margin: 10px 0;
+  text-align: center;
 }
 
 .authors {
@@ -128,4 +136,40 @@
 
 .input-items.json {
   padding-left: 80px;
+}
+
+@media (max-width: 768px) {
+  .loaded-img {
+    width: 400px;
+  }
+
+  .btn-container {
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0;
+  }
+
+  .btn-container > button {
+    margin-bottom: 15px;
+  }
+
+  .input-wrapper {
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .json-input {
+    width: 350px;
+    margin-bottom: 20px;
+  }
+
+  .json-input textarea {
+    width: 350px;
+    height: 200px;
+  }
+
+  .input-data-content {
+    text-align: center;
+  }
 }

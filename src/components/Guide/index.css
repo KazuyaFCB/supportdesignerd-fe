@@ -2,6 +2,16 @@
   margin-top: 50px;
   padding: 0 150px;
 }
+
+.help-wrapper {
+  margin: 15px 125px;
+  list-style: circle;
+}
+
+.help-wrapper li {
+  margin-bottom: 10px;
+}
+
 .switch-container {
   display: flex;
   justify-content: space-between;
@@ -84,11 +94,13 @@ input:checked + .slider:before {
   border-radius: 50%;
 }
 
-.help-wrapper {
-  margin: 15px 125px;
-  list-style: circle;
-}
+@media (max-width: 768px) {
+  .help-container {
+    margin-top: 50px;
+    padding: 0 30px;
+  }
 
-.help-wrapper li {
-  margin-bottom: 10px;
+  .help-wrapper {
+    margin: 15px 50px;
+  }
 }

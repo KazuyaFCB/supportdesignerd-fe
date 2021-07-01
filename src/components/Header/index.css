@@ -19,6 +19,12 @@
     padding-top: 0.75rem;
     padding-bottom: 0.75rem;
   }
+
+  ._btn {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+  }
 }
 
 .navbar .navbar-brand {
@@ -171,4 +177,11 @@ a,
 a:hover,
 a:visited {
   text-decoration: none;
+}
+
+@media (max-width: 768px) {
+  #navbarsExample09 {
+    background-color: black;
+    padding: 8px 16px;
+  }
 }

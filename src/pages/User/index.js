@@ -635,9 +635,6 @@ export default function User() {
                     />
                   </div>
                   <div className="footer">
-                    {/* <p className="copyright">
-                      &copy; Copyright. All Rights Reserved.
-                    </p> */}
                     <h4>Ứng dụng hỗ trợ thiết kế mô hình thực thể - kết hợp</h4>
                     <div className="authors">
                       <p className="">Designed by our team:</p>
@@ -728,16 +725,18 @@ export default function User() {
                     />
                   </div>
                   <div className="footer">
-                    <p> &copy; Copyright. All Rights Reserved.</p>
-                    <p>Designed by our team:</p>
-                    <ul>
-                      <li>Huỳnh Lâm Tứ</li>
-                      <li>Phạm Hồng Phước</li>
-                      <li>Trương Quốc Đạt</li>
-                      <li>Nguyễn Phượng Vỹ</li>
-                      <li>Nguyễn Hoàng Vinh</li>
-                      <li>Phạm Văn Vương</li>
-                    </ul>
+                    <h4>Ứng dụng hỗ trợ thiết kế mô hình thực thể - kết hợp</h4>
+                    <div className="authors">
+                      <p className="">Designed by our team:</p>
+                      <div className="author-list">
+                        <h6>Trương Quốc Đạt</h6>
+                        <h6>Phạm Văn Vương</h6>
+                        <h6>Huỳnh Lâm Tứ</h6>
+                        <h6>Nguyễn Hoàng Vinh</h6>
+                        <h6>Nguyễn Phượng Vỹ</h6>
+                        <h6>Phạm Hồng Phước</h6>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <WaitingDialog
