@@ -644,7 +644,7 @@ export default function User() {
                       />
                       <form encType="multipart/form-data">
                         <div className="input-items">
-                          <label for="img">Tải hình ảnh mô hình:</label>
+                          <label for="img"><p>Tải hình ảnh mô hình:</p></label>
                           <br />
                           {/* https://stackoverflow.com/questions/1944267/how-to-change-the-button-text-of-input-type-file */}
                           <input
@@ -654,7 +654,7 @@ export default function User() {
                             onClick={() => {
                               document.getElementById("imageFile").click();
                             }}
-                          />
+                          />{" "}
                           {fileName ? fileName : "Không có tệp nào được chọn"}
                           <input
                             type="file"
@@ -703,7 +703,7 @@ export default function User() {
                           onClick={() => convertImageToDiagram()}
                         >
                           <img src="/images/convert.svg" alt="" />
-                          Tạo mô hình
+                          Chuyển đổi
                         </button>
                         <button
                           className="btn btn-new"
@@ -788,7 +788,7 @@ export default function User() {
                           onClick={() => convertJSONToDiagram()}
                         >
                           <img src="/images/convert.svg" alt="" />
-                          Tạo mô hình
+                          Chuyển đổi
                         </button>
                         <button
                           className="btn btn-new"

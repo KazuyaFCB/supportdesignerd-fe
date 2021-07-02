@@ -85,8 +85,8 @@ export default function DiagramList({
         <tr>
           <td>{i + 1}</td>
           <td>{diagramList[i].erdName}</td>
-          <td className="hide-for-mobile">{diagramList[i].createdDate}</td>
-          <td className="hide-for-mobile">{diagramList[i].updatedDate}</td>
+          <td className="hide-for-mobile">{(new Date(diagramList[i].createdDate)).toLocaleString("vi-VN")}</td>
+          <td className="hide-for-mobile">{(new Date(diagramList[i].updatedDate)).toLocaleString("vi-VN")}</td>
           <td>
             <Link to={"/image-to-diagram"}>
               {/* <a onClick={(e) => viewDiagram(e.currentTarget.id)} id={viewId} class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE417;</i></a> */}
