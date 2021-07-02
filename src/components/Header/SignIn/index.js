@@ -51,11 +51,17 @@ export default function SignIn() {
     const password = document.getElementsByName("password")[0].value;
 
     if (username.length < 5 || username.length > 50) {
-      setValidationError("username", "Tên đăng nhập phải chứa từ 5 đến 50 kí tự");
+      setValidationError(
+        "username",
+        "Tên đăng nhập phải chứa từ 5 đến 50 kí tự"
+      );
       return;
     }
     if (!checkForSpecialChar(username)) {
-      setValidationError("username", "Tên đăng nhập không được chứa ký tự đặc biệt");
+      setValidationError(
+        "username",
+        "Tên đăng nhập không được chứa ký tự đặc biệt"
+      );
       return;
     }
     if (password.length < 6) {
@@ -97,9 +103,14 @@ export default function SignIn() {
           <h1>ĐĂNG NHẬP</h1>
           <div className="input-items">
             <label htmlFor="username">Tên đăng nhập</label>
-            <input 
-              type="text" name="username" autoComplete="off" required
-              onInvalid={(e) => e.currentTarget.setCustomValidity("Vui lòng điền tên đăng nhập")}
+            <input
+              type="text"
+              name="username"
+              autoComplete="off"
+              required
+              onInvalid={(e) =>
+                e.currentTarget.setCustomValidity("Vui lòng điền tên đăng nhập")
+              }
               onInput={(e) => e.currentTarget.setCustomValidity("")}
             />
             {validateError && validateError.type === "username" && (
@@ -108,9 +119,13 @@ export default function SignIn() {
           </div>
           <div className="input-items">
             <label htmlFor="username">Mật khẩu</label>
-            <input 
-              type="password" name="password" required
-              onInvalid={(e) => e.currentTarget.setCustomValidity("Vui lòng điền mật khẩu")}
+            <input
+              type="password"
+              name="password"
+              required
+              onInvalid={(e) =>
+                e.currentTarget.setCustomValidity("Vui lòng điền mật khẩu")
+              }
               onInput={(e) => e.currentTarget.setCustomValidity("")}
             />
             {validateError && validateError.type === "password" && (

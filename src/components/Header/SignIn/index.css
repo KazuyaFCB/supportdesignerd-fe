@@ -86,6 +86,8 @@
   .login-box {
     flex-direction: column;
     justify-content: center;
+    position: relative;
+    /* top: 50px; */
   }
 
   .left-box img {
@@ -102,6 +104,7 @@
 
   .right-box {
     margin: 0 auto;
+    padding: 40px 0;
   }
 
   .right-box form > * {
@@ -110,6 +113,14 @@
 
   .right-box form input {
     margin: 0 auto;
+  }
+
+  .input-items {
+    width: auto;
+  }
+
+  .submit-btn {
+    margin-top: 20px;
   }
 
   .right-box form label {

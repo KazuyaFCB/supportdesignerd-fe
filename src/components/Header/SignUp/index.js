@@ -59,7 +59,10 @@ export default function SignUp() {
       return;
     }
     if (username.length < 5 || username.length > 50) {
-      setValidationError("username", "Tên đăng nhập phải chứa từ 5 đến 50 kí tự");
+      setValidationError(
+        "username",
+        "Tên đăng nhập phải chứa từ 5 đến 50 kí tự"
+      );
       return;
     }
 
@@ -69,7 +72,10 @@ export default function SignUp() {
     }
     let specialChars = "<>@!#$%^&*+{}?:;|()[]'\"\\,/~`= ";
     if (!checkForSpecialChar(username, specialChars)) {
-      setValidationError("username", "Tên đăng nhập không được chứa ký tự đặc biệt");
+      setValidationError(
+        "username",
+        "Tên đăng nhập không được chứa ký tự đặc biệt"
+      );
       return;
     }
     if (password.length < 6) {
@@ -114,7 +120,7 @@ export default function SignUp() {
   }
   if (isSignUpSuccess) return <Redirect to="/sign-in" />;
   return (
-    <div className="login-box">
+    <div className="login-box signup-box">
       <WaitingDialog openLoading={openLoading} text={waitingDialogContent} />
       <div className="left-box">
         <h2>Ứng dụng hỗ trợ thiết kế mô hình thực thể - kết hợp</h2>
@@ -131,9 +137,14 @@ export default function SignUp() {
 
           <div className="input-items">
             <label htmlFor="username">Tên đăng nhập</label>
-            <input 
-              type="text" name="username" autoComplete="off" required
-              onInvalid={(e) => e.currentTarget.setCustomValidity("Vui lòng điền tên đăng nhập")}
+            <input
+              type="text"
+              name="username"
+              autoComplete="off"
+              required
+              onInvalid={(e) =>
+                e.currentTarget.setCustomValidity("Vui lòng điền tên đăng nhập")
+              }
               onInput={(e) => e.currentTarget.setCustomValidity("")}
             />
             {validateError && validateError.type === "username" && (
@@ -142,9 +153,13 @@ export default function SignUp() {
           </div>
           <div className="input-items">
             <label htmlFor="username">Mật khẩu</label>
-            <input 
-              type="password" name="password" required 
-              onInvalid={(e) => e.currentTarget.setCustomValidity("Vui lòng điền mật khẩu")}
+            <input
+              type="password"
+              name="password"
+              required
+              onInvalid={(e) =>
+                e.currentTarget.setCustomValidity("Vui lòng điền mật khẩu")
+              }
               onInput={(e) => e.currentTarget.setCustomValidity("")}
             />
             {validateError && validateError.type === "password" && (
@@ -153,9 +168,15 @@ export default function SignUp() {
           </div>
           <div className="input-items">
             <label htmlFor="username">Nhập lại mật khẩu</label>
-            <input 
-              type="password" name="retypePassword" required 
-              onInvalid={(e) => e.currentTarget.setCustomValidity("Vui lòng điền nhập lại mật khẩu")}
+            <input
+              type="password"
+              name="retypePassword"
+              required
+              onInvalid={(e) =>
+                e.currentTarget.setCustomValidity(
+                  "Vui lòng điền nhập lại mật khẩu"
+                )
+              }
               onInput={(e) => e.currentTarget.setCustomValidity("")}
             />
             {validateError && validateError.type === "retype password" && (
@@ -164,9 +185,14 @@ export default function SignUp() {
           </div>
           <div className="input-items">
             <label htmlFor="username">Họ và tên</label>
-            <input 
-              type="text" name="fullName" autoComplete="off" required 
-              onInvalid={(e) => e.currentTarget.setCustomValidity("Vui lòng điền họ và tên")}
+            <input
+              type="text"
+              name="fullName"
+              autoComplete="off"
+              required
+              onInvalid={(e) =>
+                e.currentTarget.setCustomValidity("Vui lòng điền họ và tên")
+              }
               onInput={(e) => e.currentTarget.setCustomValidity("")}
             />
             {validateError && validateError.type === "fullname" && (
@@ -175,9 +201,14 @@ export default function SignUp() {
           </div>
           <div className="input-items">
             <label htmlFor="username">Email</label>
-            <input 
-              type="text" name="email" autoComplete="off" required 
-              onInvalid={(e) => e.currentTarget.setCustomValidity("Vui lòng điền email")}
+            <input
+              type="text"
+              name="email"
+              autoComplete="off"
+              required
+              onInvalid={(e) =>
+                e.currentTarget.setCustomValidity("Vui lòng điền email")
+              }
               onInput={(e) => e.currentTarget.setCustomValidity("")}
             />
             {validateError && validateError.type === "email" && (
